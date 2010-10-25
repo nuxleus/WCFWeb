@@ -1,0 +1,141 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <StyleCopOverrideSettingsFile>..\..\..\Common\CodeAnalysis\Settings.Src.StyleCop</StyleCopOverrideSettingsFile>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{7182B333-2A03-4D98-9DDB-0F0D462F6F36}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>System.ServiceModel</RootNamespace>
+    <AssemblyName>Microsoft.ServiceModel.Http</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <OutputPath>..\..\..\build\$(Configuration)\Http\bin\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>..\..\..\Common\CodeAnalysis\FxCopRules.Src.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Http">
+      <HintPath>..\lib\Microsoft.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Http.Extensions">
+      <HintPath>..\lib\Microsoft.Http.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.QueryComposition, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Microsoft.ServiceModel.Http.Client\lib\Microsoft.QueryComposition.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.IdentityModel" />
+    <Reference Include="System.Runtime.DurableInstancing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SR.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SR.resx</DependentUpon>
+    </Compile>
+    <Compile Include="System\ServiceModel\Channels\HttpTransportDefaults.cs" />
+    <Compile Include="System\ServiceModel\Channels\TransportDefaults.cs" />
+    <Compile Include="System\ServiceModel\Channels\HttpMessage.cs" />
+    <Compile Include="System\ServiceModel\Channels\HttpMessageEncoderFactory.cs" />
+    <Compile Include="System\ServiceModel\Channels\HttpMessageEncodingBindingElement.cs" />
+    <Compile Include="System\ServiceModel\Channels\HttpMessageEncodingChannelListener.cs" />
+    <Compile Include="System\ServiceModel\Channels\HttpMessageEncodingReplyChannel.cs" />
+    <Compile Include="System\ServiceModel\Channels\HttpMessageEncodingRequestContext.cs" />
+    <Compile Include="System\ServiceModel\Channels\HttpMessageExtensionMethods.cs" />
+    <Compile Include="System\ServiceModel\Configuration\HttpMessageBindingCollectionElement.cs" />
+    <Compile Include="System\ServiceModel\Configuration\HttpMessageBindingElement.cs" />
+    <Compile Include="System\ServiceModel\Configuration\HttpMessageBindingSecurityElement.cs" />
+    <Compile Include="System\ServiceModel\Configuration\InternalEnumValidator.cs" />
+    <Compile Include="System\ServiceModel\Configuration\InternalEnumValidatorAttribute.cs" />
+    <Compile Include="System\ServiceModel\Dispatcher\ArgumentValueConverter.cs" />
+    <Compile Include="System\ServiceModel\Dispatcher\BindArgumentsEventArgs.cs" />
+    <Compile Include="System\ServiceModel\Dispatcher\IConditionalExecutionProcessor.cs" />
+    <Compile Include="System\ServiceModel\Dispatcher\IOrderableProcessor.cs" />
+    <Compile Include="System\ServiceModel\Dispatcher\Pipeline.cs" />
+    <Compile Include="System\ServiceModel\Dispatcher\PipelineBindingCollection.cs" />
+    <Compile Include="System\ServiceModel\Dispatcher\PipelineBuilder.cs" />
+    <Compile Include="System\ServiceModel\Dispatcher\PipelineContext.cs" />
+    <Compile Include="System\ServiceModel\Dispatcher\PipelineContextInfo.cs" />
+    <Compile Include="System\ServiceModel\Dispatcher\Processor.cs" />
+    <Compile Include="System\ServiceModel\Dispatcher\ProcessorArgument.cs" />
+    <Compile Include="System\ServiceModel\Dispatcher\ProcessorArgumentCollection.cs" />
+    <Compile Include="System\ServiceModel\Dispatcher\ProcessorArgumentDirection.cs" />
+    <Compile Include="System\ServiceModel\Dispatcher\ProcessorCollection.cs" />
+    <Compile Include="System\ServiceModel\Dispatcher\ProcessorExecutionOrder.cs" />
+    <Compile Include="System\ServiceModel\Dispatcher\ProcessorResult.cs" />
+    <Compile Include="System\ServiceModel\Dispatcher\ProcessorStatus.cs" />
+    <Compile Include="System\ServiceModel\Dispatcher\ReflectionProcessorArgumentBuilder.cs" />
+    <Compile Include="System\ServiceModel\HttpProxyCredentialTypeHelper.cs" />
+    <Compile Include="System\ServiceModel\HttpClientCredentialTypeHelper.cs" />
+    <Compile Include="System\ServiceModel\Description\HttpOperationDescription.cs" />
+    <Compile Include="System\ServiceModel\Description\HttpOperationDescriptionExtensionMethods.cs" />
+    <Compile Include="System\ServiceModel\Description\HttpParameterDescription.cs" />
+    <Compile Include="System\ServiceModel\Description\HttpParameterDescriptionCollection.cs" />
+    <Compile Include="System\ServiceModel\Description\HttpParameterDescriptionExtensionMethods.cs" />
+    <Compile Include="System\ServiceModel\Dispatcher\HttpMessageErrorHandler.cs" />
+    <Compile Include="System\ServiceModel\Dispatcher\HttpMessageFormatter.cs" />
+    <Compile Include="System\ServiceModel\Dispatcher\HttpMessageInspector.cs" />
+    <Compile Include="System\ServiceModel\Dispatcher\HttpMessageInstanceProvider.cs" />
+    <Compile Include="System\ServiceModel\Dispatcher\HttpMessageOperationSelector.cs" />
+    <Compile Include="System\ServiceModel\HttpMessageBinding.cs" />
+    <Compile Include="System\ServiceModel\HttpMessageBindingSecurity.cs" />
+    <Compile Include="System\ServiceModel\HttpMessageBindingSecurityMode.cs" />
+    <Compile Include="System\ServiceModel\HttpMessageBindingSecurityModeHelper.cs" />
+    <Compile Include="System\ServiceModel\IQueryComposer.cs" />
+    <Compile Include="System\ServiceModel\QueryCompositionAttribute.cs" />
+    <Compile Include="System\ServiceModel\QueryCompositionMessageProperty.cs" />
+    <Compile Include="System\ServiceModel\QueryCompositionOperationInvoker.cs" />
+    <Compile Include="System\ServiceModel\UrlQueryComposer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="SR.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>SR.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Lib\Microsoft.Http.dll" />
+    <Content Include="Lib\Microsoft.Http.Extensions.dll" />
+    <Content Include="Lib\Microsoft.QueryComposition.dll" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(ProjectExtensionsDir)\ProjectExtensions.targets" Condition="Exists('$(ProjectExtensionsDir)\ProjectExtensions.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

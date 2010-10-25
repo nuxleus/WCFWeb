@@ -1,0 +1,303 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ArgumentBindingInvalidSinceBelongToSameProcessor" xml:space="preserve">
+    <value>The output argument with name '{0}' and type '{1}' can not be bound or unbound with the input argument with name '{2}' and type '{3}' because they belong to the same processor.</value>
+  </data>
+  <data name="ArgumentBindingInvalidSinceNotAssignable" xml:space="preserve">
+    <value>The arguments can not be bound or unbound because the argument with name '{0}' has a type '{1}' that is not assignable to the type of the argument with name '{2}' and type '{3}'.</value>
+  </data>
+  <data name="ArgumentBindingInvalidSinceNotInProcessorArgumentCollection" xml:space="preserve">
+    <value>The argument with name '{0}' and type '{1}' can not be bound or unbound because it does not belong to a ProcessorArgumentCollection.</value>
+  </data>
+  <data name="ArgumentBindingInvalidSinceNotInputArgument" xml:space="preserve">
+    <value>The argument with name '{0}' and type '{1}' can not be bound or unbound because it is not an input argument.</value>
+  </data>
+  <data name="ArgumentBindingInvalidSinceNotOutputArgument" xml:space="preserve">
+    <value>The argument with name '{0}' and type '{1}' can not be bound or unbound because it is not an output argument.</value>
+  </data>
+  <data name="ArgumentBindingInvalidSinceProcessorNotInPipeline" xml:space="preserve">
+    <value>The argument with name '{0}' and type '{1}' can not be bound or unbound because it's processor does not belong to the pipeline.</value>
+  </data>
+  <data name="ArgumentBindingInvalidSinceProcessorOrderIsWrong" xml:space="preserve">
+    <value>The arguments can not be bound or unbound because the out argument with name '{0}' and type '{1}' belongs to a processor that comes after the processor with the input argument with name '{2}' and type '{3}'.</value>
+  </data>
+  <data name="ArgumentDoesNotBelongToProcessorInCurrentPipeline" xml:space="preserve">
+    <value>InArgument does not belong to a processor in the current pipeline</value>
+  </data>
+  <data name="ArgumentsCannotBeBoundAfterInitialization" xml:space="preserve">
+    <value>Arguments can not be bound after the PipelineProcessor has been initialized.</value>
+  </data>
+  <data name="ArgumentsCannotBeUnboundAfterInitialization" xml:space="preserve">
+    <value>Arguments can not be unbound after the PipelineProcessor has been initialized.</value>
+  </data>
+  <data name="CertificateUnsupportedForHttpTransportCredentialOnly" xml:space="preserve">
+    <value>Certificate-based client authentication is not supported in TransportCredentialOnly security mode. Select the Transport security mode.</value>
+  </data>
+  <data name="ChannelFactoryNotSupportedByHttpMessageEncodingBindingElement" xml:space="preserve">
+    <value>The message encoding binding element does not support building ChannelFactory instances.</value>
+  </data>
+  <data name="ChannelShapeNotSupportedByHttpMessageEncodingBindingElement" xml:space="preserve">
+    <value>The message encoding binding element does not support the '{0}' channel shape.</value>
+  </data>
+  <data name="ConfigInvalidBindingConfigurationName" xml:space="preserve">
+    <value>The {1} binding does not have a configured binding named '{0}'.</value>
+  </data>
+  <data name="ContainerProcessorCannotBeInProcessorCollection" xml:space="preserve">
+    <value>The ContainerProcessor of type '{0}' cannot be included in the collection of processors.</value>
+  </data>
+  <data name="DerivedMethodCannotReturnNull" xml:space="preserve">
+    <value>Any implementation of '{0}' in a derived class must return a non-null value.</value>
+  </data>
+  <data name="HttpErrorMessageNullResponse" xml:space="preserve">
+    <value>The error handler of type '{0}' received a null HttpResponseMessage in ProvideFault.</value>
+  </data>
+  <data name="HttpInstanceProviderNullRequest" xml:space="preserve">
+    <value>The instance provider of type '{0}' received a null HttpRequestMessage in GetInstance.</value>
+  </data>
+  <data name="HttpMessageFormatterMessageVersion" xml:space="preserve">
+    <value>The formatter of type '{0}' only supports bindings that ensure the message version is MessageVersion.None</value>
+  </data>
+  <data name="HttpMessageFormatterNullRequest" xml:space="preserve">
+    <value>The formatter of type '{0}' received a null HttpRequestMessage in DeserializeRequest.</value>
+  </data>
+  <data name="HttpMessageFormatterNullResponse" xml:space="preserve">
+    <value>The formatter of type '{0}' received a null HttpResponseMessage in SerializeReply.</value>
+  </data>
+  <data name="HttpMessageInspectorNullRequest" xml:space="preserve">
+    <value>The inspector of type '{0}' received a null HttpRequestMessage in AfterReceiveRequest.</value>
+  </data>
+  <data name="HttpMessageInspectorNullResponse" xml:space="preserve">
+    <value>The inspector of type '{0}' received a null HttpResponseMessage in BeforeSendReply.</value>
+  </data>
+  <data name="HttpOperationDescriptionNameImmutable" xml:space="preserve">
+    <value>The Name property cannot be modified on the associated OperationDescription.</value>
+  </data>
+  <data name="HttpOperationDescriptionNullOperationDescription" xml:space="preserve">
+    <value>No OperationDescription is available.</value>
+  </data>
+  <data name="HttpOperationSelectorNullOperation" xml:space="preserve">
+    <value>The operation selector of type '{0}' selected a null operation.</value>
+  </data>
+  <data name="HttpOperationSelectorNullRequest" xml:space="preserve">
+    <value>The operation selector of type '{0}' received a null HttpRequestMessage in SelectOperation.</value>
+  </data>
+  <data name="HttpParameterDescriptionMustBeSynchronized" xml:space="preserve">
+    <value>Only an HttpParameterDescription created from a MessagePartDescription can be used with this operation.</value>
+  </data>
+  <data name="HttpParameterDescriptionNameImmutable" xml:space="preserve">
+    <value>The Name property cannot be modified on the associated MessagePartDescription.</value>
+  </data>
+  <data name="HttpParameterDescriptionNamespaceImmutable" xml:space="preserve">
+    <value>The Namespace property cannot be modified on the associated MessagePartDescription.</value>
+  </data>
+  <data name="MessageBodyIsHttpRequestMessageWithKnownContentLength" xml:space="preserve">
+    <value>HTTP request message body with a content length of '{0}' bytes.</value>
+  </data>
+  <data name="MessageBodyIsHttpRequestMessageWithUnknownContentLength" xml:space="preserve">
+    <value>HTTP request message body with an undetermined content length.</value>
+  </data>
+  <data name="MessageBodyIsHttpResponseMessageWithKnownContentLength" xml:space="preserve">
+    <value>HTTP response message body with a content length of '{0}' bytes.</value>
+  </data>
+  <data name="MessageBodyIsHttpResponseMessageWithUnknownContentLength" xml:space="preserve">
+    <value>HTTP response message body with an undetermined content length.</value>
+  </data>
+  <data name="MessageClosed" xml:space="preserve">
+    <value>Message is closed.</value>
+  </data>
+  <data name="MessageInvalidForHttpMessageEncoder" xml:space="preserve">
+    <value>The response message is not valid for the encoder used by the '{0}' binding, which requires that the response message have been created with the '{1}' extension method on the '{2}' class.</value>
+  </data>
+  <data name="MessageReadWriteCopyNotSupported" xml:space="preserve">
+    <value>The message instance does not support being read, written out or copied.  Use the '{0}' or '{1}' extension methods on the '{2}' class to access the message content.</value>
+  </data>
+  <data name="NonHttpMessageMustBeEmpty" xml:space="preserve">
+    <value>The message instance is non-empty but the '{0}' extension method on the '{1}' class returned null.  Message instances that do not support the '{0}' extension method must be empty. </value>
+  </data>
+  <data name="NullValueInArrayParameter" xml:space="preserve">
+    <value>The value at index '{0}' of the '{1}' array parameter is null.</value>
+  </data>
+  <data name="OnlyMessageVersionNoneSupportedOnHttpMessageEncodingBindingElement" xml:space="preserve">
+    <value>The message encoding binding element only supports MessageVersion.None. </value>
+  </data>
+  <data name="ParameterCannotBeNullEmptyStringOrWhitespace" xml:space="preserve">
+    <value>The '{0}' parameter can not be null, an empty string or only white space.</value>
+  </data>
+  <data name="ParameterMustBeLessThanOrEqualSecondParameter" xml:space="preserve">
+    <value>The value of the '{0}' parameter must be less than or equal to the value of the '{1}' parameter.</value>
+  </data>
+  <data name="PipelineBuilderRequiresPipelineConstructorHaveCertainParameters" xml:space="preserve">
+    <value>The PipelineBuilder requires that the Pipeline type parameter '{0}' have a constructor identical to the constructor of the base Pipeline type.</value>
+  </data>
+  <data name="PipelineDoesNotHaveGivenInputArgument" xml:space="preserve">
+    <value>The pipeline does not have an input argument with the name '{0}'.</value>
+  </data>
+  <data name="PipelineDoesNotHaveGivenOutputArgument" xml:space="preserve">
+    <value>The pipeline does not have an output argument with the name '{0}'.</value>
+  </data>
+  <data name="PipelineInvalidSinceArgumentNotBound" xml:space="preserve">
+    <value>The Pipeline is not valid because the input ProcessArgument with name '{0}' on the Processor of type '{1}' at index '{2}' will never receive a value because it is not bound to the output of any Processor.</value>
+  </data>
+  <data name="ProcessorAlreadyBelongsToProcessorCollection" xml:space="preserve">
+    <value>The Processor of type '{0}' already belongs to a ProcessorCollection and cannot be added to a second ProcessorCollection.</value>
+  </data>
+  <data name="ProcessorArgumentAlreadyBelongsToProcessorArgumentCollection" xml:space="preserve">
+    <value>The ProcessorArgument with name '{0}' already belongs to ProcessorArgumentCollection and cannot be added to a second ProcessorArgumentCollection.</value>
+  </data>
+  <data name="ProcessorArgumentCannotBeAddedTwice" xml:space="preserve">
+    <value>The ProcessorArgument '{0}' cannot be added to a ProcessorArgumentCollection more than once.</value>
+  </data>
+  <data name="ProcessorArgumentNameCannotBeEmptyStringOrWhitespace" xml:space="preserve">
+    <value>The name of a ProcessorArgument can not be an empty string or only white space.</value>
+  </data>
+  <data name="ProcessorArgumentTypeCannotBeNullable" xml:space="preserve">
+    <value>The Type property of a ProcessorArgument can not be a generic nullable type.  Set the Type property to type '{0}' directly.</value>
+  </data>
+  <data name="ProcessorArgumentWithSameName" xml:space="preserve">
+    <value>The containing ProcessorArgumentCollection already has an ProcessorArgument with the name '{0}' at index '{1}'.</value>
+  </data>
+  <data name="ProcessorCannotBeAddedTwice" xml:space="preserve">
+    <value>The Processor of type '{0}' cannot be added to a ProcessorCollection more than once.</value>
+  </data>
+  <data name="ProcessorDoesNotBelongToCurrentPipeline" xml:space="preserve">
+    <value>The processor does not belong to the current pipeline.</value>
+  </data>
+  <data name="ProcessorMustBeInitializedBeforeExecution" xml:space="preserve">
+    <value>The processor must be initialized before it can be executed.</value>
+  </data>
+  <data name="ProcessorOrderingConflictCannotBeResolved" xml:space="preserve">
+    <value>The Processors of types '{0}' and '{1}' have an ordering conflict that can not be resolved.</value>
+  </data>
+  <data name="ProcessorReceivedWrongNumberOfValues" xml:space="preserve">
+    <value>Processor '{0}' expected '{1}' argument values but received '{2}' values.</value>
+  </data>
+  <data name="ProcessorReturnedNullProcessorResult" xml:space="preserve">
+    <value>The processor returned a null ProcessorResult.</value>
+  </data>
+  <data name="RequestMissingHttpRequestMessageProperty" xml:space="preserve">
+    <value>The incoming message does not have the required '{0}' property of type '{1}'.</value>
+  </data>
+  <data name="RequestMissingToHeader" xml:space="preserve">
+    <value>The incoming message does not have the required 'To' header.</value>
+  </data>
+  <data name="ValueCannotBeConverted" xml:space="preserve">
+    <value>The value '{0}' cannot be converted to '{1}'.</value>
+  </data>
+</root>

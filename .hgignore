@@ -1,0 +1,11 @@
+build/
+/obj/
+\.user
+\.suo
+\.xap
+\csproj.user
+/Bin/
+/bin/
+TestResults/
+relre:/StyleCop\.Cache
+\.orig
