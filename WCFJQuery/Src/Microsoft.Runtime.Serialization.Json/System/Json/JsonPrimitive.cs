@@ -350,10 +350,10 @@ namespace System.Json
         }
 
         /// <summary>
-        /// Attempts to convert this <see cref="System.Json.JsonPrimitive"/> instance into the type T.
+        /// Attempts to convert this <see cref="System.Json.JsonPrimitive"/> instance into an instance of the specified type.
         /// </summary>
-        /// <typeparam name="T">The type to which the conversion is being performed.</typeparam>
-        /// <returns>An instance of T initialized with the <see cref="System.Json.JsonValue"/> value
+        /// <param name="type">The type to which the conversion is being performed.</param>
+        /// <returns>An object instance initialized with the <see cref="System.Json.JsonValue"/> value
         /// specified if the conversion.</returns>
         /// <exception cref="System.UriFormatException">If T is <see cref="System.Uri"/> and this value does
         /// not represent a valid Uri.</exception>
@@ -364,18 +364,22 @@ namespace System.Json
         /// <exception cref="System.FormatException">If the conversion from the string representation of this
         /// value into another fails because the string is not in the proper format.</exception>
         /// <exception cref="System.InvalidCastException">If this instance cannot be read as type T.</exception>
-        public override T ReadAs<T>()
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0",
+            Justification = "Call to DiagnosticUtility validates the parameter.")]
+        public override object ReadAs(Type type)
         {
-            T valueOfT;
-            ReadAsFailureKind failure = TryReadAsInternal<T>(out valueOfT);
+            DiagnosticUtility.ExceptionUtility.ThrowOnNull(type, "type");
+
+            object result;
+            ReadAsFailureKind failure = this.TryReadAsInternal(type, out result);
             if (failure == ReadAsFailureKind.NoFailure)
             {
-                return valueOfT;
+                return result;
             }
             else
             {
                 string valueStr = this.value.ToString();
-                string typeOfTName = typeof(T).Name;
+                string typeOfTName = type.Name;
                 switch (failure)
                 {
                     case ReadAsFailureKind.InvalidFormat:
@@ -408,22 +412,16 @@ namespace System.Json
         }
 
         /// <summary>
-        /// Attempts to convert this <see cref="System.Json.JsonPrimitive"/> instance into the type T.
+        /// Attempts to convert this <see cref="System.Json.JsonPrimitive"/> instance into an instance of the specified type.
         /// </summary>
-        /// <typeparam name="T">The type to which the conversion is being performed.</typeparam>
-        /// <param name="valueOfT">An instance of T initialized with this instance, or the default
-        /// value of T, if the conversion cannot be performed.</param>
-        /// <returns>true if this <see cref="System.Json.JsonPrimitive"/> instance can be read as type T; otherwise, false.</returns>
-        public override bool TryReadAs<T>(out T valueOfT)
+        /// <param name="type">The type to which the conversion is being performed.</param>
+        /// <param name="value">An object instance to be initialized with this instance or null if the conversion cannot be performed.</param>
+        /// <returns>true if this <see cref="System.Json.JsonPrimitive"/> instance can be read as the specified type; otherwise, false.</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "value",
+            Justification = "field is used with 'this' and arg is out param which makes it harder to be misused.")]
+        public override bool TryReadAs(Type type, out object value)
         {
-            if (TryReadAsInternal<T>(out valueOfT) == ReadAsFailureKind.NoFailure)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return this.TryReadAsInternal(type, out value) == ReadAsFailureKind.NoFailure;
         }
 
         internal static bool TryCreate(object value, out JsonPrimitive result)
@@ -745,14 +743,30 @@ namespace System.Json
 
         private static ReadAsFailureKind NumberToNumberConverter<T>(object valueObject, out T valueNumber)
         {
+            object value;
+            ReadAsFailureKind failureKind = NumberToNumberConverter(typeof(T), valueObject, out value);
+            if (failureKind == ReadAsFailureKind.NoFailure)
+            {
+                valueNumber = (T)value;
+            }
+            else
+            {
+                valueNumber = default(T);
+            }
+            
+            return failureKind;
+        }
+
+        private static ReadAsFailureKind NumberToNumberConverter(Type type, object valueObject, out object valueNumber)
+        {
             try
             {
-                valueNumber = (T)System.Convert.ChangeType(valueObject, typeof(T), CultureInfo.InvariantCulture);
+                valueNumber = System.Convert.ChangeType(valueObject, type, CultureInfo.InvariantCulture);
                 return ReadAsFailureKind.NoFailure;
             }
             catch (OverflowException)
             {
-                valueNumber = default(T);
+                valueNumber = null;
                 return ReadAsFailureKind.Overflow;
             }
         }
@@ -896,19 +910,19 @@ namespace System.Json
             }
         }
 
-        private ReadAsFailureKind TryReadAsInternal<T>(out T valueOfT)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "value",
+            Justification = "field is used with 'this' and arg is out param which makes it harder to be misused.")]
+        private ReadAsFailureKind TryReadAsInternal(Type type, out object value)
         {
-            Type toType = typeof(T);
-
-            if (this.value.GetType() == toType)
+            if (this.value.GetType() == type)
             {
-                valueOfT = (T)this.value;
+                value = this.value;
                 return ReadAsFailureKind.NoFailure;
             }
 
             if (this.JsonType == JsonType.Number)
             {
-                switch (Type.GetTypeCode(toType))
+                switch (Type.GetTypeCode(type))
                 {
                     case TypeCode.Byte:
                     case TypeCode.SByte:
@@ -921,18 +935,18 @@ namespace System.Json
                     case TypeCode.Single:
                     case TypeCode.Double:
                     case TypeCode.Decimal:
-                        return NumberToNumberConverter<T>(this.value, out valueOfT);
+                        return NumberToNumberConverter(type, this.value, out value);
                     case TypeCode.String:
-                        valueOfT = (T)(object)this.ToString();
+                        value = this.ToString();
                         return ReadAsFailureKind.NoFailure;
                 }
             }
 
             if (this.JsonType == JsonType.Boolean)
             {
-                if (toType == typeof(string))
+                if (type == typeof(string))
                 {
-                    valueOfT = (T)(object)this.ToString();
+                    value = this.ToString();
                     return ReadAsFailureKind.NoFailure;
                 }
             }
@@ -943,21 +957,21 @@ namespace System.Json
                 Debug.Assert(str.Length >= 2 && str.StartsWith("\"", StringComparison.Ordinal) && str.EndsWith("\"", StringComparison.Ordinal), "The unescaped string must begin and end with quotes.");
                 str = str.Substring(1, str.Length - 2);
 
-                if (stringConverters.ContainsKey(toType))
+                if (stringConverters.ContainsKey(type))
                 {
-                    ConvertResult result = stringConverters[toType].Invoke(str);
-                    valueOfT = (T)result.Value;
+                    ConvertResult result = stringConverters[type].Invoke(str);
+                    value = result.Value;
                     return result.ReadAsFailureKind;
                 }
 
-                if (toType == typeof(string))
+                if (type == typeof(string))
                 {
-                    valueOfT = (T)(object)str;
+                    value = str;
                     return ReadAsFailureKind.NoFailure;
                 }
             }
 
-            valueOfT = default(T);
+            value = null;
             return ReadAsFailureKind.InvalidCast;
         }
 

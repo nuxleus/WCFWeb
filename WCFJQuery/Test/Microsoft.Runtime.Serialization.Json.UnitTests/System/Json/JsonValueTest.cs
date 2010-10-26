@@ -136,6 +136,7 @@
             string json = "{\"long\":12345678901234,\"zero\":0.0,\"double\":1.23e+200}";
             string expectedJson = "{\"long\":12345678901234,\"zero\":0,\"double\":1.23E+200}";
             JsonValue jv = JsonValue.Parse(json);
+
             Assert.AreEqual(expectedJson, jv.ToString());
             Assert.AreEqual(12345678901234L, (long)jv["long"]);
             Assert.AreEqual<double>(0, jv["zero"].ReadAs<double>());
@@ -148,10 +149,19 @@
         public void ReadAsTest()
         {
             JsonValue target = new JsonPrimitive(AnyInstance.AnyInt);
+            Assert.AreEqual(AnyInstance.AnyInt.ToString(CultureInfo.InvariantCulture), target.ReadAs(typeof(string)));
             Assert.AreEqual(AnyInstance.AnyInt.ToString(CultureInfo.InvariantCulture), target.ReadAs<string>());
+            
+            object value;
             double dblValue;
+
+            Assert.IsTrue(target.TryReadAs(typeof(double), out value));
             Assert.IsTrue(target.TryReadAs<double>(out dblValue));
+            Assert.AreEqual(Convert.ToDouble(AnyInstance.AnyInt, CultureInfo.InvariantCulture), (double) value);
             Assert.AreEqual(Convert.ToDouble(AnyInstance.AnyInt, CultureInfo.InvariantCulture), dblValue);
+
+            Assert.IsFalse(target.TryReadAs(typeof(Guid), out value), "TryReadAs should have failed to read a double as a Guid");
+            Assert.IsNull(value, "value from failed TryReadAs should be null!");
         }
 
         [TestMethod]

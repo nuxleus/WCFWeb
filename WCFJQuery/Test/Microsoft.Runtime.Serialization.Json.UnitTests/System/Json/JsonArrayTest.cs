@@ -131,11 +131,16 @@
         public void ReadAsComplexTypeTest()
         {
             JsonArray target = new JsonArray(AnyInstance.AnyInt, AnyInstance.AnyInt + 1, AnyInstance.AnyInt + 2);
-            int[] intArray = target.ReadAs<int[]>();
-            Assert.AreEqual(((JsonArray)target).Count, intArray.Length);
-            for (int i = 0; i < intArray.Length; i++)
+            int[] intArray1 = (int[]) target.ReadAs(typeof(int[]));
+            int[] intArray2 = target.ReadAs<int[]>();
+
+            Assert.AreEqual(((JsonArray)target).Count, intArray1.Length);
+            Assert.AreEqual(((JsonArray)target).Count, intArray2.Length); 
+            
+            for (int i = 0; i < intArray1.Length; i++)
             {
-                Assert.AreEqual(AnyInstance.AnyInt + i, intArray[i]);
+                Assert.AreEqual(AnyInstance.AnyInt + i, intArray1[i]);
+                Assert.AreEqual(AnyInstance.AnyInt + i, intArray2[i]);
             }
         }
 

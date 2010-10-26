@@ -11,6 +11,7 @@ namespace System.Json
     using System.IO;
     using System.Linq.Expressions;
     using System.Reflection;
+    using System.Runtime.CompilerServices;
     using System.Runtime.Serialization.Json;
     using System.Text;
     using System.Xml;
@@ -566,6 +567,16 @@ namespace System.Json
         }
 
         /// <summary>
+        /// Enables implicit casts from type <see cref="System.DateTimeOffset"/> to a <see cref="System.Json.JsonPrimitive"/>.
+        /// </summary>
+        /// <param name="value">The <see cref="System.DateTimeOffset"/> instance used to initialize the <see cref="System.Json.JsonPrimitive"/>.</param>
+        /// <returns>The <see cref="System.Json.JsonValue"/> initialized with the <see cref="System.DateTimeOffset"/> specified.</returns>
+        public static implicit operator JsonValue(DateTimeOffset value)
+        {
+            return new JsonPrimitive(value);
+        }
+
+        /// <summary>
         /// Performs a cast operation from a <see cref="JsonValue"/> instance into the specified type parameter./>
         /// </summary>
         /// <typeparam name="T">The type to cast the instance to.</typeparam>
@@ -600,16 +611,6 @@ namespace System.Json
 
                 throw;
             }
-        }
-
-        /// <summary>
-        /// Enables implicit casts from type <see cref="System.DateTimeOffset"/> to a <see cref="System.Json.JsonPrimitive"/>.
-        /// </summary>
-        /// <param name="value">The <see cref="System.DateTimeOffset"/> instance used to initialize the <see cref="System.Json.JsonPrimitive"/>.</param>
-        /// <returns>The <see cref="System.Json.JsonValue"/> initialized with the <see cref="System.DateTimeOffset"/> specified.</returns>
-        public static implicit operator JsonValue(DateTimeOffset value)
-        {
-            return new JsonPrimitive(value);
         }
 
         /// <summary>
@@ -652,30 +653,30 @@ namespace System.Json
         /// <param name="valueOfT">An instance of T initialized with this instance, or the default
         /// value of T, if the conversion cannot be performed.</param>
         /// <returns>true if this <see cref="System.Json.JsonValue"/> instance can be read as type T; otherwise, false.</returns>
-        public virtual bool TryReadAs<T>(out T valueOfT)
+        public bool TryReadAs<T>(out T valueOfT)
         {
-            try
+            object value;
+            if (this.TryReadAs(typeof(T), out value))
             {
-                using (MemoryStream ms = new MemoryStream())
-                {
-                    this.Save(ms);
-                    ms.Position = 0;
-                    DataContractJsonSerializer dcjs = new DataContractJsonSerializer(typeof(T));
-                    valueOfT = (T)dcjs.ReadObject(ms);
-                }
-
+                valueOfT = (T)value;
                 return true;
             }
-            catch (Exception e)
-            {
-                if (DiagnosticUtility.IsFatal(e))
-                {
-                    throw;
-                }
 
-                valueOfT = default(T);
-                return false;
-            }
+            valueOfT = default(T);
+            return false;
+        }
+
+        /// <summary>
+        /// Attempts to convert this <see cref="System.Json.JsonValue"/> instance into the type T.
+        /// </summary>
+        /// <typeparam name="T">The type to which the conversion is being performed.</typeparam>
+        /// <returns>An instance of T initialized with the <see cref="System.Json.JsonValue"/> value
+        /// specified if the conversion.</returns>
+        /// <exception cref="System.NotSupportedException">If this <see cref="System.Json.JsonValue"/> value cannot be
+        /// converted into the type T.</exception>
+        public T ReadAs<T>()
+        {
+            return (T)this.ReadAs(typeof(T));
         }
 
         /// <summary>
@@ -687,8 +688,20 @@ namespace System.Json
         /// specified if the conversion, or the fallback value, if the conversion cannot be made.</returns>
         public T ReadAs<T>(T fallback)
         {
-            T result;
-            if (this.JsonType != JsonType.Default && this.TryReadAs<T>(out result))
+            return (T)this.ReadAs(typeof(T), fallback);
+        }
+
+        /// <summary>
+        /// Attempts to convert this <see cref="System.Json.JsonValue"/> instance to an instance of the specified type.
+        /// </summary>
+        /// <param name="type">The type to which the conversion is being performed.</param>
+        /// <param name="fallback">The fallback value to be returned, if the conversion cannot be made.</param>
+        /// <returns>An object instance initialized with the <see cref="System.Json.JsonValue"/> value
+        /// specified if the conversion, or the fallback value, if the conversion cannot be made.</returns>
+        public object ReadAs(Type type, object fallback)
+        {
+            object result;
+            if (this.JsonType != JsonType.Default && this.TryReadAs(type, out result))
             {
                 return result;
             }
@@ -699,22 +712,56 @@ namespace System.Json
         }
 
         /// <summary>
-        /// Attempts to convert this <see cref="System.Json.JsonValue"/> instance into the type T.
+        /// Attempts to convert this <see cref="System.Json.JsonValue"/> instance into an instance of the specified type.
         /// </summary>
-        /// <typeparam name="T">The type to which the conversion is being performed.</typeparam>
-        /// <returns>An instance of T initialized with the <see cref="System.Json.JsonValue"/> value
+        /// <param name="type">The type to which the conversion is being performed.</param>
+        /// <returns>An object instance initialized with the <see cref="System.Json.JsonValue"/> value
         /// specified if the conversion.</returns>
         /// <exception cref="System.NotSupportedException">If this <see cref="System.Json.JsonValue"/> value cannot be
         /// converted into the type T.</exception>
-        public virtual T ReadAs<T>()
+        public virtual object ReadAs(Type type)
         {
-            T result;
-            if (this.TryReadAs<T>(out result))
+            object result;
+            if (this.TryReadAs(type, out result))
             {
                 return result;
             }
 
             throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new NotSupportedException());
+        }
+
+        /// <summary>
+        /// Attempts to convert this <see cref="System.Json.JsonValue"/> instance into an instance of the specified type.
+        /// </summary>
+        /// <param name="type">The type to which the conversion is being performed.</param>
+        /// <param name="value">An object to be initialized with this instance or null if the conversion cannot be performed.</param>
+        /// <returns>true if this <see cref="System.Json.JsonValue"/> instance can be read as the specified type; otherwise, false.</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1007:UseGenericsWhereAppropriate", 
+            Justification = "This is the non-generic version of the method.")]
+        public virtual bool TryReadAs(Type type, out object value)
+        {
+            try
+            {
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    this.Save(ms);
+                    ms.Position = 0;
+                    DataContractJsonSerializer dcjs = new DataContractJsonSerializer(type);
+                    value = dcjs.ReadObject(ms);
+                }
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                if (DiagnosticUtility.IsFatal(e))
+                {
+                    throw;
+                }
+
+                value = null;
+                return false;
+            }
         }
 
         /// <summary>

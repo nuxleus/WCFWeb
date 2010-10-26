@@ -46,6 +46,10 @@
         {
             JsonValue target = AnyInstance.DefaultJsonValue;
 
+            ExceptionTestHelper.ExpectException<NotSupportedException>(delegate { target.ReadAs(typeof(bool)); });
+            ExceptionTestHelper.ExpectException<NotSupportedException>(delegate { target.ReadAs(typeof(string)); });
+            ExceptionTestHelper.ExpectException<NotSupportedException>(delegate { target.ReadAs(typeof(JsonObject)); });
+
             ExceptionTestHelper.ExpectException<NotSupportedException>(delegate { target.ReadAs<bool>(); });
             ExceptionTestHelper.ExpectException<NotSupportedException>(delegate { target.ReadAs<string>(); });
             ExceptionTestHelper.ExpectException<NotSupportedException>(delegate { target.ReadAs<JsonObject>(); });
@@ -54,9 +58,25 @@
             string stringValue;
             JsonObject objValue;
 
-            Assert.IsFalse(target.TryReadAs<bool>(out boolValue));
-            Assert.IsFalse(target.TryReadAs<string>(out stringValue));
-            Assert.IsFalse(target.TryReadAs<JsonObject>(out objValue));
+            object value;
+
+            Assert.IsFalse(target.TryReadAs(typeof(bool), out value), "TryReadAs expected to fail");
+            Assert.IsNull(value, "value from failed TryReadAs should be null!");
+            
+            Assert.IsFalse(target.TryReadAs(typeof(string), out value), "TryReadAs expected to fail");
+            Assert.IsNull(value, "value from failed TryReadAs should be null!");
+
+            Assert.IsFalse(target.TryReadAs(typeof(JsonObject), out value), "TryReadAs expected to fail");
+            Assert.IsNull(value, "value from failed TryReadAs should be null!");
+
+            Assert.IsFalse(target.TryReadAs<bool>(out boolValue), "TryReadAs expected to fail");
+            Assert.IsFalse(boolValue, "value from failed TryReadAs should be default!");
+
+            Assert.IsFalse(target.TryReadAs<string>(out stringValue), "TryReadAs expected to fail");
+            Assert.IsNull(stringValue, "value from failed TryReadAs should be null!");
+
+            Assert.IsFalse(target.TryReadAs<JsonObject>(out objValue), "TryReadAs expected to fail");
+            Assert.IsNull(objValue, "value from failed TryReadAs should be null!");
         }
 
         [TestMethod()]

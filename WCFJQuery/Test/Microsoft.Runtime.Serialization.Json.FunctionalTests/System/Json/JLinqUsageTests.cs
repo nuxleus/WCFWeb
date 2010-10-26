@@ -234,7 +234,7 @@
             JsonValue people = this.CreateArrayOfPeople();
 
             var match = from person in people
-                        where person.Value.AsDynamic().IDontExist.IAlsoDontExist.ReadAs<int>(5) > 2
+                        where ((dynamic)person.Value).IDontExist.IAlsoDontExist.ReadAs<int>(5) > 2
                         select person;
             Assert.IsTrue(match.Count() == people.Count, "Number of matches was expected to be " + people.Count + " but was " + match.Count());
 
