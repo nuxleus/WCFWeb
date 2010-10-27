@@ -33,19 +33,23 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup Label="jQuery Assembly Path">
-    <RelativeInstallPath>Microsoft SDKs\WCF for jQuery\v1.0\Libraries\Microsoft.ServiceModel.Web.jQuery.dll</RelativeInstallPath>
-    <WCFjQueryAssemblyPath>..\..\..\build\$(Configuration)\WcfJQuery\bin\Microsoft.ServiceModel.Web.jQuery.dll</WCFjQueryAssemblyPath>
+  <PropertyGroup Label="Relative Install Path">
+    <RelativeInstallPath>Microsoft SDKs\WCF Support for jQuery\Libraries</RelativeInstallPath>
+    <AssemblyInstallPath>..\..\..\build\$(Configuration)\WcfJQuery\bin</AssemblyInstallPath>
   </PropertyGroup>
-  <PropertyGroup Label="x86 installation" Condition="!Exists('$(WCFjQueryAssemblyPath)') AND Exists('$(ProgramFiles)\$(RelativeInstallPath)')">
-    <WCFjQueryAssemblyPath>$(ProgramFiles)\$(RelativeInstallPath)</WCFjQueryAssemblyPath>
+  <PropertyGroup Label="x86 Install Path" Condition="!Exists('$(AssemblyInstallPath)') AND Exists('$(ProgramFiles)\$(RelativeInstallPath)')">
+    <AssemblyInstallPath>$(ProgramFiles)\$(RelativeInstallPath)</AssemblyInstallPath>
   </PropertyGroup>
-  <PropertyGroup Label="x64 installation" Condition="!Exists('$(WCFjQueryAssemblyPath)') AND Exists('$(ProgramFiles(x86))\$(RelativeInstallPath)')">
-    <WCFjQueryAssemblyPath>$(ProgramFiles(x86))\$(RelativeInstallPath)</WCFjQueryAssemblyPath>
+  <PropertyGroup Label="x64 Install Path" Condition="!Exists('$(AssemblyInstallPath)') AND Exists('$(ProgramFiles(x86))\$(RelativeInstallPath)')">
+    <AssemblyInstallPath>$(ProgramFiles(x86))\$(RelativeInstallPath)</AssemblyInstallPath>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.ServiceModel.Web.jQuery">
-      <HintPath>$(WCFjQueryAssemblyPath)</HintPath>
+      <HintPath>$(AssemblyInstallPath)\Microsoft.ServiceModel.Web.jQuery.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Runtime.Serialization.Json">
+      <HintPath>$(AssemblyInstallPath)\Microsoft.Runtime.Serialization.Json.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
@@ -77,12 +81,6 @@
     <Compile Include="ContactsResource.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Src\Microsoft.Runtime.Serialization.Json\Microsoft.Runtime.Serialization.Json.csproj">
-      <Project>{A5879BE4-F1F5-4C39-88B9-372ABDEFF843}</Project>
-      <Name>Microsoft.Runtime.Serialization.Json</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
