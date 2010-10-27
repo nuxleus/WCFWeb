@@ -337,19 +337,6 @@ namespace System.Json
         }
 
         /// <summary>
-        /// Returns an enumerator which iterates through the values in this object.
-        /// </summary>
-        /// <returns>An enumerator of <see cref="System.Collections.Generic.KeyValuePair{K, V}"/> which iterates through the values in this object.</returns>
-        /// <remarks>The enumerator returned by this class contains a single element, a pair with the
-        /// empty string and this value.</remarks>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1033",
-            Justification = "Cannot make this class sealed, it need to have subclasses. But its subclasses are sealed themselves.")]
-        public override IEnumerator<KeyValuePair<string, JsonValue>> GetEnumerator()
-        {
-            yield return new KeyValuePair<string, JsonValue>(string.Empty, this);
-        }
-
-        /// <summary>
         /// Attempts to convert this <see cref="System.Json.JsonPrimitive"/> instance into an instance of the specified type.
         /// </summary>
         /// <param name="type">The type to which the conversion is being performed.</param>

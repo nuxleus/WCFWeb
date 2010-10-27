@@ -213,9 +213,7 @@
 
             var match = from m in primitive select m;
             KeyValuePair<string, JsonValue>[] kv = match.ToArray();
-            Assert.IsTrue(kv.Length == 1);            
-            Assert.AreEqual(kv[0].Key, string.Empty);
-            Assert.AreEqual(kv[0].Value, primitive);
+            Assert.IsTrue(kv.Length == 0);            
         }
 
         [TestMethod]

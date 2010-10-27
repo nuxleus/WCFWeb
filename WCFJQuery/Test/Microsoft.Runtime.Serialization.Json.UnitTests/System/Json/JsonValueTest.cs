@@ -225,9 +225,7 @@
         {
             JsonValue target = AnyInstance.AnyJsonPrimitive;
             IEnumerator<KeyValuePair<string, JsonValue>> enumerator = target.GetEnumerator();
-            Assert.IsTrue(enumerator.MoveNext());
-            Assert.AreEqual(string.Empty, enumerator.Current.Key);
-            Assert.AreSame(target, enumerator.Current.Value);
+            Assert.IsFalse(enumerator.MoveNext());
         }
 
         [TestMethod]
