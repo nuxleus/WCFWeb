@@ -18,7 +18,7 @@ namespace ContactManager
             contacts.Add(new Contact { ContactId = 1, Name = "Glenn Block", Address = "1 Microsoft Way", City = "Redmond", State = "Washington", Zip = "98112", Email = "gblock@microsoft.com", Twitter = "gblock" });
             contacts.Add(new Contact { ContactId = 2, Name = "Yavor Georgiev", Address = "1 Microsoft Way", City = "Redmond", State = "Washington", Zip = "98112", Email = "yavorg@microsoft.com", Twitter = "digthepony" });
             contacts.Add(new Contact { ContactId = 3, Name = "Jeff Handley", Address = "1 Microsoft Way", City = "Redmond", State = "Washington", Zip = "98112", Email = "jeff.handley@microsoft.com", Twitter = "jeffhandley" });
-            nextContactID = 3;
+            nextContactID = contacts.Count + 1;
         }
 
         public void Update(Contact updatedContact)
