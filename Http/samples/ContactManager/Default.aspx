@@ -38,7 +38,7 @@
             $("body").addClass("ui-widget");
             $("#contacts li").addClass("ui-widget-content ui-corner-all");
             $("#contacts li h1").addClass("ui-widget-header");
-            $("input[type=\"submit\"], .removeContact,.viewAsXml").button();
+            $("input[type=\"submit\"], .removeContact, .viewAsXml").button();
 
         });
     </script>
@@ -48,7 +48,7 @@
                 <p>${ Address }, ${ City } ${ State } ${ Zip }<br />
                     <a href="mailto:${ Email }">${ Email }</a><br/>
                     <a href="http://twitter.com/${ Twitter }">@${ Twitter }</a><br /><br />
-                    <a href="${ Self }" class="viewAsXml" target='_blank'>View as Xml</a><br />
+                    <p><a href="${ Self }" class="viewAsXml ui-state-default ui-corner-all" target='_blank'>View as Xml</a></p>
                     <p><a href="${ Self }" class="removeContact ui-state-default ui-corner-all">Remove</a></p>
                 </p>
             </li>

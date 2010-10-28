@@ -50,7 +50,7 @@ form input[type="text"]
     margin: 0;
 }
 
-.removeContact 
+.removeContact, .viewAsXml
 {
     padding: 3px;
     text-decoration: none;
