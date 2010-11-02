@@ -438,7 +438,18 @@
             Assert.AreEqual(person.Friends[0].Age, target.Friends[0].Age.ReadAs<int>());
 
             Assert.AreEqual(target.ValueOrDefault("Address").ValueOrDefault("City"), target.Address.City);
+            Assert.AreEqual(target.ValueOrDefault("Address", "City"), target.Address.City);
+
             Assert.AreEqual(target.ValueOrDefault("Friends").ValueOrDefault(0).ValueOrDefault("Age"), target.Friends[0].Age);
+            Assert.AreEqual(target.ValueOrDefault("Friends", 0, "Age"), target.Friends[0].Age);
+
+            Assert.AreEqual(JsonType.Default, AnyInstance.AnyJsonValue1.ValueOrDefault((object[])null).JsonType);
+            Assert.AreEqual(JsonType.Default, jv.ValueOrDefault("Friends", null).JsonType);
+            Assert.AreEqual(JsonType.Default, AnyInstance.AnyJsonValue1.ValueOrDefault((string)null).JsonType);
+
+            ExceptionTestHelper.ExpectException<ArgumentException>(delegate { var c = AnyInstance.AnyJsonValue1.ValueOrDefault(AnyInstance.AnyLong); });
+            ExceptionTestHelper.ExpectException<ArgumentException>(delegate { var c = AnyInstance.AnyJsonValue1.ValueOrDefault("str", AnyInstance.AnyShort); });
+            ExceptionTestHelper.ExpectException<ArgumentException>(delegate { var c = AnyInstance.AnyJsonValue1.ValueOrDefault("str", AnyInstance.AnyUInt); });
         }
 
         [TestMethod()]

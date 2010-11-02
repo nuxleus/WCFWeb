@@ -97,8 +97,7 @@ namespace Microsoft.ServiceModel.Web
             MessagePartDescriptionCollection messageParts = this.operationDescription.Messages[0].Body.Parts;
 
             Func<MessagePartDescription, object> binder = this.CreateParameterBinder(match);
-            object[] values = (from p in messageParts
-                               select binder(p)).ToArray<object>();
+            object[] values = messageParts.Select(p => binder(p)).ToArray();
 
             values[this.jsonValuePosition] = jsonValue;
             values.CopyTo(parameters, 0);

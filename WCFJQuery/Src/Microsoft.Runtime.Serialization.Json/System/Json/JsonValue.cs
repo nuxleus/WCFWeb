@@ -923,6 +923,49 @@ namespace System.Json
             return JsonValue.DefaultInstance;
         }
 
+        /// <summary>
+        /// Safe deep indexer for the <see cref="JsonValue"/> type.
+        /// </summary>
+        /// <param name="indices">The indices to index this type. The indices can be
+        /// of type <see cref="System.Int32"/> or <see cref="System.String"/>.</param>
+        /// <returns>A <see cref="JsonValue"/> which is equivalent to calling<see cref="ValueOrDefault(int)"/> or
+        /// <see cref="ValueOrDefault(string)"/> on the first index, then calling it again on the result
+        /// for the second index and so on.</returns>
+        /// <exception cref="System.ArgumentException">If any of the indices is not of type
+        /// <see cref="System.Int32"/> or <see cref="System.String"/>.</exception>
+        public JsonValue ValueOrDefault(params object[] indices)
+        {
+            if (indices == null)
+            {
+                return JsonValue.DefaultInstance;
+            }
+
+            if (indices.Length == 0)
+            {
+                return this;
+            }
+
+            JsonValue result = this;
+            for (int i = 0; i < indices.Length; i++)
+            {
+                object index = indices[i];
+                if (index is int)
+                {
+                    result = result.ValueOrDefault((int)index);
+                }
+                else if (index == null || index is string)
+                {
+                    result = result.ValueOrDefault((string)index);
+                }
+                else
+                {
+                    throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new ArgumentException(SR.InvalidIndexType, "indices"));
+                }
+            }
+
+            return result;
+        }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1033",
             Justification = "Cannot make this class sealed, it need to have subclasses. But its subclasses are sealed themselves.")]
         DynamicMetaObject IDynamicMetaObjectProvider.GetMetaObject(Expression parameter)

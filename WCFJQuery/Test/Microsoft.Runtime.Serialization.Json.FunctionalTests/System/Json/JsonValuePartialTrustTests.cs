@@ -77,6 +77,9 @@
             AssertAreEqual(person2.Address.City, jo.ValueOrDefault("Friends").ValueOrDefault(1).ValueOrDefault("Address").ValueOrDefault("City").ReadAs<string>(), "Address.City3");
             AssertAreEqual(person2.Age, (int)jo.ValueOrDefault("Friends").ValueOrDefault(1).ValueOrDefault("Age"), "Friends[1].Age3");
 
+            AssertAreEqual(person2.Address.City, jo.ValueOrDefault("Friends", 1, "Address", "City").ReadAs<string>(), "Address.City3");
+            AssertAreEqual(person2.Age, (int)jo.ValueOrDefault("Friends", 1, "Age"), "Friends[1].Age3");
+
             int newAge = 42;
             JsonValue ageValue = jo["Friends"][1]["Age"] = newAge;
             AssertAreEqual(newAge, (int)ageValue, "Friends[1].Age4");
@@ -107,6 +110,9 @@
 
             AssertAreEqual(person.Friends[0].Address.City, jo.ValueOrDefault("Friends").ValueOrDefault(0).ValueOrDefault("Address").ValueOrDefault("City").ReadAs<string>(), "Friends[0].Address.City");
             AssertAreEqual(person.Friends[0].Age, (int)jo.ValueOrDefault("Friends").ValueOrDefault(0).ValueOrDefault("Age"), "Friends[0].Age2");
+
+            AssertAreEqual(person.Friends[0].Address.City, jo.ValueOrDefault("Friends", 0, "Address", "City").ReadAs<string>(), "Friends[0].Address.City");
+            AssertAreEqual(person.Friends[0].Age, (int)jo.ValueOrDefault("Friends", 0, "Age"), "Friends[0].Age2");
 
             int newAge = 42;
             JsonValue ageValue = jo.Friends[0].Age = newAge;

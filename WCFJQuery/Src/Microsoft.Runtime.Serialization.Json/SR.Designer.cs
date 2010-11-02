@@ -124,6 +124,15 @@ namespace System.Json {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Indices for ValueOrDefault can only be of type System.Int32 and System.String..
+        /// </summary>
+        internal static string InvalidIndexType {
+            get {
+                return ResourceManager.GetString("InvalidIndexType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid JSON primitive: {0}..
         /// </summary>
         internal static string InvalidJsonPrimitive {

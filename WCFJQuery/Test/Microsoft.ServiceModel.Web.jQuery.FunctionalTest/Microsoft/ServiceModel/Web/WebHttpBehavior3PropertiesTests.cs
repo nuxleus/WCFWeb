@@ -140,8 +140,8 @@
             string[] funcNames = new string[]
             {
                 "Latin-ãêíôöù",
-                "Jap-日本語",
-                "Chin-我说中文",
+                "Japanese-日本語",
+                "Chinese-我说中文",
             };
 
             foreach (string funcName in funcNames)
