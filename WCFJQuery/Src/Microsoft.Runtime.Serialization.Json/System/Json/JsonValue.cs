@@ -926,40 +926,44 @@ namespace System.Json
         /// <summary>
         /// Safe deep indexer for the <see cref="JsonValue"/> type.
         /// </summary>
-        /// <param name="indices">The indices to index this type. The indices can be
+        /// <param name="indexes">The indices to index this type. The indices can be
         /// of type <see cref="System.Int32"/> or <see cref="System.String"/>.</param>
         /// <returns>A <see cref="JsonValue"/> which is equivalent to calling<see cref="ValueOrDefault(int)"/> or
         /// <see cref="ValueOrDefault(string)"/> on the first index, then calling it again on the result
         /// for the second index and so on.</returns>
         /// <exception cref="System.ArgumentException">If any of the indices is not of type
         /// <see cref="System.Int32"/> or <see cref="System.String"/>.</exception>
-        public JsonValue ValueOrDefault(params object[] indices)
+        public JsonValue ValueOrDefault(params object[] indexes)
         {
-            if (indices == null)
+            if (indexes == null)
             {
                 return JsonValue.DefaultInstance;
             }
 
-            if (indices.Length == 0)
+            if (indexes.Length == 0)
             {
                 return this;
             }
 
             JsonValue result = this;
-            for (int i = 0; i < indices.Length; i++)
+            for (int i = 0; i < indexes.Length; i++)
             {
-                object index = indices[i];
+                object index = indexes[i];
                 if (index is int)
                 {
                     result = result.ValueOrDefault((int)index);
                 }
-                else if (index == null || index is string)
-                {
-                    result = result.ValueOrDefault((string)index);
-                }
                 else
                 {
-                    throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new ArgumentException(SR.InvalidIndexType, "indices"));
+                    string strIndex = index as string;
+                    if (index == null || strIndex != null)
+                    {
+                        result = result.ValueOrDefault(strIndex);
+                    }
+                    else
+                    {
+                        throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new ArgumentException(SR.InvalidIndexType, "indexes"));
+                    }
                 }
             }
 

@@ -466,7 +466,17 @@
             Assert.IsNotNull(target);
             Assert.AreEqual<string>(person.Address.City, target.ReadAs<string>());
 
+            target = jo.ValueOrDefault("Address", "City"); // JsonPrimitive
+            Assert.IsNotNull(target);
+            Assert.AreEqual<string>(person.Address.City, target.ReadAs<string>());
+
             target = jo.ValueOrDefault("Address").ValueOrDefault("NonExistentProp").ValueOrDefault("NonExistentProp2"); // JsonObject
+            Assert.AreEqual(JsonType.Default, target.JsonType);
+            Assert.IsNotNull(target);
+            Assert.IsFalse(target.TryReadAs<bool>(out boolValue));
+            Assert.IsFalse(target.TryReadAs<JsonValue>(out jsonValue));
+
+            target = jo.ValueOrDefault("Address", "NonExistentProp", "NonExistentProp2"); // JsonObject
             Assert.AreEqual(JsonType.Default, target.JsonType);
             Assert.IsNotNull(target);
             Assert.IsFalse(target.TryReadAs<bool>(out boolValue));
