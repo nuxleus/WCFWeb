@@ -310,6 +310,7 @@ namespace System.Json
             {
                 DiagnosticUtility.ExceptionUtility.ThrowOnDefaultArg(item.Value);
                 this.values.Add(item.Key, item.Value);
+                this.AddChildHandlers(item.Value);
                 this.RaiseItemChanged(item.Value, JsonValueChange.Add, item.Key);
             }
         }
@@ -421,6 +422,11 @@ namespace System.Json
         public void Clear()
         {
             this.RaiseItemChanging(null, JsonValueChange.Clear, null);
+            foreach (KeyValuePair<string, JsonValue> item in this.values)
+            {
+                this.RemoveChildHandlers(item.Value);
+            }
+
             this.values.Clear();
             this.RaiseItemChanged(null, JsonValueChange.Clear, null);
         }

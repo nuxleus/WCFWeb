@@ -245,6 +245,7 @@ namespace System.Json
             {
                 DiagnosticUtility.ExceptionUtility.ThrowOnDefaultArg(item);
                 this.values.Add(item);
+                this.AddChildHandlers(item);
                 this.RaiseItemChanged(item, JsonValueChange.Add, this.values.Count - 1);
             }
         }
@@ -331,6 +332,11 @@ namespace System.Json
         public void Clear()
         {
             this.RaiseItemChanging(null, JsonValueChange.Clear, 0);
+            foreach (JsonValue child in this.values)
+            {
+                this.RemoveChildHandlers(child);
+            }
+
             this.values.Clear();
             this.RaiseItemChanged(null, JsonValueChange.Clear, 0);
         }
