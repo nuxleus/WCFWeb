@@ -526,6 +526,148 @@
         }
 
         [TestMethod]
+        public void ChangingEventsTest()
+        {
+            const string key1 = "first";
+            const string key2 = "second";
+            const string key3 = "third";
+            const string key4 = "fourth";
+            const string key5 = "fifth";
+            JsonObject jo = new JsonObject
+            {
+                { key1, AnyInstance.AnyString },
+                { key2, AnyInstance.AnyBool },
+                { key3, null },
+            };
+
+            TestEvents(
+                jo,
+                obj => obj.Add(key4, 1),
+                new List<Tuple<bool, JsonValue, JsonValueChangeEventArgs>>
+                {
+                    new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(true, jo, new JsonValueChangeEventArgs(1, JsonValueChange.Add, key4)),
+                    new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(false, jo, new JsonValueChangeEventArgs(1, JsonValueChange.Add, key4)),
+                });
+
+            TestEvents(
+                jo,
+                obj => obj[key2] = 2,
+                new List<Tuple<bool, JsonValue, JsonValueChangeEventArgs>>
+                {
+                    new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(true, jo, new JsonValueChangeEventArgs(2, JsonValueChange.Replace, key2)),
+                    new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(false, jo, new JsonValueChangeEventArgs(AnyInstance.AnyBool, JsonValueChange.Replace, key2)),
+                });
+
+            TestEvents(
+                jo,
+                obj => obj[key5] = 3,
+                new List<Tuple<bool, JsonValue, JsonValueChangeEventArgs>>
+                {
+                    new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(true, jo, new JsonValueChangeEventArgs(3, JsonValueChange.Add, key5)),
+                    new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(false, jo, new JsonValueChangeEventArgs(3, JsonValueChange.Add, key5)),
+                });
+
+            jo.Remove(key4);
+            jo.Remove(key5);
+
+            TestEvents(
+                jo,
+                obj => obj.AddRange(new JsonObject { { key4, AnyInstance.AnyString }, { key5, AnyInstance.AnyDouble } }),
+                new List<Tuple<bool, JsonValue, JsonValueChangeEventArgs>>
+                {
+                    new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(true, jo, new JsonValueChangeEventArgs(AnyInstance.AnyString, JsonValueChange.Add, key4)),
+                    new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(true, jo, new JsonValueChangeEventArgs(AnyInstance.AnyDouble, JsonValueChange.Add, key5)),
+                    new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(false, jo, new JsonValueChangeEventArgs(AnyInstance.AnyString, JsonValueChange.Add, key4)),
+                    new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(false, jo, new JsonValueChangeEventArgs(AnyInstance.AnyDouble, JsonValueChange.Add, key5)),
+                });
+
+            TestEvents(
+                jo,
+                obj => obj.Remove(key5),
+                new List<Tuple<bool, JsonValue, JsonValueChangeEventArgs>>
+                {
+                    new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(true, jo, new JsonValueChangeEventArgs(AnyInstance.AnyDouble, JsonValueChange.Remove, key5)),
+                    new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(false, jo, new JsonValueChangeEventArgs(AnyInstance.AnyDouble, JsonValueChange.Remove, key5)),
+                });
+
+            TestEvents(
+                jo,
+                obj => obj.Remove("not there"),
+                new List<Tuple<bool, JsonValue, JsonValueChangeEventArgs>>());
+
+            jo = new JsonObject { { key1, 1 }, { key2, 2 }, { key3, 3 } };
+
+            TestEvents(
+                jo,
+                obj => obj.Clear(),
+                new List<Tuple<bool, JsonValue, JsonValueChangeEventArgs>>
+                {
+                    new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(true, jo, new JsonValueChangeEventArgs(null, JsonValueChange.Clear, null)),
+                    new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(false, jo, new JsonValueChangeEventArgs(null, JsonValueChange.Clear, null)),
+                });
+
+            jo = new JsonObject { { key1, 1 }, { key2, 2 }, { key3, 3 } };
+            TestEvents(
+                jo,
+                obj => ((IDictionary<string, JsonValue>)obj).Remove(new KeyValuePair<string, JsonValue>(key2, jo[key2])),
+                new List<Tuple<bool, JsonValue, JsonValueChangeEventArgs>>
+                {
+                    new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(true, jo, new JsonValueChangeEventArgs(2, JsonValueChange.Remove, key2)),
+                    new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(false, jo, new JsonValueChangeEventArgs(2, JsonValueChange.Remove, key2)),
+                });
+
+            TestEvents(
+                jo,
+                obj => ((IDictionary<string, JsonValue>)obj).Remove(new KeyValuePair<string, JsonValue>("key not in object", jo[key1])),
+                new List<Tuple<bool, JsonValue, JsonValueChangeEventArgs>>
+                {
+                });
+
+            TestEvents(
+                jo,
+                obj => ((IDictionary<string, JsonValue>)obj).Remove(new KeyValuePair<string, JsonValue>(key1, "different object")),
+                new List<Tuple<bool, JsonValue, JsonValueChangeEventArgs>>
+                {
+                });
+
+            ExceptionTestHelper.ExpectException<ArgumentNullException>(() => new JsonValueChangeEventArgs(1, JsonValueChange.Add, null));
+        }
+
+        [TestMethod]
+        public void NestedChangingEventTest()
+        {
+            const string key1 = "first";
+
+            JsonObject target = new JsonObject { { key1, new JsonArray { 1, 2 } } };
+            JsonArray child = target[key1] as JsonArray;
+            TestEvents(
+                target,
+                obj => ((JsonArray)obj[key1]).Add(5),
+                new List<Tuple<bool, JsonValue, JsonValueChangeEventArgs>>
+                {
+                    new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(true, child, new JsonValueChangeEventArgs(5, JsonValueChange.Add, 2)),
+                    new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(false, child, new JsonValueChangeEventArgs(5, JsonValueChange.Add, 2)),
+                });
+
+            target = new JsonObject();
+            child = new JsonArray(1, 2);
+            TestEvents(
+                target,
+                obj =>
+                {
+                    obj.Add(key1, child);
+                    ((JsonArray)obj[key1]).Add(5);
+                },
+                new List<Tuple<bool, JsonValue, JsonValueChangeEventArgs>>
+                {
+                    new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(true, target, new JsonValueChangeEventArgs(child, JsonValueChange.Add, key1)),
+                    new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(false, target, new JsonValueChangeEventArgs(child, JsonValueChange.Add, key1)),
+                    new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(true, child, new JsonValueChangeEventArgs(5, JsonValueChange.Add, 2)),
+                    new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(false, child, new JsonValueChangeEventArgs(5, JsonValueChange.Add, 2)),
+                });
+        }
+
+        [TestMethod]
         public void JsonTypeTest()
         {
             JsonObject target = AnyInstance.AnyJsonObject;
@@ -634,6 +776,11 @@
                 Assert.IsTrue(jsonObject.ContainsKey(key));
                 Assert.AreEqual(expected[key], jsonObject[key]);
             }
+        }
+
+        static void TestEvents(JsonObject obj, Action<JsonObject> actionToTriggerEvent, List<Tuple<bool, JsonValue, JsonValueChangeEventArgs>> expectedEvents)
+        {
+            JsonArrayTest.TestEvents<JsonObject>(obj, actionToTriggerEvent, expectedEvents);
         }
 
         public class MyCustomValidationClass

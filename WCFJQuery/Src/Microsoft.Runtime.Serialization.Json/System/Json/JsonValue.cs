@@ -31,6 +31,36 @@ namespace System.Json
         }
 
         /// <summary>
+        /// Raised when this <see cref="System.Json.JsonValue"/> or any of its members are about to be changed.
+        /// </summary>
+        /// <remarks><p>Events are raised when elements are added or removed to <see cref="System.Json.JsonValue"/>
+        /// instances. It applies to both complex descendants of <see cref="System.Json.JsonValue"/>: <see cref="System.Json.JsonArray"/>
+        /// and <see cref="System.Json.JsonObject"/>.</p>
+        /// <p>You should be careful when modifying a <see cref="System.Json.JsonValue"/> tree within one of these events,
+        /// because doing this might lead to unexpected results. For example, if you receive a Changing event, and while
+        /// the event is being processed you remove the node from the tree, you might not receive the Changed event. When
+        /// an event is being processed, it is valid to modify a tree other than the one that contains the node that is
+        /// receiving the event; it is even valid to modify the same tree provided the modifications do not affect the
+        /// specific nodes on which the event was raised. However, if you modify the area of the tree that contains the
+        /// node receiving the event, the events that you receive and the impact to the tree are undefined.</p></remarks>
+        public virtual event EventHandler<JsonValueChangeEventArgs> Changing;
+
+        /// <summary>
+        /// Raised when this <see cref="System.Json.JsonValue"/> or any of its members have changed.
+        /// </summary>
+        /// <remarks><p>Events are raised when elements are added or removed to <see cref="System.Json.JsonValue"/>
+        /// instances. It applies to both complex descendants of <see cref="System.Json.JsonValue"/>: <see cref="System.Json.JsonArray"/>
+        /// and <see cref="System.Json.JsonObject"/>.</p>
+        /// <p>You should be careful when modifying a <see cref="System.Json.JsonValue"/> tree within one of these events,
+        /// because doing this might lead to unexpected results. For example, if you receive a Changing event, and while
+        /// the event is being processed you remove the node from the tree, you might not receive the Changed event. When
+        /// an event is being processed, it is valid to modify a tree other than the one that contains the node that is
+        /// receiving the event; it is even valid to modify the same tree provided the modifications do not affect the
+        /// specific nodes on which the event was raised. However, if you modify the area of the tree that contains the
+        /// node receiving the event, the events that you receive and the impact to the tree are undefined.</p></remarks>
+        public virtual event EventHandler<JsonValueChangeEventArgs> Changed;
+
+        /// <summary>
         /// Gets the JSON CLR type represented by this instance.
         /// </summary>
         public virtual JsonType JsonType
@@ -1093,6 +1123,36 @@ namespace System.Json
         /// </summary>
         protected virtual void OnSaveEnded()
         {
+        }
+
+        /// <summary>
+        /// Called internally to raise the <see cref="Changing"/> event.
+        /// </summary>
+        /// <param name="sender">The object which caused the event to be raised.</param>
+        /// <param name="eventArgs">The arguments to the event.</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1030", Justification = "This is a helper function used to raise the event.")]
+        protected void RaiseChangingEvent(object sender, JsonValueChangeEventArgs eventArgs)
+        {
+            EventHandler<JsonValueChangeEventArgs> changing = this.Changing;
+            if (changing != null)
+            {
+                changing(sender, eventArgs);
+            }
+        }
+
+        /// <summary>
+        /// Called internally to raise the <see cref="Changed"/> event.
+        /// </summary>
+        /// <param name="sender">The object which caused the event to be raised.</param>
+        /// <param name="eventArgs">The arguments to the event.</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1030", Justification = "This is a helper function used to raise the event.")]
+        protected void RaiseChangedEvent(object sender, JsonValueChangeEventArgs eventArgs)
+        {
+            EventHandler<JsonValueChangeEventArgs> changed = this.Changed;
+            if (changed != null)
+            {
+                changed(sender, eventArgs);
+            }
         }
 
         private static bool IsJsonCollection(JsonValue value)

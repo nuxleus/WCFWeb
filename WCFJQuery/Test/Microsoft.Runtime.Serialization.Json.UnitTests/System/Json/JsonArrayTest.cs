@@ -328,10 +328,173 @@
         }
 
         [TestMethod]
+        public void ChangingEventsTest()
+        {
+            JsonArray ja = new JsonArray(AnyInstance.AnyInt, AnyInstance.AnyBool, null);
+            TestEvents(
+                ja,
+                arr => arr.Add(1),
+                new List<Tuple<bool, JsonValue, JsonValueChangeEventArgs>>
+                {
+                    new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(true, ja, new JsonValueChangeEventArgs(1, JsonValueChange.Add, 3)),
+                    new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(false, ja, new JsonValueChangeEventArgs(1, JsonValueChange.Add, 3)),
+                });
+
+            TestEvents(
+                ja,
+                arr => arr.AddRange(AnyInstance.AnyString, AnyInstance.AnyDouble),
+                new List<Tuple<bool, JsonValue, JsonValueChangeEventArgs>>
+                {
+                    new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(true, ja, new JsonValueChangeEventArgs(AnyInstance.AnyString, JsonValueChange.Add, 4)),
+                    new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(true, ja, new JsonValueChangeEventArgs(AnyInstance.AnyDouble, JsonValueChange.Add, 5)),
+                    new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(false, ja, new JsonValueChangeEventArgs(AnyInstance.AnyString, JsonValueChange.Add, 4)),
+                    new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(false, ja, new JsonValueChangeEventArgs(AnyInstance.AnyDouble, JsonValueChange.Add, 5)),
+                });
+
+            TestEvents(
+                ja,
+                arr => arr[1] = 2,
+                new List<Tuple<bool, JsonValue, JsonValueChangeEventArgs>>
+                {
+                    new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(true, ja, new JsonValueChangeEventArgs(2, JsonValueChange.Replace, 1)),
+                    new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(false, ja, new JsonValueChangeEventArgs(AnyInstance.AnyBool, JsonValueChange.Replace, 1)),
+                });
+
+            ja = new JsonArray { 1, 2, 3 };
+            TestEvents(
+                ja,
+                arr => arr.Insert(1, "new value"),
+                new List<Tuple<bool, JsonValue, JsonValueChangeEventArgs>>
+                {
+                    new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(true, ja, new JsonValueChangeEventArgs("new value", JsonValueChange.Add, 1)),
+                    new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(false, ja, new JsonValueChangeEventArgs("new value", JsonValueChange.Add, 1)),
+                });
+
+            TestEvents(
+                ja,
+                arr => arr.RemoveAt(1),
+                new List<Tuple<bool, JsonValue, JsonValueChangeEventArgs>>
+                {
+                    new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(true, ja, new JsonValueChangeEventArgs("new value", JsonValueChange.Remove, 1)),
+                    new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(false, ja, new JsonValueChangeEventArgs("new value", JsonValueChange.Remove, 1)),
+                });
+
+            TestEvents(
+                ja,
+                arr => arr.Clear(),
+                new List<Tuple<bool, JsonValue, JsonValueChangeEventArgs>>
+                {
+                    new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(true, ja, new JsonValueChangeEventArgs(null, JsonValueChange.Clear, 0)),
+                    new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(false, ja, new JsonValueChangeEventArgs(null, JsonValueChange.Clear, 0)),
+                });
+
+            ja = new JsonArray(1, 2, 3);
+            TestEvents(
+                ja,
+                arr => arr.Remove(new JsonPrimitive("Not there")),
+                new List<Tuple<bool, JsonValue, JsonValueChangeEventArgs>>());
+
+            JsonValue elementInArray = ja[1];
+            TestEvents(
+                ja,
+                arr => arr.Remove(elementInArray),
+                new List<Tuple<bool, JsonValue, JsonValueChangeEventArgs>>
+                {
+                    new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(true, ja, new JsonValueChangeEventArgs(elementInArray, JsonValueChange.Remove, 1)),
+                    new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(false, ja, new JsonValueChangeEventArgs(elementInArray, JsonValueChange.Remove, 1)),
+                });
+        }
+
+        [TestMethod]
+        public void NestedChangingEventTest()
+        {
+            JsonArray target = new JsonArray { new JsonArray { 1, 2 }, new JsonArray { 3, 4 } };
+            JsonArray child = target[1] as JsonArray;
+            TestEvents(
+                target,
+                arr => ((JsonArray)arr[1]).Add(5),
+                new List<Tuple<bool, JsonValue, JsonValueChangeEventArgs>>
+                {
+                    new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(true, child, new JsonValueChangeEventArgs(5, JsonValueChange.Add, 2)),
+                    new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(false, child, new JsonValueChangeEventArgs(5, JsonValueChange.Add, 2)),
+                });
+
+            target = new JsonArray();
+            child = new JsonArray(1, 2);
+            TestEvents(
+                target,
+                arr => {
+                    arr.Add(child);
+                    ((JsonArray)arr[0]).Add(5);
+                },
+                new List<Tuple<bool, JsonValue, JsonValueChangeEventArgs>>
+                {
+                    new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(true, target, new JsonValueChangeEventArgs(child, JsonValueChange.Add, 0)),
+                    new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(false, target, new JsonValueChangeEventArgs(child, JsonValueChange.Add, 0)),
+                    new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(true, child, new JsonValueChangeEventArgs(5, JsonValueChange.Add, 2)),
+                    new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(false, child, new JsonValueChangeEventArgs(5, JsonValueChange.Add, 2)),
+                });
+        }
+
+        [TestMethod]
         public void JsonTypeTest()
         {
             JsonArray target = AnyInstance.AnyJsonArray;
             Assert.AreEqual(JsonType.Array, target.JsonType);
+        }
+
+        internal static void TestEvents<JsonValueType>(JsonValueType target, Action<JsonValueType> actionToTriggerEvent, List<Tuple<bool, JsonValue, JsonValueChangeEventArgs>> expectedEvents) where JsonValueType : JsonValue
+        {
+            List<Tuple<bool, JsonValue, JsonValueChangeEventArgs>> actualEvents = new List<Tuple<bool, JsonValue, JsonValueChangeEventArgs>>();
+            EventHandler<JsonValueChangeEventArgs> changingHandler = delegate(object sender, JsonValueChangeEventArgs e)
+            {
+                actualEvents.Add(new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(true, sender as JsonValue, e));
+            };
+
+            EventHandler<JsonValueChangeEventArgs> changedHandler = delegate(object sender, JsonValueChangeEventArgs e)
+            {
+                actualEvents.Add(new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(false, sender as JsonValue, e));
+            };
+
+            target.Changing += new EventHandler<JsonValueChangeEventArgs>(changingHandler);
+            target.Changed += new EventHandler<JsonValueChangeEventArgs>(changedHandler);
+
+            actionToTriggerEvent(target);
+
+            target.Changing -= new EventHandler<JsonValueChangeEventArgs>(changingHandler);
+            target.Changed -= new EventHandler<JsonValueChangeEventArgs>(changedHandler);
+
+            ValidateExpectedEvents(expectedEvents, actualEvents);
+        }
+
+        static void TestEvents(JsonArray array, Action<JsonArray> actionToTriggerEvent, List<Tuple<bool, JsonValue, JsonValueChangeEventArgs>> expectedEvents)
+        {
+            TestEvents<JsonArray>(array, actionToTriggerEvent, expectedEvents);
+        }
+
+        internal static void ValidateExpectedEvents(List<Tuple<bool, JsonValue, JsonValueChangeEventArgs>> expectedEvents, List<Tuple<bool, JsonValue, JsonValueChangeEventArgs>> actualEvents)
+        {
+            Assert.AreEqual(expectedEvents.Count, actualEvents.Count);
+            for (int i = 0; i < expectedEvents.Count; i++)
+            {
+                bool expectedIsChanging = expectedEvents[i].Item1;
+                bool actualIsChanging = expectedEvents[i].Item1;
+                Assert.AreEqual(expectedIsChanging, actualIsChanging, string.Format("Event raised is different for expected event {0}: expected Chang{1}, actual Chang{2}", i, expectedIsChanging ? "ing" : "ed", actualIsChanging ? "ing" : "ed"));
+
+                JsonValue expectedSender = expectedEvents[i].Item2;
+                JsonValue actualSender = actualEvents[i].Item2;
+                Assert.AreSame(expectedSender, actualSender, string.Format("Sender is different for expected event {0}: expected {1}, actual {2}", i, expectedSender, actualSender));
+
+                JsonValueChangeEventArgs expectedEventArgs = expectedEvents[i].Item3;
+                JsonValueChangeEventArgs actualEventArgs = actualEvents[i].Item3;
+                Assert.AreEqual(expectedEventArgs.Change, actualEventArgs.Change, string.Format("JVChangeEventArgs.Change is different for event {0}: expected {1}, actual {2}", i, expectedEventArgs.Change, actualEventArgs.Change));
+                Assert.AreEqual(expectedEventArgs.Index, actualEventArgs.Index, string.Format("JVChangeEventArgs.Index is different for event {0}: expected {1}, actual {2}", i, expectedEventArgs.Index, actualEventArgs.Index));
+                Assert.AreEqual(expectedEventArgs.Key, actualEventArgs.Key, string.Format("JVChangeEventArgs.Key is different for event {0}: expected {1}, actual {2}", i, expectedEventArgs.Key ?? "<<null>>", actualEventArgs.Key ?? "<<null>>"));
+
+                string expectedChild = expectedEventArgs.Child == null ? "null" : expectedEventArgs.Child.ToString();
+                string actualChild = actualEventArgs.Child == null ? "null" : actualEventArgs.Child.ToString();
+                Assert.AreEqual(expectedChild, actualChild, string.Format("JVChangeEventArgs.Child is different for event {0}: expected {1}, actual {2}", i, expectedChild, actualChild));
+            }
         }
 
         static void ValidateJsonArrayItems(JsonArray jsonArray, IEnumerable<JsonValue> expectedItems)

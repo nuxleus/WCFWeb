@@ -56,6 +56,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
+    <Compile Include="System\Json\JsonValueChange.cs" />
+    <Compile Include="System\Json\JsonValueChangeEventArgs.cs" />
     <Compile Include="System\Json\JsonObjectValidation.cs" />
     <Compile Include="System\Json\JXmlToJsonValueConverter.cs" />
     <Compile Include="System\Json\DiagnosticUtility.cs" />

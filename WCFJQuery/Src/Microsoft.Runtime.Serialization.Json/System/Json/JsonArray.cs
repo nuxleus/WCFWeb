@@ -19,6 +19,8 @@ namespace System.Json
     public sealed class JsonArray : JsonValue, IList<JsonValue>
     {
         private List<JsonValue> values = new List<JsonValue>();
+        private int changingListeners = 0;
+        private int changedListeners = 0;
 
         /// <summary>
         /// Creates an instance of the <see cref="System.Json.JsonArray"/> class initialized by
@@ -50,6 +52,106 @@ namespace System.Json
             if (items != null)
             {
                 this.AddRange(items);
+            }
+        }
+
+        /// <summary>
+        /// Raised when this <see cref="System.Json.JsonValue"/> or any of its members are about to be changed.
+        /// </summary>
+        /// <remarks><p>Events are raised when elements are added or removed to <see cref="System.Json.JsonValue"/>
+        /// instances. It applies to both complex descendants of <see cref="System.Json.JsonValue"/>: <see cref="System.Json.JsonArray"/>
+        /// and <see cref="System.Json.JsonObject"/>.</p>
+        /// <p>You should be careful when modifying a <see cref="System.Json.JsonValue"/> tree within one of these events,
+        /// because doing this might lead to unexpected results. For example, if you receive a Changing event, and while
+        /// the event is being processed you remove the node from the tree, you might not receive the Changed event. When
+        /// an event is being processed, it is valid to modify a tree other than the one that contains the node that is
+        /// receiving the event; it is even valid to modify the same tree provided the modifications do not affect the
+        /// specific nodes on which the event was raised. However, if you modify the area of the tree that contains the
+        /// node receiving the event, the events that you receive and the impact to the tree are undefined.</p></remarks>
+        public override event EventHandler<JsonValueChangeEventArgs> Changing
+        {
+            add
+            {
+                bool needToAddChildren = this.changingListeners == 0;
+                this.changingListeners++;
+                base.Changing += value;
+                if (needToAddChildren)
+                {
+                    foreach (JsonValue child in this.values)
+                    {
+                        if (child != null)
+                        {
+                            child.Changing += new EventHandler<JsonValueChangeEventArgs>(this.ChildChanging);
+                        }
+                    }
+                }
+            }
+
+            remove
+            {
+                this.changingListeners--;
+                bool needToRemoveChildren = this.changingListeners == 0;
+                base.Changing -= value;
+                if (needToRemoveChildren)
+                {
+                    foreach (JsonValue child in this.values)
+                    {
+                        if (child != null)
+                        {
+                            child.Changing -= new EventHandler<JsonValueChangeEventArgs>(this.ChildChanging);
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Raised when this <see cref="System.Json.JsonValue"/> or any of its members have changed.
+        /// </summary>
+        /// <remarks><p>Events are raised when elements are added or removed to <see cref="System.Json.JsonValue"/>
+        /// instances. It applies to both complex descendants of <see cref="System.Json.JsonValue"/>: <see cref="System.Json.JsonArray"/>
+        /// and <see cref="System.Json.JsonObject"/>.</p>
+        /// <p>You should be careful when modifying a <see cref="System.Json.JsonValue"/> tree within one of these events,
+        /// because doing this might lead to unexpected results. For example, if you receive a Changing event, and while
+        /// the event is being processed you remove the node from the tree, you might not receive the Changed event. When
+        /// an event is being processed, it is valid to modify a tree other than the one that contains the node that is
+        /// receiving the event; it is even valid to modify the same tree provided the modifications do not affect the
+        /// specific nodes on which the event was raised. However, if you modify the area of the tree that contains the
+        /// node receiving the event, the events that you receive and the impact to the tree are undefined.</p></remarks>
+        public override event EventHandler<JsonValueChangeEventArgs> Changed
+        {
+            add
+            {
+                bool needToAddChildren = this.changedListeners == 0;
+                this.changedListeners++;
+                base.Changed += value;
+                if (needToAddChildren)
+                {
+                    foreach (JsonValue child in this.values)
+                    {
+                        if (child != null)
+                        {
+                            child.Changed += new EventHandler<JsonValueChangeEventArgs>(this.ChildChanged);
+                        }
+                    }
+                }
+            }
+
+            remove
+            {
+                this.changedListeners--;
+                bool needToRemoveChildren = this.changedListeners == 0;
+                base.Changed -= value;
+                if (needToRemoveChildren)
+                {
+                    foreach (JsonValue child in this.values)
+                    {
+                        if (child != null)
+                        {
+                            child.Changed -= new EventHandler<JsonValueChangeEventArgs>(this.ChildChanged);
+                        }
+                    }
+                }
             }
         }
 
@@ -106,7 +208,13 @@ namespace System.Json
             set
             {
                 DiagnosticUtility.ExceptionUtility.ThrowOnDefaultArg(value);
+                JsonValue oldValue = this.values[index];
+                this.RaiseItemChanging(value, JsonValueChange.Replace, index);
                 this.values[index] = value;
+                this.RaiseItemChanged(oldValue, JsonValueChange.Replace, index);
+
+                this.RemoveChildHandlers(oldValue);
+                this.AddChildHandlers(value);
             }
         }
 
@@ -124,10 +232,20 @@ namespace System.Json
         {
             DiagnosticUtility.ExceptionUtility.ThrowOnNull(items, "items");
 
+            if (this.changingListeners > 0)
+            {
+                int index = this.Count;
+                foreach (JsonValue toBeAdded in items)
+                {
+                    this.RaiseItemChanging(toBeAdded, JsonValueChange.Add, index++);
+                }
+            }
+
             foreach (JsonValue item in items)
             {
                 DiagnosticUtility.ExceptionUtility.ThrowOnDefaultArg(item);
                 this.values.Add(item);
+                this.RaiseItemChanged(item, JsonValueChange.Add, this.values.Count - 1);
             }
         }
 
@@ -169,7 +287,10 @@ namespace System.Json
         public void Insert(int index, JsonValue item)
         {
             DiagnosticUtility.ExceptionUtility.ThrowOnDefaultArg(item);
+            this.RaiseItemChanging(item, JsonValueChange.Add, index);
             this.values.Insert(index, item);
+            this.RaiseItemChanged(item, JsonValueChange.Add, index);
+            this.AddChildHandlers(item);
         }
 
         /// <summary>
@@ -180,7 +301,11 @@ namespace System.Json
         /// is equal or larger than the size of the array.</exception>
         public void RemoveAt(int index)
         {
+            JsonValue item = this.values[index];
+            this.RaiseItemChanging(item, JsonValueChange.Remove, index);
             this.values.RemoveAt(index);
+            this.RaiseItemChanged(item, JsonValueChange.Remove, index);
+            this.RemoveChildHandlers(item);
         }
 
         /// <summary>
@@ -193,7 +318,11 @@ namespace System.Json
         public void Add(JsonValue item)
         {
             DiagnosticUtility.ExceptionUtility.ThrowOnDefaultArg(item);
+            int index = this.Count;
+            this.RaiseItemChanging(item, JsonValueChange.Add, index);
             this.values.Add(item);
+            this.RaiseItemChanged(item, JsonValueChange.Add, index);
+            this.AddChildHandlers(item);
         }
 
         /// <summary>
@@ -201,7 +330,9 @@ namespace System.Json
         /// </summary>
         public void Clear()
         {
+            this.RaiseItemChanging(null, JsonValueChange.Clear, 0);
             this.values.Clear();
+            this.RaiseItemChanged(null, JsonValueChange.Clear, 0);
         }
 
         /// <summary>
@@ -235,7 +366,25 @@ namespace System.Json
         /// also returns false if item was not found in the <see cref="System.Json.JsonArray"/>.</returns>
         public bool Remove(JsonValue item)
         {
-            return this.values.Remove(item);
+            int index = -1;
+            if (this.changingListeners > 0 || this.changedListeners > 0)
+            {
+                index = this.IndexOf(item);
+            }
+
+            if (index >= 0)
+            {
+                this.RaiseItemChanging(item, JsonValueChange.Remove, index);
+            }
+
+            bool result = this.values.Remove(item);
+            if (index >= 0)
+            {
+                this.RaiseItemChanged(item, JsonValueChange.Remove, index);
+                this.RemoveChildHandlers(item);
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -321,6 +470,64 @@ namespace System.Json
             jsonWriter.WriteStartElement(JXmlToJsonValueConverter.ItemElementName);
             JsonValue nextValue = this[currentIndex];
             return nextValue;
+        }
+
+        private void ChildChanging(object sender, JsonValueChangeEventArgs e)
+        {
+            this.RaiseChangingEvent(sender, e);
+        }
+
+        private void ChildChanged(object sender, JsonValueChangeEventArgs e)
+        {
+            this.RaiseChangedEvent(sender, e);
+        }
+
+        private void RaiseItemChanging(JsonValue child, JsonValueChange change, int index)
+        {
+            if (this.changingListeners > 0)
+            {
+                this.RaiseChangingEvent(this, new JsonValueChangeEventArgs(child, change, index));
+            }
+        }
+
+        private void RaiseItemChanged(JsonValue child, JsonValueChange change, int index)
+        {
+            if (this.changedListeners > 0)
+            {
+                this.RaiseChangedEvent(this, new JsonValueChangeEventArgs(child, change, index));
+            }
+        }
+
+        private void AddChildHandlers(JsonValue child)
+        {
+            if (child != null)
+            {
+                if (this.changingListeners > 0)
+                {
+                    child.Changing += new EventHandler<JsonValueChangeEventArgs>(this.ChildChanging);
+                }
+
+                if (this.changedListeners > 0)
+                {
+                    child.Changed += new EventHandler<JsonValueChangeEventArgs>(this.ChildChanged);
+                }
+            }
+        }
+
+        private void RemoveChildHandlers(JsonValue child)
+        {
+            if (child != null)
+            {
+                if (this.changingListeners > 0)
+                {
+                    child.Changing -= new EventHandler<JsonValueChangeEventArgs>(this.ChildChanging);
+                }
+
+                if (this.changedListeners > 0)
+                {
+                    child.Changed -= new EventHandler<JsonValueChangeEventArgs>(this.ChildChanged);
+                }
+            }
         }
     }
 }
