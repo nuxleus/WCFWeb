@@ -18,7 +18,7 @@ namespace System.Json
         /// Initializes a new instance of the <see cref="System.Json.JsonValueChangeEventArgs"/> class for
         /// changes in a <see cref="System.Json.JsonArray"/>.
         /// </summary>
-        /// <param name="child">The <see cref="System.Json.JsonValue"/> instance which will be or has been added or removed.</param>
+        /// <param name="child">The <see cref="System.Json.JsonValue"/> instance which will be or has been modified.</param>
         /// <param name="change">The type of change of the <see cref="System.Json.JsonValue"/> event.</param>
         /// <param name="index">The index of the element being changed in a <see cref="System.Json.JsonArray"/>.</param>
         public JsonValueChangeEventArgs(JsonValue child, JsonValueChange change, int index)
@@ -38,7 +38,7 @@ namespace System.Json
         /// Initializes a new instance of the <see cref="System.Json.JsonValueChangeEventArgs"/> class for
         /// changes in a <see cref="System.Json.JsonObject"/>.
         /// </summary>
-        /// <param name="child">The <see cref="System.Json.JsonValue"/> instance which will be or has been added or removed.</param>
+        /// <param name="child">The <see cref="System.Json.JsonValue"/> instance which will be or has been modified.</param>
         /// <param name="change">The type of change of the <see cref="System.Json.JsonValue"/> event.</param>
         /// <param name="key">The key of the element being changed in a <see cref="System.Json.JsonObject"/>.</param>
         public JsonValueChangeEventArgs(JsonValue child, JsonValueChange change, string key)
@@ -55,9 +55,10 @@ namespace System.Json
         }
 
         /// <summary>
-        /// Gets the child which will be or has been added or removed.
+        /// Gets the child which will be or has been modified.
         /// </summary>
-        /// <remarks><p>This property is <code>null</code> for <see cref="System.Json.JsonValueChange">Clear</see> event types.</p>
+        /// <remarks><p>This property is <code>null</code> for <see cref="System.Json.JsonValueChange">Clear</see> event types
+        /// raised by <see cref="System.Json.JsonValue"> instances.</p>
         /// <p>For <see cref="System.Json.JsonValueChange">Replace</see> events, this property contains the new value in
         /// the <see cref="System.Json.JsonValue.Changing"/> event, and the old value (the one being replaced) in the
         /// <see cref="System.Json.JsonValue.Changed"/> event.</p></remarks>
