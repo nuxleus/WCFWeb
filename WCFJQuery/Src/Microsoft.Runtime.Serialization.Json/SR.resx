@@ -123,9 +123,6 @@
   <data name="CannotReadAsType" xml:space="preserve">
     <value>Cannot cast JsonPrimitive value '{0}' as '{1}'.</value>
   </data>
-  <data name="ExpectUrlEncodedOrJson" xml:space="preserve">
-    <value>Expected either to receive JSON in the message body or the content-type to be application/x-www-form-urlencoded.</value>
-  </data>
   <data name="IncorrectJsonFormat" xml:space="preserve">
     <value>The input source is not correctly formatted.</value>
   </data>
@@ -147,9 +144,6 @@
   <data name="InvalidUriFormat" xml:space="preserve">
     <value>Cannot cast JsonPrimitive value '{0}' as a type of 'Uri'. The provided string is not in a valid relative or absolute URI format.</value>
   </data>
-  <data name="JsonInvalidBytes" xml:space="preserve">
-    <value>Invalid byte encoding.</value>
-  </data>
   <data name="JsonStringCannotBeEmpty" xml:space="preserve">
     <value>An empty string cannot be parsed as JSON.</value>
   </data>
@@ -162,14 +156,17 @@
   <data name="OperationNotAllowedOnDefault" xml:space="preserve">
     <value>Default JsonValue cannot perform this operation.</value>
   </data>
+  <data name="OperatorNotAllowedOnOperands" xml:space="preserve">
+    <value>Operation '{0}' cannot be applied on operands of type '{1}' and '{2}'.</value>
+  </data>
+  <data name="OperatorNotDefinedForJsonType" xml:space="preserve">
+    <value>Operation '{0}' is not defined for JsonValue instances of JsonType '{1}'.</value>
+  </data>
   <data name="OverflowReadAs" xml:space="preserve">
     <value>Cannot cast JsonPrimitive value '{0}' as '{1}'. The value is either too large or too small for the specified CLR type.</value>
   </data>
   <data name="TypeNotSupported" xml:space="preserve">
     <value>Object type not supported.</value>
-  </data>
-  <data name="TypeNotSupportedOnJsonPrimitive" xml:space="preserve">
-    <value>Objects of type '{0}' cannot be converted to JSON primitives.</value>
   </data>
   <data name="UnsupportedOnThisJsonValue" xml:space="preserve">
     <value>This method or property is not supported on a JSON value of type '{0}'. Some operations may only be performed on JSON Arrays and some may only be performed on JSON Objects.</value>

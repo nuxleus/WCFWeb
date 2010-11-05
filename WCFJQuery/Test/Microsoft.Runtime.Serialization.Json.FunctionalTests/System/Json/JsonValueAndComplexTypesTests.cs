@@ -62,7 +62,7 @@
                 foreach (Type testType in testTypes)
                 {
                     object instance = InstanceCreator.CreateInstanceOf(testType, rndGen);
-                    JsonValue jv = JsonValue.CreateFrom(instance);
+                    JsonValue jv = JsonValueExtensions.CreateFrom(instance);
 
                     if (instance == null)
                     {
@@ -168,7 +168,7 @@
             }
             else
             {
-                T newInstance = jv.ReadAs<T>();
+                T newInstance = jv.ReadAsComplex<T>();
                 Assert.AreEqual(instance, newInstance);
             }
         }

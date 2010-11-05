@@ -6,6 +6,7 @@
     using System.ComponentModel.DataAnnotations;
     using System.Globalization;
     using System.Json;
+    using System.Runtime.Serialization.Json;
     using Microsoft.CSharp.RuntimeBinder;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -223,11 +224,11 @@
         [TestMethod]
         public void CreateFromComplexTypeTest()
         {
-            Assert.IsNull(JsonValue.CreateFrom(null));
+            Assert.IsNull(JsonValueExtensions.CreateFrom(null));
 
             Person anyObject = AnyInstance.AnyPerson;
 
-            JsonObject jv = JsonValue.CreateFrom(anyObject) as JsonObject;
+            JsonObject jv = JsonValueExtensions.CreateFrom(anyObject) as JsonObject;
             Assert.IsNotNull(jv);
             Assert.AreEqual(4, jv.Count);
             foreach (string key in "Name Age Address".Split())
@@ -261,7 +262,7 @@
                 { "Address", new JsonObject { { "Street", Address.AnyStreet }, { "City", Address.AnyCity }, { "State", Address.AnyState } } },
             };
 
-            Person person = target.ReadAs<Person>();
+            Person person = target.ReadAsComplex<Person>();
             Assert.AreEqual(AnyInstance.AnyString, person.Name);
             Assert.AreEqual(AnyInstance.AnyInt, person.Age);
             Assert.IsNotNull(person.Address);
@@ -454,10 +455,10 @@
             JsonValue jsonValue;
 
             Person person = AnyInstance.AnyPerson;
-            JsonObject jo = JsonValue.CreateFrom(person) as JsonObject;
+            JsonObject jo = JsonValueExtensions.CreateFrom(person) as JsonObject;
 
             Assert.AreEqual<int>(person.Age, jo.ValueOrDefault("Age").ReadAs<int>()); // JsonPrimitive
-            Assert.AreEqual<string>(person.Address.ToString(), jo.ValueOrDefault("Address").ReadAs<Address>().ToString()); // JsonObject
+            Assert.AreEqual<string>(person.Address.ToString(), jo.ValueOrDefault("Address").ReadAsComplex<Address>().ToString()); // JsonObject
             Assert.AreEqual<int>(person.Friends.Count, jo.ValueOrDefault("Friends").Count); // JsonArray
 
             JsonValue target;
@@ -474,13 +475,14 @@
             Assert.AreEqual(JsonType.Default, target.JsonType);
             Assert.IsNotNull(target);
             Assert.IsFalse(target.TryReadAs<bool>(out boolValue));
-            Assert.IsFalse(target.TryReadAs<JsonValue>(out jsonValue));
+            Assert.IsTrue(target.TryReadAs<JsonValue>(out jsonValue));
 
             target = jo.ValueOrDefault("Address", "NonExistentProp", "NonExistentProp2"); // JsonObject
             Assert.AreEqual(JsonType.Default, target.JsonType);
             Assert.IsNotNull(target);
             Assert.IsFalse(target.TryReadAs<bool>(out boolValue));
-            Assert.IsFalse(target.TryReadAs<JsonValue>(out jsonValue));
+            Assert.IsTrue(target.TryReadAs<JsonValue>(out jsonValue));
+            Assert.AreSame(target, jsonValue);
         }
 
         [TestMethod]

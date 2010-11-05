@@ -4,6 +4,7 @@
     using System.IO;
     using System.Json;
     using System.Reflection;
+    using System.Runtime.Serialization.Json;
     using System.Security;
     using System.Security.Policy;
     using Microsoft.ServiceModel.Web.Test.Common;
@@ -60,8 +61,8 @@
             person.AddFriends(3, rndGen);
             person2.AddFriends(3, rndGen);
             
-            JsonValue jo = JsonValue.CreateFrom(person);
-            JsonValue jo2 = JsonValue.CreateFrom(person2);
+            JsonValue jo = JsonValueExtensions.CreateFrom(person);
+            JsonValue jo2 = JsonValueExtensions.CreateFrom(person2);
 
             AssertAreEqual(person.Address.City, jo["Address"]["City"].ReadAs<string>(), "Address.City");
             AssertAreEqual(person.Friends[1].Age, jo["Friends"][1]["Age"].ReadAs<int>(), "Friends[1].Age");
@@ -96,7 +97,7 @@
             Person person = new Person(rndGen);
             person.AddFriends(1, rndGen);
 
-            dynamic jo = JsonValue.CreateFrom(person);
+            dynamic jo = JsonValueExtensions.CreateFrom(person);
 
             AssertAreEqual(jo.Friends[0].ToString(), jo.Friends[0].ToString(), "Friends[0].ToString()");
 

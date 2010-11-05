@@ -5,6 +5,7 @@
     using System.Globalization;
     using System.IO;
     using System.Json;
+    using System.Runtime.Serialization.Json;
     using System.Text;
     using System.Xml;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -305,7 +306,7 @@
                 byte[] jxmlBytes = Encoding.UTF8.GetBytes(jxml);
                 using (XmlDictionaryReader xdr = XmlDictionaryReader.CreateTextReader(jxmlBytes, XmlDictionaryReaderQuotas.Max))
                 {
-                    JsonValue jv = JsonValue.Load(xdr);
+                    JsonValue jv = JsonValueExtensions.Load(xdr);
                     Assert.AreEqual(json, jv.ToString());
                 }
             }
@@ -327,7 +328,7 @@
             {
                 Console.WriteLine("Bad JXML: {0}", badJXML);
                 byte[] xmlBytes = Encoding.UTF8.GetBytes(badJXML);
-                ExpectException<FormatException>(() => JsonValue.Load(XmlDictionaryReader.CreateTextReader(xmlBytes, XmlDictionaryReaderQuotas.Max)));
+                ExpectException<FormatException>(() => JsonValueExtensions.Load(XmlDictionaryReader.CreateTextReader(xmlBytes, XmlDictionaryReaderQuotas.Max)));
             }
         }
 

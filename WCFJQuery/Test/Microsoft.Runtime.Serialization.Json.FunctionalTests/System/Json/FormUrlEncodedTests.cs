@@ -22,11 +22,11 @@
         [TestMethod]
         public void TestJsonPrimitiveNegative()
         {
-            JsonValueTests.ExpectException<ArgumentException>(() => JsonValueExtensions.ParseFormUrlEncoded("a[b]=1&a=2"));
-            JsonValueTests.ExpectException<ArgumentException>(() => JsonValueExtensions.ParseFormUrlEncoded("a=2&a[b]=1"));
-            JsonValueTests.ExpectException<ArgumentException>(() => JsonValueExtensions.ParseFormUrlEncoded("[]=1"));
-            JsonValueTests.ExpectException<ArgumentNullException>(() => JsonValueExtensions.ParseFormUrlEncoded((string)null));
-            JsonValueTests.ExpectException<ArgumentNullException>(() => JsonValueExtensions.ParseFormUrlEncoded((NameValueCollection)null));
+            JsonValueTests.ExpectException<ArgumentException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded("a[b]=1&a=2"));
+            JsonValueTests.ExpectException<ArgumentException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded("a=2&a[b]=1"));
+            JsonValueTests.ExpectException<ArgumentException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded("[]=1"));
+            JsonValueTests.ExpectException<ArgumentNullException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded((string)null));
+            JsonValueTests.ExpectException<ArgumentNullException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded((NameValueCollection)null));
         }
 
         [TestMethod]
@@ -66,7 +66,7 @@
         [TestMethod]
         public void TestArrayCompatNegative()
         {
-            JsonValueTests.ExpectException<ArgumentException>(() => JsonValueExtensions.ParseFormUrlEncoded("a[z]=2&a[z]=3"), "a[z]");
+            JsonValueTests.ExpectException<ArgumentException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded("a[z]=2&a[z]=3"), "a[z]");
         }
 
         [TestMethod]
@@ -87,12 +87,12 @@
         [TestMethod]
         public void TestArrayIndexNegative()
         {
-            JsonValueTests.ExpectException<ArgumentException>(() => JsonValueExtensions.ParseFormUrlEncoded("a[x]=2&a[x][]=3"), "a[x]");
-            JsonValueTests.ExpectException<ArgumentException>(() => JsonValueExtensions.ParseFormUrlEncoded("a[x][]=1&a[x][0]=2"), "a[x][0]");
-            JsonValueTests.ExpectException<ArgumentException>(() => JsonValueExtensions.ParseFormUrlEncoded("a[x][]=1&a[x][1]=2"), "a[x][1]");
-            JsonValueTests.ExpectException<ArgumentException>(() => JsonValueExtensions.ParseFormUrlEncoded("a[x][0]=1&a[x][]=2"), "a[x][]");
-            JsonValueTests.ExpectException<ArgumentException>(() => JsonValueExtensions.ParseFormUrlEncoded("a[][]=0"), "a[]");
-            JsonValueTests.ExpectException<ArgumentException>(() => JsonValueExtensions.ParseFormUrlEncoded("a[][x]=0"), "a[]");
+            JsonValueTests.ExpectException<ArgumentException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded("a[x]=2&a[x][]=3"), "a[x]");
+            JsonValueTests.ExpectException<ArgumentException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded("a[x][]=1&a[x][0]=2"), "a[x][0]");
+            JsonValueTests.ExpectException<ArgumentException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded("a[x][]=1&a[x][1]=2"), "a[x][1]");
+            JsonValueTests.ExpectException<ArgumentException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded("a[x][0]=1&a[x][]=2"), "a[x][]");
+            JsonValueTests.ExpectException<ArgumentException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded("a[][]=0"), "a[]");
+            JsonValueTests.ExpectException<ArgumentException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded("a[][x]=0"), "a[]");
         }
 
         [TestMethod]
@@ -147,16 +147,16 @@
         [TestMethod]
         public void TestNegative()
         {
-            JsonValueTests.ExpectException<ArgumentException>(() => JsonValueExtensions.ParseFormUrlEncoded("a[b=2"), "1");
-            JsonValueTests.ExpectException<ArgumentException>(() => JsonValueExtensions.ParseFormUrlEncoded("a[[b]=2"), "2");
-            JsonValueTests.ExpectException<ArgumentException>(() => JsonValueExtensions.ParseFormUrlEncoded("a[b]]=2"), "4");
-            JsonValueTests.ExpectException<ArgumentException>(() => JsonValueExtensions.ParseFormUrlEncoded("&some+thing=10&%E5%B8%A6%E4%B8%89%E4%B8%AA%E8%A1%A8=bar"));
-            JsonValueTests.ExpectException<ArgumentException>(() => JsonValueExtensions.ParseFormUrlEncoded("some+thing=10&%E5%B8%A6%E4%B8%89%E4%B8%AA%E8%A1%A8=bar&"));
+            JsonValueTests.ExpectException<ArgumentException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded("a[b=2"), "1");
+            JsonValueTests.ExpectException<ArgumentException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded("a[[b]=2"), "2");
+            JsonValueTests.ExpectException<ArgumentException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded("a[b]]=2"), "4");
+            JsonValueTests.ExpectException<ArgumentException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded("&some+thing=10&%E5%B8%A6%E4%B8%89%E4%B8%AA%E8%A1%A8=bar"));
+            JsonValueTests.ExpectException<ArgumentException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded("some+thing=10&%E5%B8%A6%E4%B8%89%E4%B8%AA%E8%A1%A8=bar&"));
         }
 
         void TestFormEncodedParsing(string encoded, string expectedResult)
         {
-            JsonObject result = JsonValueExtensions.ParseFormUrlEncoded(encoded);
+            JsonObject result = FormUrlEncodedExtensions.ParseFormUrlEncoded(encoded);
             Assert.IsNotNull(result);
             Assert.AreEqual(expectedResult, result.ToString());
         }

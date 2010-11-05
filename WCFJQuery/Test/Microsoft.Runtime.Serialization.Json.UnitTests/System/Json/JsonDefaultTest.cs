@@ -6,6 +6,7 @@
     using System.IO;
     using System.Json;
     using System.Reflection;
+    using System.Runtime.Serialization.Json;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [TestClass()]
@@ -61,22 +62,22 @@
             object value;
 
             Assert.IsFalse(target.TryReadAs(typeof(bool), out value), "TryReadAs expected to fail");
-            Assert.IsNull(value, "value from failed TryReadAs should be null!");
+            Assert.IsNull(value, "expected from failed TryReadAs should be null!");
             
             Assert.IsFalse(target.TryReadAs(typeof(string), out value), "TryReadAs expected to fail");
-            Assert.IsNull(value, "value from failed TryReadAs should be null!");
+            Assert.IsNull(value, "expected from failed TryReadAs should be null!");
 
             Assert.IsFalse(target.TryReadAs(typeof(JsonObject), out value), "TryReadAs expected to fail");
-            Assert.IsNull(value, "value from failed TryReadAs should be null!");
+            Assert.IsNull(value, "expected from failed TryReadAs should be null!");
 
             Assert.IsFalse(target.TryReadAs<bool>(out boolValue), "TryReadAs expected to fail");
-            Assert.IsFalse(boolValue, "value from failed TryReadAs should be default!");
+            Assert.IsFalse(boolValue, "expected from failed TryReadAs should be default!");
 
             Assert.IsFalse(target.TryReadAs<string>(out stringValue), "TryReadAs expected to fail");
-            Assert.IsNull(stringValue, "value from failed TryReadAs should be null!");
+            Assert.IsNull(stringValue, "expected from failed TryReadAs should be null!");
 
             Assert.IsFalse(target.TryReadAs<JsonObject>(out objValue), "TryReadAs expected to fail");
-            Assert.IsNull(objValue, "value from failed TryReadAs should be null!");
+            Assert.IsNull(objValue, "expected from failed TryReadAs should be null!");
         }
 
         [TestMethod()]
@@ -106,8 +107,8 @@
         [TestMethod()]
         public void DefaultConcatTest()
         {
-            JsonValue jv = JsonValue.CreateFrom(AnyInstance.AnyPerson);
-            dynamic target = JsonValue.CreateFrom(AnyInstance.AnyPerson);
+            JsonValue jv = JsonValueExtensions.CreateFrom(AnyInstance.AnyPerson);
+            dynamic target = JsonValueExtensions.CreateFrom(AnyInstance.AnyPerson);
             Person person = AnyInstance.AnyPerson;
 
             Assert.AreEqual(JsonType.Default, target.Friends[100000].Name.JsonType);

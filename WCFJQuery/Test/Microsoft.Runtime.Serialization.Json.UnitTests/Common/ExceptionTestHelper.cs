@@ -5,7 +5,7 @@
 
     public static class ExceptionTestHelper
     {
-        public static void ExpectException<T>(Action action) where T : Exception
+        public static void ExpectException<T>(Action action, string expectedMessage = null) where T : Exception
         {
             try
             {
@@ -14,7 +14,14 @@
             }
             catch (T ex)
             {
-                Console.WriteLine("Caught expected exception with exception message: '{0}'", ex.Message);
+                if (expectedMessage != null)
+                {
+                    Assert.AreEqual<string>(expectedMessage, ex.Message);
+                }
+                else
+                {
+                    Console.WriteLine("Caught expected exception with exception message: '{0}'", ex.Message);
+                }
             }
         }
     }

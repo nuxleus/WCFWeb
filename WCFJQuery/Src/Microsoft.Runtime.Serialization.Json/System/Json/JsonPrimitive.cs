@@ -472,6 +472,15 @@ namespace System.Json
             }
         }
 
+        /// <summary>
+        /// Returns the value this object wraps (if any).
+        /// </summary>
+        /// <returns>The value wrapped by this instance or null if none.</returns>
+        internal override object Read()
+        {
+            return this.value;
+        }
+
         internal override void SaveCore(XmlDictionaryWriter jsonWriter)
         {
             DiagnosticUtility.ExceptionUtility.ThrowOnNull(jsonWriter, "jsonWriter");
@@ -901,7 +910,12 @@ namespace System.Json
             Justification = "field is used with 'this' and arg is out param which makes it harder to be misused.")]
         private ReadAsFailureKind TryReadAsInternal(Type type, out object value)
         {
-            if (this.value.GetType() == type)
+            if (base.TryReadAs(type, out value))
+            {
+                return ReadAsFailureKind.NoFailure;
+            }
+
+            if (type == this.value.GetType())
             {
                 value = this.value;
                 return ReadAsFailureKind.NoFailure;

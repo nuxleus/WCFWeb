@@ -60,12 +60,12 @@
             JsonValue jv;
             using (XmlDictionaryReader xdr = JsonReaderWriterFactory.CreateJsonReader(jsonBytes, XmlDictionaryReaderQuotas.Max))
             {
-                jv = JsonValue.Load(xdr);
+                jv = JsonValueExtensions.Load(xdr);
             }
 
             Assert.AreEqual(json, jv.ToString());
 
-            ExceptionTestHelper.ExpectException<ArgumentNullException>(() => JsonValue.Load((XmlDictionaryReader)null));
+            ExceptionTestHelper.ExpectException<ArgumentNullException>(() => JsonValueExtensions.Load((XmlDictionaryReader)null));
         }
 
         [TestMethod]
@@ -114,7 +114,7 @@
             string xml = "<root type=\"object\"><a type=\"number\">123</a><b type=\"array\"><item type=\"boolean\">false</item><item type=\"null\"/><item type=\"number\">12.34</item></b></root>";
             using (XmlDictionaryReader xdr = XmlDictionaryReader.CreateTextReader(Encoding.UTF8.GetBytes(xml), XmlDictionaryReaderQuotas.Max))
             {
-                JsonValue jv = JsonValue.Load(xdr);
+                JsonValue jv = JsonValueExtensions.Load(xdr);
                 Assert.AreEqual(json, jv.ToString());
             }
         }
@@ -161,7 +161,7 @@
             Assert.AreEqual(Convert.ToDouble(AnyInstance.AnyInt, CultureInfo.InvariantCulture), dblValue);
 
             Assert.IsFalse(target.TryReadAs(typeof(Guid), out value), "TryReadAs should have failed to read a double as a Guid");
-            Assert.IsNull(value, "value from failed TryReadAs should be null!");
+            Assert.IsNull(value, "expected from failed TryReadAs should be null!");
         }
 
         [TestMethod]
@@ -250,6 +250,61 @@
             JsonValue jv = new JsonArray(123, null, jo);
             string expectedJson = "[123,null,{\"first\":1,\"second\":2,\"third\":{\"inner_one\":4,\"\":null,\"inner_3\":\"\"},\"fourth\":[\"Item1\",2,false],\"fifth\":null}]";
             Assert.AreEqual(expectedJson, jv.ToString());
+        }
+
+        [TestMethod]
+        public void CastTests()
+        {
+            int value = 10;
+            JsonValue target = new JsonPrimitive(value);
+
+            int v1 = JsonValue.CastValue<int>(target);
+            Assert.AreEqual<int>(value, v1);
+            v1 = (int)target;
+            Assert.AreEqual<int>(value, v1);
+
+            long v2 = JsonValue.CastValue<long>(target);
+            Assert.AreEqual<long>(value, v2);
+            v2 = (long)target;
+            Assert.AreEqual<long>(value, v2);
+
+            string s = JsonValue.CastValue<string>(target);
+            Assert.AreEqual<string>(value.ToString(), s);
+            s = (string)target;
+            Assert.AreEqual<string>(value.ToString(), s);
+
+            object obj = JsonValue.CastValue<object>(target);
+            Assert.AreEqual(target, obj);
+            obj = (object)target;
+            Assert.AreEqual(target, obj);
+
+            object nill = JsonValue.CastValue<object>(null);
+            Assert.IsNull(nill);
+            
+            dynamic dyn = target;
+            JsonValue defaultJv = dyn.IamDefault;
+            nill = JsonValue.CastValue<string>(defaultJv);
+            Assert.IsNull(nill);
+            nill = (string)defaultJv;
+            Assert.IsNull(nill);
+
+            obj = JsonValue.CastValue<object>(defaultJv);
+            Assert.AreSame(defaultJv, obj);
+            obj = (object)defaultJv;
+            Assert.AreSame(defaultJv, obj);
+
+            JsonValue jv = JsonValue.CastValue<JsonValue>(target);
+            Assert.AreEqual<JsonValue>(target, jv);
+
+            jv = JsonValue.CastValue<JsonValue>(defaultJv);
+            Assert.AreEqual<JsonValue>(defaultJv, jv);
+
+            jv = JsonValue.CastValue<JsonPrimitive>(target);
+            Assert.AreEqual<JsonValue>(target, jv);
+
+            ExceptionTestHelper.ExpectException<InvalidCastException>(delegate { int i = JsonValue.CastValue<int>(null); });
+            ExceptionTestHelper.ExpectException<InvalidCastException>(delegate { int i = JsonValue.CastValue<int>(defaultJv); });
+            ExceptionTestHelper.ExpectException<InvalidCastException>(delegate { int i = JsonValue.CastValue<char>(target); });
         }
 
         [TestMethod]
@@ -430,8 +485,8 @@
         [TestMethod()]
         public void DefaultConcatTest()
         {
-            JsonValue jv = JsonValue.CreateFrom(AnyInstance.AnyPerson);
-            dynamic target = JsonValue.CreateFrom(AnyInstance.AnyPerson);
+            JsonValue jv = JsonValueExtensions.CreateFrom(AnyInstance.AnyPerson);
+            dynamic target = JsonValueExtensions.CreateFrom(AnyInstance.AnyPerson);
             Person person = AnyInstance.AnyPerson;
 
             Assert.AreEqual(person.Address.City, target.Address.City.ReadAs<string>());
@@ -463,9 +518,9 @@
                 AnyInstance.DefaultJsonValue
             };
 
-            foreach (JsonValue v in values)
+            foreach (JsonValue value in values)
             {
-                ExceptionTestHelper.ExpectException<System.Runtime.Serialization.InvalidDataContractException>(delegate { JsonValue.CreateFrom(AnyInstance.DefaultJsonValue); });
+                Assert.AreSame(value, JsonValueExtensions.CreateFrom(value));
             }
         }
     }

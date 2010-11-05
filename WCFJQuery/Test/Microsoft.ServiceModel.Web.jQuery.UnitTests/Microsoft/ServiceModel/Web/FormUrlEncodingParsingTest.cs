@@ -4,6 +4,7 @@
     using System.Collections.Specialized;
     using System.Json;
     using System.Linq;
+    using Microsoft.ServiceModel.Web;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [TestClass]
@@ -13,7 +14,7 @@
         public void SimpleStringsTest()
         {
             string anyString = "abc";
-            JsonObject jv = JsonValueExtensions.ParseFormUrlEncoded(anyString);
+            JsonObject jv = FormUrlEncodedExtensions.ParseFormUrlEncoded(anyString);
             Assert.AreEqual(1, jv.Count);
             Assert.IsTrue(jv.ContainsKey(anyString));
             Assert.AreEqual(anyString, jv.Keys.First());
@@ -25,10 +26,10 @@
             ValidateFormsEncodingParsing("", "{}");
 
             string anyFormUrlEncoded = "a=1";
-            Assert.IsNotNull(JsonValueExtensions.ParseFormUrlEncoded(anyFormUrlEncoded));
+            Assert.IsNotNull(FormUrlEncodedExtensions.ParseFormUrlEncoded(anyFormUrlEncoded));
 
-            ExceptionTestHelper.ExpectException<ArgumentNullException>(() => JsonValueExtensions.ParseFormUrlEncoded((string)null));
-            ExceptionTestHelper.ExpectException<ArgumentNullException>(() => JsonValueExtensions.ParseFormUrlEncoded((NameValueCollection)null));
+            ExceptionTestHelper.ExpectException<ArgumentNullException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded((string)null));
+            ExceptionTestHelper.ExpectException<ArgumentNullException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded((NameValueCollection)null));
         }
 
         [TestMethod]
@@ -47,7 +48,7 @@
             ValidateFormsEncodingParsing("a=1&a=hello&a=333", "{\"a\":[\"1\",\"hello\",\"333\"]}");
 
             // Only valid in shallow serialization
-            ExceptionTestHelper.ExpectException<ArgumentException>(() => JsonValueExtensions.ParseFormUrlEncoded("a[z]=2&a[z]=3"));
+            ExceptionTestHelper.ExpectException<ArgumentException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded("a[z]=2&a[z]=3"));
         }
 
         [TestMethod]
@@ -87,31 +88,31 @@
         [TestMethod]
         public void InvalidObjectGraphsTest()
         {
-            ExceptionTestHelper.ExpectException<ArgumentException>(() => JsonValueExtensions.ParseFormUrlEncoded("a[b]=1&a=2"));
-            ExceptionTestHelper.ExpectException<ArgumentException>(() => JsonValueExtensions.ParseFormUrlEncoded("a[b]=1&a[b][]=2"));
-            ExceptionTestHelper.ExpectException<ArgumentException>(() => JsonValueExtensions.ParseFormUrlEncoded("a[x][]=1&a[x][0]=2"));
-            ExceptionTestHelper.ExpectException<ArgumentException>(() => JsonValueExtensions.ParseFormUrlEncoded("a[x][0]=1&a[x][]=2"));
-            ExceptionTestHelper.ExpectException<ArgumentException>(() => JsonValueExtensions.ParseFormUrlEncoded("a=2&a[b]=1"));
-            ExceptionTestHelper.ExpectException<ArgumentException>(() => JsonValueExtensions.ParseFormUrlEncoded("[]=1"));
-            ExceptionTestHelper.ExpectException<ArgumentException>(() => JsonValueExtensions.ParseFormUrlEncoded("a[][]=0"));
-            ExceptionTestHelper.ExpectException<ArgumentException>(() => JsonValueExtensions.ParseFormUrlEncoded("a[][x]=0"));
-            ExceptionTestHelper.ExpectException<ArgumentException>(() => JsonValueExtensions.ParseFormUrlEncoded("a&a=1"));
-            ExceptionTestHelper.ExpectException<ArgumentException>(() => JsonValueExtensions.ParseFormUrlEncoded("a=1&a"));
-            ExceptionTestHelper.ExpectException<ArgumentException>(() => JsonValueExtensions.ParseFormUrlEncoded("a&a[b]=1"));
-            ExceptionTestHelper.ExpectException<ArgumentException>(() => JsonValueExtensions.ParseFormUrlEncoded("a[]=1&a"));
+            ExceptionTestHelper.ExpectException<ArgumentException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded("a[b]=1&a=2"));
+            ExceptionTestHelper.ExpectException<ArgumentException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded("a[b]=1&a[b][]=2"));
+            ExceptionTestHelper.ExpectException<ArgumentException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded("a[x][]=1&a[x][0]=2"));
+            ExceptionTestHelper.ExpectException<ArgumentException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded("a[x][0]=1&a[x][]=2"));
+            ExceptionTestHelper.ExpectException<ArgumentException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded("a=2&a[b]=1"));
+            ExceptionTestHelper.ExpectException<ArgumentException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded("[]=1"));
+            ExceptionTestHelper.ExpectException<ArgumentException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded("a[][]=0"));
+            ExceptionTestHelper.ExpectException<ArgumentException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded("a[][x]=0"));
+            ExceptionTestHelper.ExpectException<ArgumentException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded("a&a=1"));
+            ExceptionTestHelper.ExpectException<ArgumentException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded("a=1&a"));
+            ExceptionTestHelper.ExpectException<ArgumentException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded("a&a[b]=1"));
+            ExceptionTestHelper.ExpectException<ArgumentException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded("a[]=1&a"));
         }
 
         [TestMethod]
         public void InvalidFormUrlEncodingTest()
         {
-            ExceptionTestHelper.ExpectException<ArgumentException>(() => JsonValueExtensions.ParseFormUrlEncoded("a[b=2"));
-            ExceptionTestHelper.ExpectException<ArgumentException>(() => JsonValueExtensions.ParseFormUrlEncoded("a[[b]=2"));
-            ExceptionTestHelper.ExpectException<ArgumentException>(() => JsonValueExtensions.ParseFormUrlEncoded("a[b]]=2"));
+            ExceptionTestHelper.ExpectException<ArgumentException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded("a[b=2"));
+            ExceptionTestHelper.ExpectException<ArgumentException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded("a[[b]=2"));
+            ExceptionTestHelper.ExpectException<ArgumentException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded("a[b]]=2"));
         }
 
         static void ValidateFormsEncodingParsing(string formUrlEncoded, string expectedJson)
         {
-            JsonValue jv = JsonValueExtensions.ParseFormUrlEncoded(formUrlEncoded);
+            JsonValue jv = FormUrlEncodedExtensions.ParseFormUrlEncoded(formUrlEncoded);
             Assert.IsNotNull(jv);
             Assert.AreEqual(expectedJson, jv.ToString());
         }

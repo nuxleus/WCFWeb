@@ -5,6 +5,7 @@
     using System.Collections.Generic;
     using System.Globalization;
     using System.Json;
+    using System.Runtime.Serialization.Json;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [TestClass]
@@ -131,8 +132,8 @@
         public void ReadAsComplexTypeTest()
         {
             JsonArray target = new JsonArray(AnyInstance.AnyInt, AnyInstance.AnyInt + 1, AnyInstance.AnyInt + 2);
-            int[] intArray1 = (int[]) target.ReadAs(typeof(int[]));
-            int[] intArray2 = target.ReadAs<int[]>();
+            int[] intArray1 = (int[]) target.ReadAsComplex(typeof(int[]));
+            int[] intArray2 = target.ReadAsComplex<int[]>();
 
             Assert.AreEqual(((JsonArray)target).Count, intArray1.Length);
             Assert.AreEqual(((JsonArray)target).Count, intArray2.Length); 

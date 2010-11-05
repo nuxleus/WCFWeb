@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Dynamic;
     using System.Json;
+    using System.Runtime.Serialization.Json;
     using Microsoft.CSharp.RuntimeBinder;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -126,11 +127,11 @@
             JsonValue jsonValue;
 
             Person person = Person.CreateSample();
-            dynamic jo = JsonValue.CreateFrom(person);
+            dynamic jo = JsonValueExtensions.CreateFrom(person);
 
             dynamic target = jo;
             Assert.AreEqual<int>(person.Age, target.Age.ReadAs<int>()); // JsonPrimitive
-            Assert.AreEqual<string>(person.Address.ToString(), target.Address.ReadAs<Address>().ToString()); // JsonObject
+            Assert.AreEqual<string>(person.Address.ToString(), ((JsonObject)target.Address).ReadAsComplex<Address>().ToString()); // JsonObject
 
             target = jo.Address.City;  // JsonPrimitive
             Assert.IsNotNull(target);
@@ -138,7 +139,8 @@
 
             target = jo.Friends;  // JsonArray
             Assert.IsNotNull(target);
-            Assert.AreEqual<int>(target.ReadAs<List<Person>>().Count, person.Friends.Count);
+            jsonValue = target as JsonValue;
+            Assert.AreEqual<int>(jsonValue.ReadAsComplex<List<Person>>().Count, person.Friends.Count);
 
             target = jo.Friends[1].Address.City;
             Assert.IsNotNull(target);
@@ -148,7 +150,8 @@
             Assert.IsNotNull(target);
             Assert.IsTrue(jo is JsonObject);
             Assert.IsFalse(target.TryReadAs<bool>(out boolValue));
-            Assert.IsFalse(target.TryReadAs<JsonValue>(out jsonValue));
+            Assert.IsTrue(target.TryReadAs<JsonValue>(out jsonValue));
+            Assert.AreSame(target, jsonValue);
 
             Assert.AreSame(jo.Address.NonExistent, AnyInstance.DefaultJsonValue);
             Assert.AreSame(jo.Friends[1000], AnyInstance.DefaultJsonValue);
@@ -160,8 +163,8 @@
         public void PropertyAccessTest()
         {
             Person p = AnyInstance.AnyPerson;
-            JsonObject jo = JsonValue.CreateFrom(p) as JsonObject;
-            JsonArray ja = JsonValue.CreateFrom(p.Friends) as JsonArray;
+            JsonObject jo = JsonValueExtensions.CreateFrom(p) as JsonObject;
+            JsonArray ja = JsonValueExtensions.CreateFrom(p.Friends) as JsonArray;
             JsonPrimitive jp = AnyInstance.AnyJsonPrimitive;
             JsonValue jv = AnyInstance.DefaultJsonValue;
 
@@ -251,7 +254,7 @@
         [TestMethod]
         public void CastingTests()
         {
-            dynamic dyn = JsonValue.CreateFrom(AnyInstance.AnyPerson) as JsonObject;
+            dynamic dyn = JsonValueExtensions.CreateFrom(AnyInstance.AnyPerson) as JsonObject;
             string city = dyn.Address.City;
 
             Assert.AreEqual<string>(AnyInstance.AnyPerson.Address.City, dyn.Address.City.ReadAs<string>());
@@ -324,7 +327,7 @@
             bool exceptionThrown = false;
             string retstr2, retstr1;
 
-            Console.WriteLine("Test info: value:[{0}], explicitCast type:[{1}]", value, typeof(T));
+            Console.WriteLine("Test info: expected:[{0}], explicitCast type:[{1}]", value, typeof(T));
 
             try
             {

@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="Common\AnyInstance.cs" />
     <Compile Include="System\Json\JsonDefaultTest.cs" />
+    <Compile Include="System\Json\DynamicOperatorsTests.cs" />
     <Compile Include="System\Json\JsonValueDynamicTest.cs" />
     <Compile Include="Common\ExceptionTestHelper.cs" />
     <Compile Include="System\Json\JsonTypeTest.cs" />

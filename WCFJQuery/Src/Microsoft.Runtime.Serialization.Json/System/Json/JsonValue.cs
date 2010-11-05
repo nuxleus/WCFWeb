@@ -4,14 +4,13 @@
 
 namespace System.Json
 {
+    using System;
     using System.Collections;
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Dynamic;
     using System.IO;
     using System.Linq.Expressions;
-    using System.Reflection;
-    using System.Runtime.CompilerServices;
     using System.Runtime.Serialization.Json;
     using System.Text;
     using System.Xml;
@@ -190,54 +189,12 @@ namespace System.Json
         }
 
         /// <summary>
-        /// Deserializes JSON from a XML reader which implements the
-        /// <a href="http://msdn.microsoft.com/en-us/library/bb924435.aspx">mapping between JSON and XML</a>.
-        /// </summary>
-        /// <param name="jsonReader">The <see cref="System.Xml.XmlDictionaryReader"/> which
-        /// exposes JSON as XML.</param>
-        /// <returns>The <see cref="System.Json.JsonValue"/> that represents the parsed
-        /// JSON/XML as a CLR type.</returns>
-        public static JsonValue Load(XmlDictionaryReader jsonReader)
-        {
-            return JXmlToJsonValueConverter.JXMLToJsonValue(jsonReader);
-        }
-
-        /// <summary>
-        /// Creates a <see cref="System.Json.JsonValue"/> object based on an arbitrary CLR object.
-        /// </summary>
-        /// <param name="value">The object to be converted to <see cref="System.Json.JsonValue"/>.</param>
-        /// <returns>The <see cref="System.Json.JsonValue"/> which represents the given object.</returns>
-        /// <remarks>The conversion is done through the <see cref="System.Runtime.Serialization.Json.DataContractJsonSerializer"/>;
-        /// the object is first serialized into JSON using the serializer, then parsed into a <see cref="System.Json.JsonValue"/>
-        /// object.</remarks>
-        public static JsonValue CreateFrom(object value)
-        {
-            if (value == null)
-            {
-                return null;
-            }
-
-            DataContractJsonSerializer dcjs = new DataContractJsonSerializer(value.GetType());
-            using (MemoryStream ms = new MemoryStream())
-            {
-                dcjs.WriteObject(ms, value);
-                ms.Position = 0;
-                return JsonValue.Load(ms);
-            }
-        }
-
-        /// <summary>
         /// Enables explicit casts from an instance of type <see cref="System.Json.JsonValue"/> to a <see cref="System.String"/> object.
         /// </summary>
         /// <param name="value">The instance of <see cref="System.Json.JsonValue"/> used to initialize the <see cref="System.String"/> object.</param>
         /// <returns>The <see cref="System.String"/> initialized with the <see cref="System.Json.JsonValue"/> value specified or null if value is null.</returns>
         public static explicit operator string(JsonValue value)
         {
-            if (value == null)
-            {
-                return null;
-            }
-
             return CastValue<string>(value);
         }
 
@@ -362,11 +319,6 @@ namespace System.Json
         /// <returns>The <see cref="System.Uri"/> initialized with the <see cref="System.Json.JsonValue"/> value specified or null if value is null.</returns>
         public static explicit operator Uri(JsonValue value)
         {
-            if (value == null)
-            {
-                return null;
-            }
-
             return CastValue<Uri>(value);
         }
 
@@ -605,7 +557,7 @@ namespace System.Json
         {
             return new JsonPrimitive(value);
         }
-
+        
         /// <summary>
         /// Performs a cast operation from a <see cref="JsonValue"/> instance into the specified type parameter./>
         /// </summary>
@@ -616,6 +568,11 @@ namespace System.Json
         [EditorBrowsable(EditorBrowsableState.Never)]
         public static T CastValue<T>(JsonValue value)
         {
+            if ((value != null && typeof(T).IsAssignableFrom(value.GetType())) || typeof(T) == typeof(object))
+            {
+                return (T)(object)value;
+            }
+
             if (value == null || value.JsonType == JsonType.Default)
             {
                 if (typeof(T).IsValueType)
@@ -770,28 +727,19 @@ namespace System.Json
             Justification = "This is the non-generic version of the method.")]
         public virtual bool TryReadAs(Type type, out object value)
         {
-            try
+            if (type == null)
             {
-                using (MemoryStream ms = new MemoryStream())
-                {
-                    this.Save(ms);
-                    ms.Position = 0;
-                    DataContractJsonSerializer dcjs = new DataContractJsonSerializer(type);
-                    value = dcjs.ReadObject(ms);
-                }
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new ArgumentNullException("type"));
+            }
 
+            if (type.IsAssignableFrom(this.GetType()) || type == typeof(object))
+            {
+                value = this;
                 return true;
             }
-            catch (Exception e)
-            {
-                if (DiagnosticUtility.IsFatal(e))
-                {
-                    throw;
-                }
 
-                value = null;
-                return false;
-            }
+            value = null;
+            return false;
         }
 
         /// <summary>
@@ -831,16 +779,6 @@ namespace System.Json
         }
 
         /// <summary>
-        /// Serializes this <see cref="System.Json.JsonValue"/> CLR type into a JSON/XML writer using the
-        /// <a href="http://msdn.microsoft.com/en-us/library/bb924435.aspx">mapping between JSON and XML</a>.
-        /// </summary>
-        /// <param name="jsonWriter">The JSON/XML writer used to serialize this instance.</param>
-        public void Save(XmlDictionaryWriter jsonWriter)
-        {
-            JXmlToJsonValueConverter.JsonValueToJXML(jsonWriter, this);
-        }
-
-        /// <summary>
         /// Saves (serializes) this JSON CLR type into text-based JSON.
         /// </summary>
         /// <returns>A <see cref="System.String"/>, which contains text-based JSON.</returns>
@@ -870,7 +808,7 @@ namespace System.Json
         {
             return false;
         }
-
+        
         /// <summary>
         /// Returns the value returned by the safe string indexer for this instance.
         /// </summary>
@@ -898,7 +836,7 @@ namespace System.Json
         {
             return this.ValueOrDefault(index);
         }
-
+        
         /// <summary>
         /// Sets the value and returns it.
         /// </summary>
@@ -1004,7 +942,7 @@ namespace System.Json
             Justification = "Cannot make this class sealed, it need to have subclasses. But its subclasses are sealed themselves.")]
         DynamicMetaObject IDynamicMetaObjectProvider.GetMetaObject(Expression parameter)
         {
-            return new DynamicJsonValueMetaObject(parameter, this);
+            return new JsonValueDynamicMetaObject(parameter, this);
         }
 
         internal static JsonValue ResolveObject(object value)
@@ -1029,6 +967,26 @@ namespace System.Json
             }
 
             throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new ArgumentException(DiagnosticUtility.GetString(SR.TypeNotSupported, "value")));
+        }
+
+        internal static bool IsSupportedExplicitCastType(Type type)
+        {
+            return
+                type == typeof(bool) || type == typeof(byte) || type == typeof(char) ||
+                type == typeof(DateTime) || type == typeof(DateTimeOffset) || type == typeof(decimal) ||
+                type == typeof(double) || type == typeof(float) || type == typeof(Guid) ||
+                type == typeof(int) || type == typeof(long) || type == typeof(sbyte) ||
+                type == typeof(short) || type == typeof(string) || type == typeof(uint) ||
+                type == typeof(ulong) || type == typeof(Uri) || type == typeof(ushort);
+        }
+
+        /// <summary>
+        /// Returns the value this object wraps (if any).
+        /// </summary>
+        /// <returns>The value wrapped by this instance or null if none.</returns>
+        internal virtual object Read()
+        {
+            return null;
         }
 
         internal virtual void SaveCore(XmlDictionaryWriter jsonWriter)
@@ -1158,159 +1116,6 @@ namespace System.Json
         private static bool IsJsonCollection(JsonValue value)
         {
             return value is IList<JsonValue> || value is IDictionary<string, JsonValue>;
-        }
-
-        private static bool IsSupportedExplicitCastType(Type type)
-        {
-            return
-                type == typeof(bool) || type == typeof(byte) || type == typeof(char) ||
-                type == typeof(DateTime) || type == typeof(DateTimeOffset) || type == typeof(decimal) ||
-                type == typeof(double) || type == typeof(float) || type == typeof(Guid) ||
-                type == typeof(int) || type == typeof(long) || type == typeof(sbyte) ||
-                type == typeof(short) || type == typeof(string) || type == typeof(uint) ||
-                type == typeof(ulong) || type == typeof(Uri) || type == typeof(ushort);
-        }
-
-        private class DynamicJsonValueMetaObject : DynamicMetaObject
-        {
-            private static readonly MethodInfo GetValueByIndexMethodInfo = typeof(JsonValue).GetMethod("GetValue", new Type[] { typeof(int) });
-            private static readonly MethodInfo GetValueByKeyMethodInfo = typeof(JsonValue).GetMethod("GetValue", new Type[] { typeof(string) });
-            private static readonly MethodInfo SetValueByIndexMethodInfo = typeof(JsonValue).GetMethod("SetValue", new Type[] { typeof(int), typeof(object) });
-            private static readonly MethodInfo SetValueByKeyMethodInfo = typeof(JsonValue).GetMethod("SetValue", new Type[] { typeof(string), typeof(object) });
-            private static readonly MethodInfo CastValueMethodInfo = typeof(JsonValue).GetMethod("CastValue", new Type[] { typeof(JsonValue) });
-
-            internal DynamicJsonValueMetaObject(System.Linq.Expressions.Expression parameter, JsonValue value)
-                : base(parameter, BindingRestrictions.Empty, value)
-            {
-            }
-
-            private BindingRestrictions DefaultRestrictions
-            {
-                get { return BindingRestrictions.GetTypeRestriction(this.Expression, this.LimitType); }
-            }
-            
-            [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0",
-                Justification = "Call to DiagnosticUtility validates the parameter.")]
-            public override DynamicMetaObject BindConvert(ConvertBinder binder)
-            {
-                DiagnosticUtility.ExceptionUtility.ThrowOnNull(binder, "binder");
-
-                Expression expression = this.Expression;
-
-                // instance type to cast from is expected to be JsonValue (safe check).
-                if (typeof(JsonValue).IsAssignableFrom(this.LimitType) && this.Value != null)
-                {
-                    bool implicitCastSupported = 
-                        binder.Type.IsAssignableFrom(this.LimitType) ||
-                        binder.Type == typeof(IEnumerable<KeyValuePair<string, JsonValue>>) ||
-                        binder.Type == typeof(IDynamicMetaObjectProvider) ||
-                        binder.Type == typeof(object);
-
-                    if (!implicitCastSupported)
-                    {
-                        if (JsonValue.IsSupportedExplicitCastType(binder.Type))
-                        {
-                            Expression instance = Expression.Convert(this.Expression, this.LimitType);
-                            expression = Expression.Call(CastValueMethodInfo.MakeGenericMethod(binder.Type), new Expression[] { instance });
-                        }
-                        else
-                        {
-                            string exceptionMessage = DiagnosticUtility.GetString(SR.CannotCastJsonValue, this.LimitType.FullName, binder.Type.FullName);
-                            expression = Expression.Throw(Expression.Constant(new InvalidCastException(exceptionMessage)), typeof(object));
-                        }
-                    }
-                }
-
-                expression = Expression.Convert(expression, binder.Type);
-
-                return new DynamicMetaObject(expression, this.DefaultRestrictions);
-            }
-
-            [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0",
-                Justification = "Call to DiagnosticUtility validates the parameter.")]
-            [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "1",
-                Justification = "Call to DiagnosticUtility validates the parameter.")]
-            public override DynamicMetaObject BindGetIndex(GetIndexBinder binder, DynamicMetaObject[] indexes)
-            {
-                DiagnosticUtility.ExceptionUtility.ThrowOnNull(binder, "binder");
-                DiagnosticUtility.ExceptionUtility.ThrowOnNull(indexes, "indexes");
-            
-                if ((indexes[0].LimitType != typeof(int) && indexes[0].LimitType != typeof(string)) || indexes.Length != 1)
-                {
-                    return new DynamicMetaObject(Expression.Throw(Expression.Constant(new ArgumentException(SR.IndexTypeNotSupported)), typeof(object)), this.DefaultRestrictions);
-                }
-
-                MethodInfo methodInfo = indexes[0].LimitType == typeof(int) ? GetValueByIndexMethodInfo : GetValueByKeyMethodInfo;
-                Expression[] args = new Expression[] { Expression.Convert(indexes[0].Expression, indexes[0].LimitType) };
-
-                return this.GetMethodMetaObject(methodInfo, args);
-            }
-
-            [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0",
-                Justification = "Call to DiagnosticUtility validates the parameter.")]
-            [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "1",
-                Justification = "Call to DiagnosticUtility validates the parameter.")]
-            [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "2",
-                Justification = "Call to DiagnosticUtility validates the parameter.")]
-            public override DynamicMetaObject BindSetIndex(SetIndexBinder binder, DynamicMetaObject[] indexes, DynamicMetaObject value)
-            {
-                DiagnosticUtility.ExceptionUtility.ThrowOnNull(binder, "binder");
-                DiagnosticUtility.ExceptionUtility.ThrowOnNull(indexes, "indexes");
-                DiagnosticUtility.ExceptionUtility.ThrowOnNull(value, "value");
-                
-                if ((indexes[0].LimitType != typeof(int) && indexes[0].LimitType != typeof(string)) || indexes.Length != 1 || !indexes[0].HasValue)
-                {
-                    return new DynamicMetaObject(Expression.Throw(Expression.Constant(new ArgumentException(SR.IndexTypeNotSupported)), typeof(object)), this.DefaultRestrictions);
-                }
-
-                MethodInfo methodInfo = indexes[0].LimitType == typeof(int) ? SetValueByIndexMethodInfo : SetValueByKeyMethodInfo;
-                Expression[] args = new Expression[] { Expression.Convert(indexes[0].Expression, indexes[0].LimitType), Expression.Convert(value.Expression, typeof(object)) };
-
-                return this.GetMethodMetaObject(methodInfo, args);
-            }
-
-            [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0",
-                Justification = "Call to DiagnosticUtility validates the parameter.")]
-            public override DynamicMetaObject BindGetMember(GetMemberBinder binder)
-            {
-                DiagnosticUtility.ExceptionUtility.ThrowOnNull(binder, "binder");
-
-                PropertyInfo propInfo = this.LimitType.GetProperty(binder.Name, BindingFlags.Instance | BindingFlags.Public);
-
-                if (propInfo != null)
-                {
-                    return base.BindGetMember(binder);
-                }
-
-                Expression[] args = new Expression[] { Expression.Constant(binder.Name) };
-
-                return this.GetMethodMetaObject(GetValueByKeyMethodInfo, args);
-            }
-
-            [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0",
-                Justification = "Call to DiagnosticUtility validates the parameter.")]
-            [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "1",
-                Justification = "Call to DiagnosticUtility validates the parameter.")]
-            public override DynamicMetaObject BindSetMember(SetMemberBinder binder, DynamicMetaObject value)
-            {
-                DiagnosticUtility.ExceptionUtility.ThrowOnNull(binder, "binder");
-                DiagnosticUtility.ExceptionUtility.ThrowOnNull(value, "value");
-                
-                Expression[] args = new Expression[] { Expression.Constant(binder.Name), Expression.Convert(value.Expression, typeof(object)) };
-
-                return this.GetMethodMetaObject(SetValueByKeyMethodInfo, args);
-            }
-
-            private DynamicMetaObject GetMethodMetaObject(MethodInfo methodInfo, Expression[] args)
-            {
-                Expression instance = Expression.Convert(this.Expression, this.LimitType);
-                Expression methodCall = Expression.Call(instance, methodInfo, args);
-                BindingRestrictions restrictions = this.DefaultRestrictions;
-
-                DynamicMetaObject metaObj = new DynamicMetaObject(methodCall, restrictions);
-
-                return metaObj;
-            }
         }
     }
 }

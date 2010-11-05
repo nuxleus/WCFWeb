@@ -5,10 +5,10 @@
 namespace Microsoft.ServiceModel.Web
 {
     using System;
-    using System.Collections.Generic;
     using System.IO;
     using System.Json;
     using System.Linq;
+    using System.Runtime.Serialization.Json;
     using System.ServiceModel.Channels;
     using System.ServiceModel.Description;
     using System.ServiceModel.Dispatcher;
@@ -89,7 +89,7 @@ namespace Microsoft.ServiceModel.Web
                     }
                 }
 
-                jsonValue = JsonValueExtensions.ParseFormUrlEncoded(formData, this.readerQuotas.MaxDepth);
+                jsonValue = FormUrlEncodedExtensions.ParseFormUrlEncoded(formData, this.readerQuotas.MaxDepth);
             }
 
             UriTemplateMatch match = WebOperationContext.Current.IncomingRequest.UriTemplateMatch;
@@ -152,8 +152,10 @@ namespace Microsoft.ServiceModel.Web
 
         private static JsonValue DeserializeFromJXML(Message message)
         {
-            XmlDictionaryReader bodyReader = message.GetReaderAtBodyContents();
-            return JsonValue.Load(bodyReader);
+            using (XmlDictionaryReader bodyReader = message.GetReaderAtBodyContents())
+            {
+                return JsonValueExtensions.Load(bodyReader);
+            }
         }
 
         private static string CharsetFromEncoding(WebMessageEncodingBindingElement webEncoding)

@@ -61,8 +61,7 @@
     <Compile Include="Microsoft\ServiceModel\Configuration\WebConfigurationStrings.cs" />
     <Compile Include="Microsoft\ServiceModel\Configuration\WebHttpElement3.cs" />
     <Compile Include="Microsoft\ServiceModel\Web\DiagnosticUtility.cs" />
-    <Compile Include="Microsoft\ServiceModel\Web\FormUrlEncodedHelper.cs" />
-    <Compile Include="Microsoft\ServiceModel\Web\JsonValueExtensions.cs" />
+    <Compile Include="Microsoft\ServiceModel\Web\FormUrlEncodedExtensions.cs" />
     <Compile Include="Microsoft\ServiceModel\Web\WebHttpBehavior3.cs" />
     <Compile Include="Microsoft\ServiceModel\Web\JsonValueFormatter.cs" />
     <Compile Include="Microsoft\ServiceModel\Web\StreamMessageHelper.cs" />

@@ -7,6 +7,7 @@ namespace Microsoft.ServiceModel.Web
     using System;
     using System.Json;
     using System.Net;
+    using System.Runtime.Serialization.Json;
     using System.ServiceModel;
     using System.ServiceModel.Channels;
     using System.Xml;

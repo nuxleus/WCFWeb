@@ -79,15 +79,6 @@ namespace System.Json {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Expected either to receive JSON in the message body or the content-type to be application/x-www-form-urlencoded..
-        /// </summary>
-        internal static string ExpectUrlEncodedOrJson {
-            get {
-                return ResourceManager.GetString("ExpectUrlEncodedOrJson", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The input source is not correctly formatted..
         /// </summary>
         internal static string IncorrectJsonFormat {
@@ -151,15 +142,6 @@ namespace System.Json {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid byte encoding..
-        /// </summary>
-        internal static string JsonInvalidBytes {
-            get {
-                return ResourceManager.GetString("JsonInvalidBytes", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to An empty string cannot be parsed as JSON..
         /// </summary>
         internal static string JsonStringCannotBeEmpty {
@@ -196,6 +178,24 @@ namespace System.Json {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Operation &apos;{0}&apos; cannot be applied on operands of type &apos;{1}&apos; and &apos;{2}&apos;..
+        /// </summary>
+        internal static string OperatorNotAllowedOnOperands {
+            get {
+                return ResourceManager.GetString("OperatorNotAllowedOnOperands", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Operation &apos;{0}&apos; is not defined for JsonValue instances of JsonType &apos;{1}&apos;..
+        /// </summary>
+        internal static string OperatorNotDefinedForJsonType {
+            get {
+                return ResourceManager.GetString("OperatorNotDefinedForJsonType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot cast JsonPrimitive value &apos;{0}&apos; as &apos;{1}&apos;. The value is either too large or too small for the specified CLR type..
         /// </summary>
         internal static string OverflowReadAs {
@@ -210,15 +210,6 @@ namespace System.Json {
         internal static string TypeNotSupported {
             get {
                 return ResourceManager.GetString("TypeNotSupported", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Objects of type &apos;{0}&apos; cannot be converted to JSON primitives..
-        /// </summary>
-        internal static string TypeNotSupportedOnJsonPrimitive {
-            get {
-                return ResourceManager.GetString("TypeNotSupportedOnJsonPrimitive", resourceCulture);
             }
         }
         
