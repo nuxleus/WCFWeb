@@ -25,6 +25,8 @@ namespace System.Json
     {
         private static object lockKey = new object();
         private static JsonValue defaultInstance;
+        private int changingListenersCount = 0;
+        private int changedListenersCount = 0;
 
         internal JsonValue()
         {
@@ -43,7 +45,20 @@ namespace System.Json
         /// receiving the event; it is even valid to modify the same tree provided the modifications do not affect the
         /// specific nodes on which the event was raised. However, if you modify the area of the tree that contains the
         /// node receiving the event, the events that you receive and the impact to the tree are undefined.</p></remarks>
-        public virtual event EventHandler<JsonValueChangeEventArgs> Changing;
+        public event EventHandler<JsonValueChangeEventArgs> Changing
+        {
+            add
+            {
+                this.changingListenersCount++;
+                this.OnChanging += value;
+            }
+
+            remove
+            {
+                this.changingListenersCount--;
+                this.OnChanging -= value;
+            }
+        }
 
         /// <summary>
         /// Raised when this <see cref="System.Json.JsonValue"/> or any of its members have changed.
@@ -58,7 +73,24 @@ namespace System.Json
         /// receiving the event; it is even valid to modify the same tree provided the modifications do not affect the
         /// specific nodes on which the event was raised. However, if you modify the area of the tree that contains the
         /// node receiving the event, the events that you receive and the impact to the tree are undefined.</p></remarks>
-        public virtual event EventHandler<JsonValueChangeEventArgs> Changed;
+        public event EventHandler<JsonValueChangeEventArgs> Changed
+        {
+            add
+            {
+                this.changedListenersCount++;
+                this.OnChanged += value;
+            }
+
+            remove
+            {
+                this.changedListenersCount--;
+                this.OnChanged -= value;
+            }
+        }
+
+        private event EventHandler<JsonValueChangeEventArgs> OnChanging;
+
+        private event EventHandler<JsonValueChangeEventArgs> OnChanged;
 
         /// <summary>
         /// Gets the JSON CLR type represented by this instance.
@@ -77,6 +109,22 @@ namespace System.Json
             {
                 return 0;
             }
+        }
+
+        /// <summary>
+        /// Gets the number of listeners to the <see cref="Changing"/> event for this instance.
+        /// </summary>
+        protected int ChangingListenersCount
+        {
+            get { return this.changingListenersCount; }
+        }
+
+        /// <summary>
+        /// Gets the number of listeners to the <see cref="Changed"/> event for this instance.
+        /// </summary>
+        protected int ChangedListenersCount
+        {
+            get { return this.changedListenersCount; }
         }
 
         private static JsonValue DefaultInstance
@@ -1104,7 +1152,7 @@ namespace System.Json
             Justification = "This is not externally visible, since the constructor for this class is internal (cannot be directly derived) and all its subclasses are sealed.")]
         protected void RaiseChangingEvent(object sender, JsonValueChangeEventArgs eventArgs)
         {
-            EventHandler<JsonValueChangeEventArgs> changing = this.Changing;
+            EventHandler<JsonValueChangeEventArgs> changing = this.OnChanging;
             if (changing != null)
             {
                 changing(sender, eventArgs);
@@ -1121,7 +1169,7 @@ namespace System.Json
             Justification = "This is not externally visible, since the constructor for this class is internal (cannot be directly derived) and all its subclasses are sealed.")]
         protected void RaiseChangedEvent(object sender, JsonValueChangeEventArgs eventArgs)
         {
-            EventHandler<JsonValueChangeEventArgs> changed = this.Changed;
+            EventHandler<JsonValueChangeEventArgs> changed = this.OnChanged;
             if (changed != null)
             {
                 changed(sender, eventArgs);

@@ -645,11 +645,7 @@
             TestEvents(
                 target,
                 obj => ((JsonArray)obj[key1]).Add(5),
-                new List<Tuple<bool, JsonValue, JsonValueChangeEventArgs>>
-                {
-                    new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(true, child, new JsonValueChangeEventArgs(5, JsonValueChange.Add, 2)),
-                    new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(false, child, new JsonValueChangeEventArgs(5, JsonValueChange.Add, 2)),
-                });
+                new List<Tuple<bool, JsonValue, JsonValueChangeEventArgs>>());
 
             target = new JsonObject();
             child = new JsonArray(1, 2);
@@ -664,9 +660,47 @@
                 {
                     new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(true, target, new JsonValueChangeEventArgs(child, JsonValueChange.Add, key1)),
                     new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(false, target, new JsonValueChangeEventArgs(child, JsonValueChange.Add, key1)),
-                    new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(true, child, new JsonValueChangeEventArgs(5, JsonValueChange.Add, 2)),
-                    new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(false, child, new JsonValueChangeEventArgs(5, JsonValueChange.Add, 2)),
                 });
+        }
+
+        [TestMethod]
+        public void MultipleListenersTest()
+        {
+            const string key1 = "first";
+            const string key2 = "second";
+            const string key3 = "third";
+
+            for (int changingListeners = 0; changingListeners <= 2; changingListeners++)
+            {
+                for (int changedListeners = 0; changedListeners <= 2; changedListeners++)
+                {
+                    JsonArrayTest.MultipleListenersTest<JsonObject>(
+                        () => new JsonObject { { key1, 1 }, { key2, 2 } },
+                        delegate(JsonObject obj)
+                        {
+                            obj[key2] = "hello";
+                            obj.Remove(key1);
+                            obj.Add(key3, "world");
+                            obj.Clear();
+                        },
+                        new List<JsonValueChangeEventArgs>
+                        {
+                            new JsonValueChangeEventArgs("hello", JsonValueChange.Replace, key2),
+                            new JsonValueChangeEventArgs(1, JsonValueChange.Remove, key1),
+                            new JsonValueChangeEventArgs("world", JsonValueChange.Add, key3),
+                            new JsonValueChangeEventArgs(null, JsonValueChange.Clear, null),
+                        },
+                        new List<JsonValueChangeEventArgs>
+                        {
+                            new JsonValueChangeEventArgs(2, JsonValueChange.Replace, key2),
+                            new JsonValueChangeEventArgs(1, JsonValueChange.Remove, key1),
+                            new JsonValueChangeEventArgs("world", JsonValueChange.Add, key3),
+                            new JsonValueChangeEventArgs(null, JsonValueChange.Clear, null),
+                        },
+                        changingListeners,
+                        changedListeners);
+                }
+            }
         }
 
         [TestMethod]

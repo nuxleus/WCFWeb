@@ -5,6 +5,7 @@
     using System.Collections.Generic;
     using System.Globalization;
     using System.Json;
+    using System.Linq;
     using System.Runtime.Serialization.Json;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -414,11 +415,7 @@
             TestEvents(
                 target,
                 arr => ((JsonArray)arr[1]).Add(5),
-                new List<Tuple<bool, JsonValue, JsonValueChangeEventArgs>>
-                {
-                    new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(true, child, new JsonValueChangeEventArgs(5, JsonValueChange.Add, 2)),
-                    new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(false, child, new JsonValueChangeEventArgs(5, JsonValueChange.Add, 2)),
-                });
+                new List<Tuple<bool, JsonValue, JsonValueChangeEventArgs>>());
 
             target = new JsonArray();
             child = new JsonArray(1, 2);
@@ -432,9 +429,43 @@
                 {
                     new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(true, target, new JsonValueChangeEventArgs(child, JsonValueChange.Add, 0)),
                     new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(false, target, new JsonValueChangeEventArgs(child, JsonValueChange.Add, 0)),
-                    new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(true, child, new JsonValueChangeEventArgs(5, JsonValueChange.Add, 2)),
-                    new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(false, child, new JsonValueChangeEventArgs(5, JsonValueChange.Add, 2)),
                 });
+        }
+
+        [TestMethod]
+        public void MultipleListenersTest()
+        {
+            for (int changingListeners = 0; changingListeners <= 2; changingListeners++)
+            {
+                for (int changedListeners = 0; changedListeners <= 2; changedListeners++)
+                {
+                    MultipleListenersTest<JsonArray>(
+                        () => new JsonArray(1, 2),
+                        delegate(JsonArray arr)
+                        {
+                            arr[1] = "hello";
+                            arr.RemoveAt(0);
+                            arr.Add("world");
+                            arr.Clear();
+                        },
+                        new List<JsonValueChangeEventArgs>
+                        {
+                            new JsonValueChangeEventArgs("hello", JsonValueChange.Replace, 1),
+                            new JsonValueChangeEventArgs(1, JsonValueChange.Remove, 0),
+                            new JsonValueChangeEventArgs("world", JsonValueChange.Add, 1),
+                            new JsonValueChangeEventArgs(null, JsonValueChange.Clear, 0),
+                        },
+                        new List<JsonValueChangeEventArgs>
+                        {
+                            new JsonValueChangeEventArgs(2, JsonValueChange.Replace, 1),
+                            new JsonValueChangeEventArgs(1, JsonValueChange.Remove, 0),
+                            new JsonValueChangeEventArgs("world", JsonValueChange.Add, 1),
+                            new JsonValueChangeEventArgs(null, JsonValueChange.Clear, 0),
+                        },
+                        changingListeners,
+                        changedListeners);
+                }
+            }
         }
 
         [TestMethod]
@@ -495,6 +526,58 @@
                 string expectedChild = expectedEventArgs.Child == null ? "null" : expectedEventArgs.Child.ToString();
                 string actualChild = actualEventArgs.Child == null ? "null" : actualEventArgs.Child.ToString();
                 Assert.AreEqual(expectedChild, actualChild, string.Format("JVChangeEventArgs.Child is different for event {0}: expected {1}, actual {2}", i, expectedChild, actualChild));
+            }
+        }
+
+        internal static void MultipleListenersTest<JsonValueType>(
+            Func<JsonValueType> createTarget,
+            Action<JsonValueType> actionToTriggerEvents,
+            List<JsonValueChangeEventArgs> expectedChangingEventArgs,
+            List<JsonValueChangeEventArgs> expectedChangedEventArgs,
+            int changingListeners,
+            int changedListeners) where JsonValueType : JsonValue
+        {
+            Console.WriteLine("Testing events on a {0} for {1} changING listeners and {2} changED listeners", typeof(JsonValueType).Name, changingListeners, changedListeners);
+            JsonValueType target = createTarget();
+            List<Tuple<bool, JsonValue, JsonValueChangeEventArgs>>[] actualChangingEvents = new List<Tuple<bool, JsonValue, JsonValueChangeEventArgs>>[changingListeners];
+            List<Tuple<bool, JsonValue, JsonValueChangeEventArgs>>[] actualChangedEvents = new List<Tuple<bool, JsonValue, JsonValueChangeEventArgs>>[changedListeners];
+            List<Tuple<bool, JsonValue, JsonValueChangeEventArgs>> expectedChangingEvents = new List<Tuple<bool, JsonValue, JsonValueChangeEventArgs>>(
+                expectedChangingEventArgs.Select((args) => new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(true, target, args)));
+            List<Tuple<bool, JsonValue, JsonValueChangeEventArgs>> expectedChangedEvents = new List<Tuple<bool, JsonValue, JsonValueChangeEventArgs>>(
+                expectedChangedEventArgs.Select((args) => new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(false, target, args)));
+
+            for (int i = 0; i < changingListeners; i++)
+            {
+                actualChangingEvents[i] = new List<Tuple<bool, JsonValue, JsonValueChangeEventArgs>>();
+                int index = i;
+                target.Changing += delegate(object sender, JsonValueChangeEventArgs e)
+                {
+                    actualChangingEvents[index].Add(new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(true, sender as JsonValue, e));
+                };
+            }
+
+            for (int i = 0; i < changedListeners; i++)
+            {
+                actualChangedEvents[i] = new List<Tuple<bool, JsonValue, JsonValueChangeEventArgs>>();
+                int index = i;
+                target.Changed += delegate(object sender, JsonValueChangeEventArgs e)
+                {
+                    actualChangedEvents[index].Add(new Tuple<bool, JsonValue, JsonValueChangeEventArgs>(false, sender as JsonValue, e));
+                };
+            }
+
+            actionToTriggerEvents(target);
+
+            for (int i = 0; i < changingListeners; i++)
+            {
+                Console.WriteLine("Validating Changing events for listener {0}", i);
+                ValidateExpectedEvents(expectedChangingEvents, actualChangingEvents[i]);
+            }
+
+            for (int i = 0; i < changedListeners; i++)
+            {
+                Console.WriteLine("Validating Changed events for listener {0}", i);
+                ValidateExpectedEvents(expectedChangedEvents, actualChangedEvents[i]);
             }
         }
 
