@@ -2,12 +2,12 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>.
 
-namespace System.Runtime.Serialization
+namespace System.Json
 {
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
-    internal partial class SR
+    internal static class SG
     {
         public static string GetString(string format, params object[] args)
         {
