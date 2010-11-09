@@ -4,6 +4,8 @@
 
 namespace System.Json
 {
+    using System;
+
     /// <summary>
     /// Provide data for the <see cref="System.Json.JsonValue.Changing"/> and <see cref="System.Json.JsonValue.Changed"/> events.
     /// </summary>
@@ -45,7 +47,10 @@ namespace System.Json
         {
             if (change != JsonValueChange.Clear)
             {
-                DiagnosticUtility.ExceptionUtility.ThrowOnNull(key, "key");
+                if (key == null)
+                {
+                    throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("key");
+                }
             }
 
             this.child = child;

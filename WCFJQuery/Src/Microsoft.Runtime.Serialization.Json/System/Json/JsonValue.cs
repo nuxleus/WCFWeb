@@ -11,6 +11,7 @@ namespace System.Json
     using System.Dynamic;
     using System.IO;
     using System.Linq.Expressions;
+    using System.Runtime.Serialization;
     using System.Runtime.Serialization.Json;
     using System.Text;
     using System.Xml;
@@ -20,6 +21,7 @@ namespace System.Json
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix",
         Justification = "JsonValue is by definition either a collection or a single object.")]
+    [Serializable]
     public class JsonValue : IEnumerable<KeyValuePair<string, JsonValue>>, IDynamicMetaObjectProvider
     {
         private static object lockKey = new object();
@@ -109,12 +111,12 @@ namespace System.Json
         {
             get
             {
-                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(DiagnosticUtility.GetString(SR.UnsupportedOnThisJsonValue, this.GetType())));
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.GetString(SR.UnsupportedOnThisJsonValue, this.GetType())));
             }
 
             set
             {
-                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(DiagnosticUtility.GetString(SR.UnsupportedOnThisJsonValue, this.GetType())));
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.GetString(SR.UnsupportedOnThisJsonValue, this.GetType())));
             }
         }
 
@@ -130,12 +132,12 @@ namespace System.Json
         {
             get
             {
-                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(DiagnosticUtility.GetString(SR.UnsupportedOnThisJsonValue, this.GetType())));
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.GetString(SR.UnsupportedOnThisJsonValue, this.GetType())));
             }
 
             set
             {
-                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(DiagnosticUtility.GetString(SR.UnsupportedOnThisJsonValue, this.GetType())));
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.GetString(SR.UnsupportedOnThisJsonValue, this.GetType())));
             }
         }
 
@@ -165,11 +167,13 @@ namespace System.Json
         /// <remarks>The result will be an instance of either <see cref="System.Json.JsonArray"/>,
         /// <see cref="System.Json.JsonObject"/> or <see cref="System.Json.JsonPrimitive"/>,
         /// depending on the text-based JSON supplied to the method.</remarks>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0",
-            Justification = "Call to DiagnosticUtility validates the parameter.")]
         public static JsonValue Load(TextReader textReader)
         {
-            DiagnosticUtility.ExceptionUtility.ThrowOnNull(textReader, "textReader");
+            if (textReader == null)
+            {
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("textReader");
+            }
+
             return JsonValue.Parse(textReader.ReadToEnd());
         }
 
@@ -577,7 +581,7 @@ namespace System.Json
             {
                 if (typeof(T).IsValueType)
                 {
-                    throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidCastException(DiagnosticUtility.GetString(SR.InvalidCastNonNullable, typeof(T).FullName)));
+                    throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidCastException(SR.GetString(SR.InvalidCastNonNullable, typeof(T).FullName)));
                 }
                 else
                 {
@@ -593,7 +597,7 @@ namespace System.Json
             {
                 if (ex is FormatException || ex is NotSupportedException || ex is InvalidCastException)
                 {
-                    throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidCastException(DiagnosticUtility.GetString(SR.CannotCastJsonValue, value.GetType().FullName, typeof(T).FullName), ex));
+                    throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidCastException(SR.GetString(SR.CannotCastJsonValue, value.GetType().FullName, typeof(T).FullName), ex));
                 }
 
                 throw;
@@ -618,7 +622,7 @@ namespace System.Json
         /// <returns>An <see cref="System.Collections.IEnumerator"/> which iterates through the values in this object.</returns>
         /// <remarks>The enumerator returned by this class is empty; subclasses will override this method to return appropriate enumerators for themselves.</remarks>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1033",
-            Justification = "Cannot make this class sealed, there's already a GetEnumerator method.")]
+             Justification = "Cannot make this class sealed, there's already a GetEnumerator method.")]
         IEnumerator IEnumerable.GetEnumerator()
         {
             return ((IEnumerable<KeyValuePair<string, JsonValue>>)this).GetEnumerator();
@@ -637,8 +641,7 @@ namespace System.Json
         /// Attempts to convert this <see cref="System.Json.JsonValue"/> instance into the type T.
         /// </summary>
         /// <typeparam name="T">The type to which the conversion is being performed.</typeparam>
-        /// <param name="valueOfT">An instance of T initialized with this instance, or the default
-        /// value of T, if the conversion cannot be performed.</param>
+        /// <param name="valueOfT">An instance of T initialized with this instance, or the default value of T if the conversion cannot be performed.</param>
         /// <returns>true if this <see cref="System.Json.JsonValue"/> instance can be read as type T; otherwise, false.</returns>
         public bool TryReadAs<T>(out T valueOfT)
         {
@@ -657,10 +660,8 @@ namespace System.Json
         /// Attempts to convert this <see cref="System.Json.JsonValue"/> instance into the type T.
         /// </summary>
         /// <typeparam name="T">The type to which the conversion is being performed.</typeparam>
-        /// <returns>An instance of T initialized with the <see cref="System.Json.JsonValue"/> value
-        /// specified if the conversion.</returns>
-        /// <exception cref="System.NotSupportedException">If this <see cref="System.Json.JsonValue"/> value cannot be
-        /// converted into the type T.</exception>
+        /// <returns>An instance of T initialized with the value from the conversion of this instance.</returns>
+        /// <exception cref="System.NotSupportedException">If this <see cref="System.Json.JsonValue"/> value cannot be converted into the type T.</exception>
         public T ReadAs<T>()
         {
             return (T)this.ReadAs(typeof(T));
@@ -670,9 +671,8 @@ namespace System.Json
         /// Attempts to convert this <see cref="System.Json.JsonValue"/> instance into the type T.
         /// </summary>
         /// <typeparam name="T">The type to which the conversion is being performed.</typeparam>
-        /// <param name="fallback">The fallback value to be returned, if the conversion cannot be made.</param>
-        /// <returns>An instance of T initialized with the <see cref="System.Json.JsonValue"/> value
-        /// specified if the conversion, or the fallback value, if the conversion cannot be made.</returns>
+        /// <param name="fallback">The fallback value to be returned if the conversion cannot be made.</param>
+        /// <returns>An instance of T initialized with the value from the conversion of this instance, or the specified fallback value if the conversion cannot be made.</returns>
         public T ReadAs<T>(T fallback)
         {
             return (T)this.ReadAs(typeof(T), fallback);
@@ -682,9 +682,8 @@ namespace System.Json
         /// Attempts to convert this <see cref="System.Json.JsonValue"/> instance to an instance of the specified type.
         /// </summary>
         /// <param name="type">The type to which the conversion is being performed.</param>
-        /// <param name="fallback">The fallback value to be returned, if the conversion cannot be made.</param>
-        /// <returns>An object instance initialized with the <see cref="System.Json.JsonValue"/> value
-        /// specified if the conversion, or the fallback value, if the conversion cannot be made.</returns>
+        /// <param name="fallback">The fallback value to be returned if the conversion cannot be made.</param>
+        /// <returns>An instance of the specified type initialized with the value from the conversion of this instance, or the specified fallback value if the conversion cannot be made.</returns>
         public object ReadAs(Type type, object fallback)
         {
             object result;
@@ -702,10 +701,8 @@ namespace System.Json
         /// Attempts to convert this <see cref="System.Json.JsonValue"/> instance into an instance of the specified type.
         /// </summary>
         /// <param name="type">The type to which the conversion is being performed.</param>
-        /// <returns>An object instance initialized with the <see cref="System.Json.JsonValue"/> value
-        /// specified if the conversion.</returns>
-        /// <exception cref="System.NotSupportedException">If this <see cref="System.Json.JsonValue"/> value cannot be
-        /// converted into the type T.</exception>
+        /// <returns>An instance of the specified type initialized with the value from the conversion of this instance.</returns>
+        /// <exception cref="System.NotSupportedException">If this <see cref="System.Json.JsonValue"/> value cannot be converted into the type T.</exception>
         public virtual object ReadAs(Type type)
         {
             object result;
@@ -748,13 +745,20 @@ namespace System.Json
         /// <param name="stream">Stream to which to write text-based JSON.</param>
         public void Save(Stream stream)
         {
-            DiagnosticUtility.ExceptionUtility.ThrowOnDefaultInstance(this);
-            DiagnosticUtility.ExceptionUtility.ThrowOnNull(stream, "stream");
+            if (this.JsonType == JsonType.Default)
+            {
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.GetString(SR.UseOfDefaultNotAllowed)));
+            }
+
+            if (stream == null)
+            {
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("stream");
+            }
 
             using (XmlDictionaryWriter jsonWriter = JsonReaderWriterFactory.CreateJsonWriter(stream, Encoding.UTF8, false))
             {
                 jsonWriter.WriteStartElement(JXmlToJsonValueConverter.RootElementName);
-                this.SaveCore(jsonWriter);
+                this.Save(jsonWriter);
                 jsonWriter.WriteEndElement();
             }
         }
@@ -763,12 +767,17 @@ namespace System.Json
         /// Serializes the <see cref="System.Json.JsonValue"/> CLR type into text-based JSON using a text writer.
         /// </summary>
         /// <param name="textWriter">The <see cref="System.IO.TextWriter"/> used to write text-based JSON.</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0",
-            Justification = "Call to DiagnosticUtility validates the parameter.")]
-        public virtual void Save(TextWriter textWriter)
+        public void Save(TextWriter textWriter)
         {
-            DiagnosticUtility.ExceptionUtility.ThrowOnDefaultInstance(this);
-            DiagnosticUtility.ExceptionUtility.ThrowOnNull(textWriter, "textWriter");
+            if (this.JsonType == JsonType.Default)
+            {
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.GetString(SR.UseOfDefaultNotAllowed)));
+            }
+
+            if (textWriter == null)
+            {
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("textWriter");
+            }
 
             using (MemoryStream ms = new MemoryStream())
             {
@@ -930,7 +939,7 @@ namespace System.Json
                     }
                     else
                     {
-                        throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new ArgumentException(SR.InvalidIndexType, "indexes"));
+                        throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgument("indexes", SR.GetString(SR.InvalidIndexType));
                     }
                 }
             }
@@ -966,7 +975,7 @@ namespace System.Json
                 return primitive;
             }
 
-            throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new ArgumentException(DiagnosticUtility.GetString(SR.TypeNotSupported, "value")));
+            throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgument("value", SR.GetString(SR.TypeNotSupported));
         }
 
         internal static bool IsSupportedExplicitCastType(Type type)
@@ -989,9 +998,12 @@ namespace System.Json
             return null;
         }
 
-        internal virtual void SaveCore(XmlDictionaryWriter jsonWriter)
+        internal virtual void Save(XmlDictionaryWriter jsonWriter)
         {
-            DiagnosticUtility.ExceptionUtility.ThrowOnNull(jsonWriter, "jsonWriter");
+            if (jsonWriter == null)
+            {
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("jsonWriter");
+            }
 
             Stack<JsonValue> objectStack = new Stack<JsonValue>();
             Stack<int> indexStack = new Stack<int>();
@@ -1026,7 +1038,7 @@ namespace System.Json
                         }
                         else
                         {
-                            nextValue.SaveCore(jsonWriter);
+                            nextValue.Save(jsonWriter);
                         }
 
                         currentIndex++;
@@ -1089,6 +1101,8 @@ namespace System.Json
         /// <param name="sender">The object which caused the event to be raised.</param>
         /// <param name="eventArgs">The arguments to the event.</param>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1030", Justification = "This is a helper function used to raise the event.")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2109",
+            Justification = "This is not externally visible, since the constructor for this class is internal (cannot be directly derived) and all its subclasses are sealed.")]
         protected void RaiseChangingEvent(object sender, JsonValueChangeEventArgs eventArgs)
         {
             EventHandler<JsonValueChangeEventArgs> changing = this.Changing;
@@ -1104,6 +1118,8 @@ namespace System.Json
         /// <param name="sender">The object which caused the event to be raised.</param>
         /// <param name="eventArgs">The arguments to the event.</param>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1030", Justification = "This is a helper function used to raise the event.")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2109",
+            Justification = "This is not externally visible, since the constructor for this class is internal (cannot be directly derived) and all its subclasses are sealed.")]
         protected void RaiseChangedEvent(object sender, JsonValueChangeEventArgs eventArgs)
         {
             EventHandler<JsonValueChangeEventArgs> changed = this.Changed;
@@ -1116,6 +1132,30 @@ namespace System.Json
         private static bool IsJsonCollection(JsonValue value)
         {
             return value is IList<JsonValue> || value is IDictionary<string, JsonValue>;
+        }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Event methods are called on this instance")]
+        private void OnSerializing()
+        {
+            throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new NotSupportedException());
+        }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Event methods are called on this instance")]
+        private void OnDeserializing()
+        {
+            throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new NotSupportedException());
+        }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Event methods are called on this instance")]
+        private void OnSerialized()
+        {
+            throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new NotSupportedException());
+        }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Event methods are called on this instance")]
+        private void OnDeserialized()
+        {
+            throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new NotSupportedException());
         }
     }
 }

@@ -9,6 +9,7 @@ namespace System.Json
     using System.Collections.Generic;
     using System.Collections.Specialized;
     using System.ComponentModel.DataAnnotations;
+    using System.Runtime.Serialization;
     using System.Web;
     using System.Xml;
 
@@ -24,11 +25,12 @@ namespace System.Json
         /// <param name="key">The key of the member to search.</param>
         /// <returns>This object, so that other validation operations can be chained.</returns>
         /// <exception cref="System.ComponentModel.DataAnnotations.ValidationException">If the validation failed.</exception>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0",
-            Justification = "Call to DiagnosticUtility validates the parameter.")]
         public static JsonObject ValidatePresence(this JsonObject value, string key)
         {
-            DiagnosticUtility.ExceptionUtility.ThrowOnNull(value, "value");
+            if (value == null)
+            {
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("value");
+            }
 
             if (value.ContainsKey(key))
             {
@@ -36,7 +38,7 @@ namespace System.Json
             }
             else
             {
-                ValidationResult failedResult = new ValidationResult(DiagnosticUtility.GetString(SR.NamedValueNotPresent, key), new List<string> { key });
+                ValidationResult failedResult = new ValidationResult(SR.GetString(SR.NamedValueNotPresent, key), new List<string> { key });
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new ValidationException(failedResult, null, null));
             }
         }
@@ -50,11 +52,12 @@ namespace System.Json
         /// <param name="pattern">The regular expression pattern.</param>
         /// <returns>This object, so that other validation operations can be chained.</returns>
         /// <exception cref="System.ComponentModel.DataAnnotations.ValidationException">If the validation failed.</exception>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0",
-            Justification = "Call to DiagnosticUtility validates the parameter.")]
         public static JsonObject ValidateRegularExpression(this JsonObject value, string key, string pattern)
         {
-            DiagnosticUtility.ExceptionUtility.ThrowOnNull(value, "value");
+            if (value == null)
+            {
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("value");
+            }
 
             value.ValidatePresence(key);
 
@@ -75,12 +78,17 @@ namespace System.Json
         /// <param name="enumType">The enum type to validate the value.</param>
         /// <returns>This object, so that other validation operations can be chained.</returns>
         /// <exception cref="System.ComponentModel.DataAnnotations.ValidationException">If the validation failed.</exception>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0",
-            Justification = "Call to DiagnosticUtility validates the parameter.")]
         public static JsonObject ValidateEnum(this JsonObject value, string key, Type enumType)
         {
-            DiagnosticUtility.ExceptionUtility.ThrowOnNull(value, "value");
-            DiagnosticUtility.ExceptionUtility.ThrowOnNull(enumType, "enumType");
+            if (value == null)
+            {
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("value");
+            }
+
+            if (enumType == null)
+            {
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("enumType");
+            }
 
             value.ValidatePresence(key);
 
@@ -103,7 +111,11 @@ namespace System.Json
         /// <exception cref="System.ComponentModel.DataAnnotations.ValidationException">If the validation failed.</exception>
         public static JsonObject ValidateStringLength(this JsonObject value, string key, int maximumLength)
         {
-            DiagnosticUtility.ExceptionUtility.ThrowOnNull(value, "value");
+            if (value == null)
+            {
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("value");
+            }
+
             return value.ValidateStringLength(key, 0, maximumLength);
         }
 
@@ -117,11 +129,13 @@ namespace System.Json
         /// <param name="maximumLength">The maximum length allowed for the member value.</param>
         /// <returns>This object, so that other validation operations can be chained.</returns>
         /// <exception cref="System.ComponentModel.DataAnnotations.ValidationException">If the validation failed.</exception>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0",
-            Justification = "Call to DiagnosticUtility validates the parameter.")]
         public static JsonObject ValidateStringLength(this JsonObject value, string key, int minimumLength, int maximumLength)
         {
-            DiagnosticUtility.ExceptionUtility.ThrowOnNull(value, "value");
+            if (value == null)
+            {
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("value");
+            }
+
             value.ValidatePresence(key);
 
             string jsonValue = value[key].ReadAs<string>();
@@ -142,17 +156,19 @@ namespace System.Json
         /// <exception cref="System.ComponentModel.DataAnnotations.ValidationException">If the validation failed.</exception>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1004",
             Justification = "The validation support will be changed (189014); will disable this for now")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0",
-            Justification = "Call to DiagnosticUtility validates the parameter.")]
         public static JsonObject ValidateTypeOf<T>(this JsonObject value, string key)
         {
-            DiagnosticUtility.ExceptionUtility.ThrowOnNull(value, "value");
+            if (value == null)
+            {
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("value");
+            }
+            
             value.ValidatePresence(key);
 
             T tempOfT;
             if (!value[key].TryReadAs<T>(out tempOfT))
             {
-                ValidationResult failedResult = new ValidationResult(DiagnosticUtility.GetString(SR.NamedValueNotOfType, key, typeof(T).FullName), new List<string> { key });
+                ValidationResult failedResult = new ValidationResult(SR.GetString(SR.NamedValueNotOfType, key, typeof(T).FullName), new List<string> { key });
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new ValidationException(failedResult, null, null));
             }
 
@@ -168,11 +184,13 @@ namespace System.Json
         /// <param name="method">The name of the method used to perform the validation.</param>
         /// <returns>This object, so that other validation operations can be chained.</returns>
         /// <exception cref="System.ComponentModel.DataAnnotations.ValidationException">If the validation failed.</exception>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0",
-            Justification = "Call to DiagnosticUtility validates the parameter.")]
         public static JsonObject ValidateCustomValidator(this JsonObject value, string key, Type type, string method)
         {
-            DiagnosticUtility.ExceptionUtility.ThrowOnNull(value, "value");
+            if (value == null)
+            {
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("value");
+            }
+            
             value.ValidatePresence(key);
 
             ValidationContext context = new ValidationContext(value, null, null);
@@ -192,11 +210,13 @@ namespace System.Json
         /// <param name="max">The upper bound of the range check.</param>
         /// <returns>This object, so that other validation operations can be chained.</returns>
         /// <exception cref="System.ComponentModel.DataAnnotations.ValidationException">If the validation failed.</exception>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0",
-            Justification = "Call to DiagnosticUtility validates the parameter.")]
         public static JsonObject ValidateRange(this JsonObject value, string key, int min, int max)
         {
-            DiagnosticUtility.ExceptionUtility.ThrowOnNull(value, "value");
+            if (value == null)
+            {
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("value");
+            }
+
             value.ValidateTypeOf<int>(key);
             return value.ValidateRange<int>(key, value[key].ReadAs<int>(), new RangeAttribute(min, max));
         }
@@ -211,11 +231,13 @@ namespace System.Json
         /// <param name="max">The upper bound of the range check.</param>
         /// <returns>This object, so that other validation operations can be chained.</returns>
         /// <exception cref="System.ComponentModel.DataAnnotations.ValidationException">If the validation failed.</exception>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0",
-            Justification = "Call to DiagnosticUtility validates the parameter.")]
         public static JsonObject ValidateRange(this JsonObject value, string key, double min, double max)
         {
-            DiagnosticUtility.ExceptionUtility.ThrowOnNull(value, "value");
+            if (value == null)
+            {
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("value");
+            }
+
             value.ValidateTypeOf<double>(key);
             return value.ValidateRange<double>(key, value[key].ReadAs<double>(), new RangeAttribute(min, max));
         }
@@ -231,13 +253,22 @@ namespace System.Json
         /// <param name="max">The upper bound of the range check.</param>
         /// <returns>This object, so that other validation operations can be chained.</returns>
         /// <exception cref="System.ComponentModel.DataAnnotations.ValidationException">If the validation failed.</exception>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0",
-            Justification = "Call to DiagnosticUtility validates the parameter.")]
         public static JsonObject ValidateRange<T>(this JsonObject value, string key, T min, T max) where T : IComparable
         {
-            DiagnosticUtility.ExceptionUtility.ThrowOnNull(value, "value");
-            DiagnosticUtility.ExceptionUtility.ThrowOnNull(min, "min");
-            DiagnosticUtility.ExceptionUtility.ThrowOnNull(max, "max");
+            if (value == null)
+            {
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("value");
+            }
+
+            if (min == null)
+            {
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("min");
+            }
+
+            if (max == null)
+            {
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("max");
+            }
 
             value.ValidateTypeOf<T>(key);
             return value.ValidateRange<T>(key, value[key].ReadAs<T>(), new RangeAttribute(typeof(T), min.ToString(), max.ToString()));

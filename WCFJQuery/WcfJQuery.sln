@@ -18,14 +18,20 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalendarEntry", "Samples\CalendarEntry\CalendarEntry.csproj", "{375C3AB0-F37C-4F8E-9F04-2E70CED635C7}"
 	ProjectSection(ProjectDependencies) = postProject
 		{7A183D69-9C8B-493A-A3A0-AC9CE0A72CA3} = {7A183D69-9C8B-493A-A3A0-AC9CE0A72CA3}
+		{A5879BE4-F1F5-4C39-88B9-372ABDEFF843} = {A5879BE4-F1F5-4C39-88B9-372ABDEFF843}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContactManager", "Samples\ContactManager\ContactManager.csproj", "{696A7E32-E9D2-49D2-A52A-4B4DD0741B6F}"
 	ProjectSection(ProjectDependencies) = postProject
 		{7A183D69-9C8B-493A-A3A0-AC9CE0A72CA3} = {7A183D69-9C8B-493A-A3A0-AC9CE0A72CA3}
+		{A5879BE4-F1F5-4C39-88B9-372ABDEFF843} = {A5879BE4-F1F5-4C39-88B9-372ABDEFF843}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeatherWidget", "Samples\WeatherWidget\WeatherWidget.csproj", "{8235DC35-C7EF-4E60-9EEB-750CBA9E6866}"
+	ProjectSection(ProjectDependencies) = postProject
+		{7A183D69-9C8B-493A-A3A0-AC9CE0A72CA3} = {7A183D69-9C8B-493A-A3A0-AC9CE0A72CA3}
+		{A5879BE4-F1F5-4C39-88B9-372ABDEFF843} = {A5879BE4-F1F5-4C39-88B9-372ABDEFF843}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Runtime.Serialization.Json", "Src\Microsoft.Runtime.Serialization.Json\Microsoft.Runtime.Serialization.Json.csproj", "{A5879BE4-F1F5-4C39-88B9-372ABDEFF843}"
 EndProject

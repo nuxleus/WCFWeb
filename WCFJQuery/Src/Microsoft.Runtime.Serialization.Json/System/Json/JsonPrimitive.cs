@@ -8,6 +8,7 @@ namespace System.Json
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Globalization;
+    using System.Runtime.Serialization;
     using System.Text;
     using System.Xml;
 
@@ -229,10 +230,14 @@ namespace System.Json
         /// object can be recovered by casting the <see cref="System.Json.JsonPrimitive"/> to <see cref="System.String"/>.</remarks>
         /// <exception cref="System.ArgumentNullException">value is null.</exception>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1057:StringUriOverloadsCallSystemUriOverloads",
-            Justification = "This constructor does not intend to represent a Uri overload.")]
+            Justification = "This operator does not intend to represent a Uri overload.")]
         public JsonPrimitive(string value)
         {
-            DiagnosticUtility.ExceptionUtility.ThrowOnNull(value, "value");
+            if (value == null)
+            {
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("value");
+            }
+            
             this.jsonType = JsonType.String;
             this.value = value;
         }
@@ -290,7 +295,11 @@ namespace System.Json
         /// <exception cref="System.ArgumentNullException">value is null.</exception>
         public JsonPrimitive(Uri value)
         {
-            DiagnosticUtility.ExceptionUtility.ThrowOnNull(value, "value");
+            if (value == null)
+            {
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("value");
+            }
+
             this.jsonType = JsonType.String;
             this.value = value;
         }
@@ -351,11 +360,12 @@ namespace System.Json
         /// <exception cref="System.FormatException">If the conversion from the string representation of this
         /// value into another fails because the string is not in the proper format.</exception>
         /// <exception cref="System.InvalidCastException">If this instance cannot be read as type T.</exception>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0",
-            Justification = "Call to DiagnosticUtility validates the parameter.")]
         public override object ReadAs(Type type)
         {
-            DiagnosticUtility.ExceptionUtility.ThrowOnNull(type, "type");
+            if (type == null)
+            {
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("type");
+            }
 
             object result;
             ReadAsFailureKind failure = this.TryReadAsInternal(type, out result);
@@ -370,11 +380,11 @@ namespace System.Json
                 switch (failure)
                 {
                     case ReadAsFailureKind.InvalidFormat:
-                        throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new FormatException(DiagnosticUtility.GetString(SR.CannotReadAsType, valueStr, typeOfTName)));
+                        throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new FormatException(SR.GetString(SR.CannotReadAsType, valueStr, typeOfTName)));
                     case ReadAsFailureKind.InvalidDateFormat:
                         throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(
                             new FormatException(
-                                DiagnosticUtility.GetString(
+                                SR.GetString(
                                     SR.InvalidDateFormat,
                                     valueStr,
                                     typeOfTName,
@@ -388,12 +398,12 @@ namespace System.Json
                                     JSDateOrTimeLocalFormats[2],
                                     JSDateOrTimeLocalFormats[3])));
                     case ReadAsFailureKind.InvalidUriFormat:
-                        throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new UriFormatException(DiagnosticUtility.GetString(SR.InvalidUriFormat, valueStr, typeOfTName)));
+                        throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new UriFormatException(SR.GetString(SR.InvalidUriFormat, valueStr, typeOfTName)));
                     case ReadAsFailureKind.Overflow:
-                        throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new OverflowException(DiagnosticUtility.GetString(SR.OverflowReadAs, valueStr, typeOfTName)));
+                        throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new OverflowException(SR.GetString(SR.OverflowReadAs, valueStr, typeOfTName)));
                     case ReadAsFailureKind.InvalidCast:
                     default:
-                        throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidCastException(DiagnosticUtility.GetString(SR.CannotReadAsType, valueStr, typeOfTName)));
+                        throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidCastException(SR.GetString(SR.CannotReadAsType, valueStr, typeOfTName)));
                 }
             }
         }
@@ -481,9 +491,13 @@ namespace System.Json
             return this.value;
         }
 
-        internal override void SaveCore(XmlDictionaryWriter jsonWriter)
+        internal override void Save(XmlDictionaryWriter jsonWriter)
         {
-            DiagnosticUtility.ExceptionUtility.ThrowOnNull(jsonWriter, "jsonWriter");
+            if (this.value == null)
+            {
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("jsonWriter");
+            }
+            
             switch (this.JsonType)
             {
                 case JsonType.Boolean:

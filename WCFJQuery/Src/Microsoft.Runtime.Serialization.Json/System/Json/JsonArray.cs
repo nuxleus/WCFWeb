@@ -7,6 +7,7 @@ namespace System.Json
     using System.Collections;
     using System.Collections.Generic;
     using System.Globalization;
+    using System.Runtime.Serialization;
     using System.Xml;
 
     /// <summary>
@@ -207,7 +208,11 @@ namespace System.Json
 
             set
             {
-                DiagnosticUtility.ExceptionUtility.ThrowOnDefaultArg(value);
+                if (value != null && value.JsonType == JsonType.Default)
+                {
+                    throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgument(SR.GetString(SR.UseOfDefaultNotAllowed));
+                }
+
                 JsonValue oldValue = this.values[index];
                 this.RaiseItemChanging(value, JsonValueChange.Replace, index);
                 this.values[index] = value;
@@ -226,11 +231,12 @@ namespace System.Json
         /// <exception cref="System.ArgumentException">If any of the items in the collection
         /// is a <see cref="System.Json.JsonValue"/> with <see cref="System.Json.JsonValue.JsonType"/> property of
         /// value <see cref="System.Json.JsonType">Default</see>.</exception>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0",
-            Justification = "Call to DiagnosticUtility validates the parameter.")]
         public void AddRange(IEnumerable<JsonValue> items)
         {
-            DiagnosticUtility.ExceptionUtility.ThrowOnNull(items, "items");
+            if (items == null)
+            {
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("items");
+            }
 
             if (this.changingListeners > 0)
             {
@@ -243,7 +249,11 @@ namespace System.Json
 
             foreach (JsonValue item in items)
             {
-                DiagnosticUtility.ExceptionUtility.ThrowOnDefaultArg(item);
+                if (item != null && item.JsonType == JsonType.Default)
+                {
+                    throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgument(SR.GetString(SR.UseOfDefaultNotAllowed));
+                }
+
                 this.values.Add(item);
                 this.AddChildHandlers(item);
                 this.RaiseItemChanged(item, JsonValueChange.Add, this.values.Count - 1);
@@ -287,7 +297,11 @@ namespace System.Json
         /// <see cref="System.Json.JsonType">Default</see>.</exception>
         public void Insert(int index, JsonValue item)
         {
-            DiagnosticUtility.ExceptionUtility.ThrowOnDefaultArg(item);
+            if (item != null && item.JsonType == JsonType.Default)
+            {
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgument(SR.GetString(SR.UseOfDefaultNotAllowed));
+            }
+
             this.RaiseItemChanging(item, JsonValueChange.Add, index);
             this.values.Insert(index, item);
             this.RaiseItemChanged(item, JsonValueChange.Add, index);
@@ -318,7 +332,11 @@ namespace System.Json
         /// <see cref="System.Json.JsonType">Default</see>.</exception>
         public void Add(JsonValue item)
         {
-            DiagnosticUtility.ExceptionUtility.ThrowOnDefaultArg(item);
+            if (item != null && item.JsonType == JsonType.Default)
+            {
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgument(SR.GetString(SR.UseOfDefaultNotAllowed));
+            }
+            
             int index = this.Count;
             this.RaiseItemChanging(item, JsonValueChange.Add, index);
             this.values.Add(item);
@@ -451,11 +469,12 @@ namespace System.Json
         /// instance.
         /// </summary>
         /// <param name="jsonWriter">The JXML writer used to write JSON.</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0", 
-            Justification = "Call to DiagnosticUtility validates the parameter.")]
         protected override void WriteAttributeString(XmlDictionaryWriter jsonWriter)
         {
-            DiagnosticUtility.ExceptionUtility.ThrowOnNull(jsonWriter, "jsonWriter");
+            if (jsonWriter == null)
+            {
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("jsonWriter");
+            }
 
             jsonWriter.WriteAttributeString(JXmlToJsonValueConverter.TypeAttributeName, JXmlToJsonValueConverter.ArrayAttributeValue);
         }
@@ -467,11 +486,12 @@ namespace System.Json
         /// <param name="jsonWriter">The JXML writer used to write JSON.</param>
         /// <param name="currentIndex">The index within this collection.</param>
         /// <returns>The next item in the collection, or null of there are no more items.</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0", 
-            Justification = "Call to DiagnosticUtility validates the parameter.")]
         protected override JsonValue WriteStartElementAndGetNext(XmlDictionaryWriter jsonWriter, int currentIndex)
         {
-            DiagnosticUtility.ExceptionUtility.ThrowOnNull(jsonWriter, "jsonWriter");
+            if (jsonWriter == null)
+            {
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("jsonWriter");
+            }
 
             jsonWriter.WriteStartElement(JXmlToJsonValueConverter.ItemElementName);
             JsonValue nextValue = this[currentIndex];

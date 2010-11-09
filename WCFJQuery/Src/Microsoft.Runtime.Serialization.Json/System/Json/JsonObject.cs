@@ -4,9 +4,9 @@
 
 namespace System.Json
 {
-    using System;
     using System.Collections;
     using System.Collections.Generic;
+    using System.Runtime.Serialization;
     using System.Xml;
 
     /// <summary>
@@ -37,8 +37,6 @@ namespace System.Json
         /// <exception cref="System.ArgumentException">If any of the values in the collection
         /// is a <see cref="System.Json.JsonValue"/> with <see cref="System.Json.JsonValue.JsonType"/> property of
         /// value <see cref="System.Json.JsonType">Default</see>.</exception>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures",
-            Justification = "Compat with Silverlight")]
         public JsonObject(IEnumerable<KeyValuePair<string, JsonValue>> items)
         {
             this.AddRange(items);
@@ -228,14 +226,25 @@ namespace System.Json
         {
             get
             {
-                DiagnosticUtility.ExceptionUtility.ThrowOnNull(key, "key");
+                if (key == null)
+                {
+                    throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("key");
+                }
+
                 return this.values[key];
             }
 
             set
             {
-                DiagnosticUtility.ExceptionUtility.ThrowOnDefaultArg(value);
-                DiagnosticUtility.ExceptionUtility.ThrowOnNull(key, "key");
+                if (value != null && value.JsonType == JsonType.Default)
+                {
+                    throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgument(SR.GetString(SR.UseOfDefaultNotAllowed));
+                }
+
+                if (key == null)
+                {
+                    throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("key");
+                }
 
                 bool replacement = this.values.ContainsKey(key);
                 JsonValue oldValue = null;
@@ -290,13 +299,12 @@ namespace System.Json
         /// <exception cref="System.ArgumentException">If the value of any of the items in the collection
         /// is a <see cref="System.Json.JsonValue"/> with <see cref="System.Json.JsonValue.JsonType"/> property of
         /// value <see cref="System.Json.JsonType">Default</see>.</exception>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures",
-            Justification = "Compat with Silverlight")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0",
-            Justification = "Call to DiagnosticUtility validates the parameter.")]
         public void AddRange(IEnumerable<KeyValuePair<string, JsonValue>> items)
         {
-            DiagnosticUtility.ExceptionUtility.ThrowOnNull(items, "items");
+            if (items == null)
+            {
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("items");
+            }
 
             if (this.changingListeners > 0)
             {
@@ -308,7 +316,11 @@ namespace System.Json
 
             foreach (KeyValuePair<string, JsonValue> item in items)
             {
-                DiagnosticUtility.ExceptionUtility.ThrowOnDefaultArg(item.Value);
+                if (item.Value != null && item.Value.JsonType == JsonType.Default)
+                {
+                    throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgument(SR.GetString(SR.UseOfDefaultNotAllowed));
+                }
+                
                 this.values.Add(item.Key, item.Value);
                 this.AddChildHandlers(item.Value);
                 this.RaiseItemChanged(item.Value, JsonValueChange.Add, item.Key);
@@ -342,7 +354,11 @@ namespace System.Json
         /// value <see cref="System.Json.JsonType">Default</see>.</exception>
         public void Add(string key, JsonValue value)
         {
-            DiagnosticUtility.ExceptionUtility.ThrowOnDefaultArg(value);
+            if (value != null && value.JsonType == JsonType.Default)
+            {
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgument(SR.GetString(SR.UseOfDefaultNotAllowed));
+            }
+            
             this.RaiseItemChanging(value, JsonValueChange.Add, key);
             this.values.Add(key, value);
             this.RaiseItemChanged(value, JsonValueChange.Add, key);
@@ -514,12 +530,8 @@ namespace System.Json
         /// instance.
         /// </summary>
         /// <param name="jsonWriter">The JXML writer used to write JSON.</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0",
-            Justification = "Call to DiagnosticUtility validates the parameter.")]
         protected override void WriteAttributeString(XmlDictionaryWriter jsonWriter)
         {
-            DiagnosticUtility.ExceptionUtility.ThrowOnNull(jsonWriter, "jsonWriter");
-
             jsonWriter.WriteAttributeString(JXmlToJsonValueConverter.TypeAttributeName, JXmlToJsonValueConverter.ObjectAttributeValue);
         }
 
@@ -530,12 +542,8 @@ namespace System.Json
         /// <param name="jsonWriter">The JXML writer used to write JSON.</param>
         /// <param name="currentIndex">The index within this collection.</param>
         /// <returns>The next item in the collection, or null of there are no more items.</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0",
-            Justification = "Call to DiagnosticUtility validates the parameter.")]
         protected override JsonValue WriteStartElementAndGetNext(XmlDictionaryWriter jsonWriter, int currentIndex)
         {
-            DiagnosticUtility.ExceptionUtility.ThrowOnNull(jsonWriter, "jsonWriter");
-
             string currentKey = this.indexedKeys[currentIndex];
 
             if (currentKey.Length == 0)

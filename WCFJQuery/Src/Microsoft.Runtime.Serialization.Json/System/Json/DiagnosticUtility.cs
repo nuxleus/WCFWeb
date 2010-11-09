@@ -4,22 +4,8 @@
 
 namespace System.Json
 {
-    using System.Globalization;
-
     internal static class DiagnosticUtility
     {
-        public static string GetString(string format, params object[] args)
-        {
-            CultureInfo culture = SR.Culture;
-            string text = format;
-            if (args != null && args.Length > 0)
-            {
-                text = String.Format(culture, format, args);
-            }
-
-            return text;
-        }
-
         internal static bool IsFatal(Exception exception)
         {
             while (exception != null)
@@ -53,28 +39,19 @@ namespace System.Json
                 return e;
             }
 
-            internal static void ThrowOnNull(object obj, string parameterName)
+            public static ArgumentException ThrowHelperArgument(string message)
             {
-                if (obj == null)
-                {
-                    throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new ArgumentNullException(parameterName));
-                }
+                return new ArgumentException(message);
             }
 
-            internal static void ThrowOnDefaultArg(JsonValue value)
+            public static ArgumentException ThrowHelperArgument(string paramName, string message)
             {
-                if (value != null && value.JsonType == JsonType.Default)
-                {
-                    throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new ArgumentException(SR.UseOfDefaultNotAllowed));
-                }
+                return new ArgumentException(message, paramName);
             }
 
-            internal static void ThrowOnDefaultInstance(JsonValue instance)
+            public static ArgumentNullException ThrowHelperArgumentNull(string paramName)
             {
-                if (instance != null && instance.JsonType == JsonType.Default)
-                {
-                    throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.OperationNotAllowedOnDefault));
-                }
+                return new ArgumentNullException(paramName);
             }
         }
     }

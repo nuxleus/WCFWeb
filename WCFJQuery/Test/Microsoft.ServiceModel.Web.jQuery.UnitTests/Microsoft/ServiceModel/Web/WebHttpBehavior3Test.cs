@@ -281,13 +281,6 @@
         }
 
         [TestMethod]
-        public void HasExactlyOneJsonValueTest()
-        {
-            this.TestValidationError<BadServices.NegativeTestService, BadServices.IInputWithMoreThanOneJsonValueInputs, InvalidDataContractException>(null);
-            this.TestValidationError<BadServices.NegativeTestService, BadServices.IInputWithMoreThanOneJsonValueInputs2, InvalidDataContractException>(null);
-        }
-
-        [TestMethod]
         public void AutomaticFormatSelectionEnabledTest()
         {
             WebHttpBehavior3 target = new WebHttpBehavior3();

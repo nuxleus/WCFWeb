@@ -7,6 +7,7 @@ namespace System.Json
     using System.Collections.Generic;
     using System.Globalization;
     using System.IO;
+    using System.Runtime.Serialization;
     using System.Runtime.Serialization.Json;
     using System.Text;
     using System.Xml;
@@ -28,7 +29,11 @@ namespace System.Json
 
         public static void JsonValueToJXML(XmlDictionaryWriter jsonWriter, JsonValue jsonValue)
         {
-            DiagnosticUtility.ExceptionUtility.ThrowOnNull(jsonWriter, "jsonWriter");
+            if (jsonWriter == null)
+            {
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("jsonWriter");
+            }
+
             jsonWriter.WriteStartElement(RootElementName);
             if (jsonValue == null)
             {
@@ -36,7 +41,7 @@ namespace System.Json
             }
             else
             {
-                jsonValue.SaveCore(jsonWriter);
+                jsonValue.Save(jsonWriter);
             }
 
             jsonWriter.WriteEndElement();
@@ -44,7 +49,10 @@ namespace System.Json
 
         public static JsonValue JXMLToJsonValue(Stream jsonStream)
         {
-            DiagnosticUtility.ExceptionUtility.ThrowOnNull(jsonStream, "jsonStream");
+            if (jsonStream == null)
+            {
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("jsonStream");
+            }
 
             using (XmlDictionaryReader jsonReader = JsonReaderWriterFactory.CreateJsonReader(jsonStream, XmlDictionaryReaderQuotas.Max))
             {
@@ -54,12 +62,15 @@ namespace System.Json
 
         public static JsonValue JXMLToJsonValue(string jsonString)
         {
-            DiagnosticUtility.ExceptionUtility.ThrowOnNull(jsonString, "jsonString");
+            if (jsonString == null)
+            {
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("jsonString");
+            }
 
             if (jsonString.Length == 0)
             {
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(
-                    new ArgumentException(DiagnosticUtility.GetString(SR.JsonStringCannotBeEmpty), "jsonString"));
+                    new ArgumentException(SR.GetString(SR.JsonStringCannotBeEmpty), "jsonString"));
             }
 
             byte[] jsonBytes = Encoding.UTF8.GetBytes(jsonString);
@@ -72,7 +83,10 @@ namespace System.Json
 
         public static JsonValue JXMLToJsonValue(XmlDictionaryReader jsonReader)
         {
-            DiagnosticUtility.ExceptionUtility.ThrowOnNull(jsonReader, "jsonReader");
+            if (jsonReader == null)
+            {
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("jsonReader");
+            }
 
             Stack<JsonValue> jsonStack = new Stack<JsonValue>();
             Stack<string> keyStack = new Stack<string>();
@@ -99,7 +113,7 @@ namespace System.Json
                         // For arrays, the element name has to be "item"
                         if (jsonReader.Name != ItemElementName)
                         {
-                            throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new FormatException(SR.IncorrectJsonFormat));
+                            throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new FormatException(SR.GetString(SR.IncorrectJsonFormat)));
                         }
                     }
                 }
@@ -108,7 +122,7 @@ namespace System.Json
                     if (jsonStack.Count == 0)
                     {
                         // "Element of type [{0}] has already been processed but cannot add it to a collection, the stack is empty!!"
-                        throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new FormatException(SR.IncorrectJsonFormat));
+                        throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new FormatException(SR.GetString(SR.IncorrectJsonFormat)));
                     }
 
                     type = jsonStack.Peek() is JsonArray ? ArrayAttributeValue : ObjectAttributeValue;
@@ -187,7 +201,7 @@ namespace System.Json
 
                         break;
                     default:
-                        throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new FormatException(SR.IncorrectJsonFormat));
+                        throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new FormatException(SR.GetString(SR.IncorrectJsonFormat)));
                 }
             }
             while (jsonStack.Count > 0);
@@ -205,7 +219,7 @@ namespace System.Json
 
                 if (name == null)
                 {
-                    throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new FormatException(SR.IncorrectJsonFormat));
+                    throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new FormatException(SR.GetString(SR.IncorrectJsonFormat)));
                 }
             }
             else
@@ -243,7 +257,7 @@ namespace System.Json
 
             if (jsonReader.NodeType != XmlNodeType.Element || !string.IsNullOrEmpty(jsonReader.NamespaceURI) || jsonReader.Name != RootElementName)
             {
-                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new FormatException(SR.IncorrectJsonFormat));
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new FormatException(SR.GetString(SR.IncorrectJsonFormat)));
             }
         }
 
@@ -309,7 +323,7 @@ namespace System.Json
                 return dblValue;
             }
 
-            throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new ArgumentException(DiagnosticUtility.GetString(SR.InvalidJsonPrimitive, value)));
+            throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new ArgumentException(SR.GetString(SR.InvalidJsonPrimitive, value)));
         }
     }
 }
