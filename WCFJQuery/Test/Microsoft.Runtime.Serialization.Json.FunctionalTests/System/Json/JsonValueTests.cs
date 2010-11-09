@@ -149,10 +149,10 @@
         [TestMethod]
         public void ParseMiscellaneousTest()
         {
-            string[] jsonValues = 
+            string[] jsonValues =
             {
                 "[]",
-                "[1]", 
+                "[1]",
                 "[1,2,3,[4.1,4.2],5]",
                 "{}",
                 "{\"a\":1}",
@@ -176,10 +176,10 @@
         [TestMethod]
         public void ParseUnbalancedJsonTest()
         {
-            string[] jsonValues = 
+            string[] jsonValues =
             {
                 "[",
-                "[1,{]", 
+                "[1,{]",
                 "[1,2,3,{{}}",
                 "}",
                 "{\"a\":}",
@@ -191,7 +191,7 @@
 
             foreach (string json in jsonValues)
             {
-                ExpectException<XmlException>(() => JsonValue.Parse(json));
+                ExpectException<FormatException>(() => JsonValue.Parse(json));
             }
         }
 
@@ -281,7 +281,7 @@
     <item type='object'/>
   </a>
 </root>";
-            List<Tuple<string, string>> jsonAndJxmlPairs = new List<Tuple<string,string>>
+            List<Tuple<string, string>> jsonAndJxmlPairs = new List<Tuple<string, string>>
             {
                 new Tuple<string, string>(completeJson, completeJxml),
                 new Tuple<string, string>("[]", "<root type='array'/>"),
