@@ -8,7 +8,6 @@ namespace System.Json
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Globalization;
-    using System.Runtime.Serialization;
     using System.Text;
     using System.Xml;
 
@@ -380,11 +379,11 @@ namespace System.Json
                 switch (failure)
                 {
                     case ReadAsFailureKind.InvalidFormat:
-                        throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new FormatException(SR.GetString(SR.CannotReadAsType, valueStr, typeOfTName)));
+                        throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new FormatException(SG.GetString(SR.CannotReadAsType, valueStr, typeOfTName)));
                     case ReadAsFailureKind.InvalidDateFormat:
                         throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(
                             new FormatException(
-                                SR.GetString(
+                                SG.GetString(
                                     SR.InvalidDateFormat,
                                     valueStr,
                                     typeOfTName,
@@ -398,12 +397,12 @@ namespace System.Json
                                     JSDateOrTimeLocalFormats[2],
                                     JSDateOrTimeLocalFormats[3])));
                     case ReadAsFailureKind.InvalidUriFormat:
-                        throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new UriFormatException(SR.GetString(SR.InvalidUriFormat, valueStr, typeOfTName)));
+                        throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new UriFormatException(SG.GetString(SR.InvalidUriFormat, valueStr, typeOfTName)));
                     case ReadAsFailureKind.Overflow:
-                        throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new OverflowException(SR.GetString(SR.OverflowReadAs, valueStr, typeOfTName)));
+                        throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new OverflowException(SG.GetString(SR.OverflowReadAs, valueStr, typeOfTName)));
                     case ReadAsFailureKind.InvalidCast:
                     default:
-                        throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidCastException(SR.GetString(SR.CannotReadAsType, valueStr, typeOfTName)));
+                        throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidCastException(SG.GetString(SR.CannotReadAsType, valueStr, typeOfTName)));
                 }
             }
         }

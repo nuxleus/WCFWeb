@@ -6,7 +6,6 @@ namespace System.Json
 {
     using System.Collections;
     using System.Collections.Generic;
-    using System.Runtime.Serialization;
     using System.Xml;
 
     /// <summary>
@@ -238,7 +237,7 @@ namespace System.Json
             {
                 if (value != null && value.JsonType == JsonType.Default)
                 {
-                    throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgument(SR.GetString(SR.UseOfDefaultNotAllowed));
+                    throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgument(SG.GetString(SR.UseOfDefaultNotAllowed));
                 }
 
                 if (key == null)
@@ -318,7 +317,7 @@ namespace System.Json
             {
                 if (item.Value != null && item.Value.JsonType == JsonType.Default)
                 {
-                    throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgument(SR.GetString(SR.UseOfDefaultNotAllowed));
+                    throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgument(SG.GetString(SR.UseOfDefaultNotAllowed));
                 }
                 
                 this.values.Add(item.Key, item.Value);
@@ -356,7 +355,7 @@ namespace System.Json
         {
             if (value != null && value.JsonType == JsonType.Default)
             {
-                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgument(SR.GetString(SR.UseOfDefaultNotAllowed));
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgument(SG.GetString(SR.UseOfDefaultNotAllowed));
             }
             
             this.RaiseItemChanging(value, JsonValueChange.Add, key);

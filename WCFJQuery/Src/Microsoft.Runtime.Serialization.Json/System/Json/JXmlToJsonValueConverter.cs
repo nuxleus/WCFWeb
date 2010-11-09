@@ -7,7 +7,6 @@ namespace System.Json
     using System.Collections.Generic;
     using System.Globalization;
     using System.IO;
-    using System.Runtime.Serialization;
     using System.Runtime.Serialization.Json;
     using System.Text;
     using System.Xml;
@@ -70,7 +69,7 @@ namespace System.Json
             if (jsonString.Length == 0)
             {
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(
-                    new ArgumentException(SR.GetString(SR.JsonStringCannotBeEmpty), "jsonString"));
+                    new ArgumentException(SG.GetString(SR.JsonStringCannotBeEmpty), "jsonString"));
             }
 
             byte[] jsonBytes = Encoding.UTF8.GetBytes(jsonString);
@@ -113,7 +112,7 @@ namespace System.Json
                         // For arrays, the element name has to be "item"
                         if (jsonReader.Name != ItemElementName)
                         {
-                            throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new FormatException(SR.GetString(SR.IncorrectJsonFormat)));
+                            throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new FormatException(SG.GetString(SR.IncorrectJsonFormat)));
                         }
                     }
                 }
@@ -122,7 +121,7 @@ namespace System.Json
                     if (jsonStack.Count == 0)
                     {
                         // "Element of type [{0}] has already been processed but cannot add it to a collection, the stack is empty!!"
-                        throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new FormatException(SR.GetString(SR.IncorrectJsonFormat)));
+                        throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new FormatException(SG.GetString(SR.IncorrectJsonFormat)));
                     }
 
                     type = jsonStack.Peek() is JsonArray ? ArrayAttributeValue : ObjectAttributeValue;
@@ -201,7 +200,7 @@ namespace System.Json
 
                         break;
                     default:
-                        throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new FormatException(SR.GetString(SR.IncorrectJsonFormat)));
+                        throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new FormatException(SG.GetString(SR.IncorrectJsonFormat)));
                 }
             }
             while (jsonStack.Count > 0);
@@ -219,7 +218,7 @@ namespace System.Json
 
                 if (name == null)
                 {
-                    throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new FormatException(SR.GetString(SR.IncorrectJsonFormat)));
+                    throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new FormatException(SG.GetString(SR.IncorrectJsonFormat)));
                 }
             }
             else
@@ -257,7 +256,7 @@ namespace System.Json
 
             if (jsonReader.NodeType != XmlNodeType.Element || !string.IsNullOrEmpty(jsonReader.NamespaceURI) || jsonReader.Name != RootElementName)
             {
-                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new FormatException(SR.GetString(SR.IncorrectJsonFormat)));
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new FormatException(SG.GetString(SR.IncorrectJsonFormat)));
             }
         }
 
@@ -323,7 +322,7 @@ namespace System.Json
                 return dblValue;
             }
 
-            throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new ArgumentException(SR.GetString(SR.InvalidJsonPrimitive, value)));
+            throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new ArgumentException(SG.GetString(SR.InvalidJsonPrimitive, value)));
         }
     }
 }

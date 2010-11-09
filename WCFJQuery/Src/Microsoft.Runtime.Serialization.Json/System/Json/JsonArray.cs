@@ -7,7 +7,6 @@ namespace System.Json
     using System.Collections;
     using System.Collections.Generic;
     using System.Globalization;
-    using System.Runtime.Serialization;
     using System.Xml;
 
     /// <summary>
@@ -210,7 +209,7 @@ namespace System.Json
             {
                 if (value != null && value.JsonType == JsonType.Default)
                 {
-                    throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgument(SR.GetString(SR.UseOfDefaultNotAllowed));
+                    throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgument(SG.GetString(SR.UseOfDefaultNotAllowed));
                 }
 
                 JsonValue oldValue = this.values[index];
@@ -251,7 +250,7 @@ namespace System.Json
             {
                 if (item != null && item.JsonType == JsonType.Default)
                 {
-                    throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgument(SR.GetString(SR.UseOfDefaultNotAllowed));
+                    throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgument(SG.GetString(SR.UseOfDefaultNotAllowed));
                 }
 
                 this.values.Add(item);
@@ -299,7 +298,7 @@ namespace System.Json
         {
             if (item != null && item.JsonType == JsonType.Default)
             {
-                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgument(SR.GetString(SR.UseOfDefaultNotAllowed));
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgument(SG.GetString(SR.UseOfDefaultNotAllowed));
             }
 
             this.RaiseItemChanging(item, JsonValueChange.Add, index);
@@ -334,7 +333,7 @@ namespace System.Json
         {
             if (item != null && item.JsonType == JsonType.Default)
             {
-                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgument(SR.GetString(SR.UseOfDefaultNotAllowed));
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgument(SG.GetString(SR.UseOfDefaultNotAllowed));
             }
             
             int index = this.Count;

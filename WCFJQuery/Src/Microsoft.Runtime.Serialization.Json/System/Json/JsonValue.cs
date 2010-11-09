@@ -11,7 +11,6 @@ namespace System.Json
     using System.Dynamic;
     using System.IO;
     using System.Linq.Expressions;
-    using System.Runtime.Serialization;
     using System.Runtime.Serialization.Json;
     using System.Text;
     using System.Xml;
@@ -111,12 +110,12 @@ namespace System.Json
         {
             get
             {
-                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.GetString(SR.UnsupportedOnThisJsonValue, this.GetType())));
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SG.GetString(SR.UnsupportedOnThisJsonValue, this.GetType())));
             }
 
             set
             {
-                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.GetString(SR.UnsupportedOnThisJsonValue, this.GetType())));
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SG.GetString(SR.UnsupportedOnThisJsonValue, this.GetType())));
             }
         }
 
@@ -132,12 +131,12 @@ namespace System.Json
         {
             get
             {
-                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.GetString(SR.UnsupportedOnThisJsonValue, this.GetType())));
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SG.GetString(SR.UnsupportedOnThisJsonValue, this.GetType())));
             }
 
             set
             {
-                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.GetString(SR.UnsupportedOnThisJsonValue, this.GetType())));
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SG.GetString(SR.UnsupportedOnThisJsonValue, this.GetType())));
             }
         }
 
@@ -581,7 +580,7 @@ namespace System.Json
             {
                 if (typeof(T).IsValueType)
                 {
-                    throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidCastException(SR.GetString(SR.InvalidCastNonNullable, typeof(T).FullName)));
+                    throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidCastException(SG.GetString(SR.InvalidCastNonNullable, typeof(T).FullName)));
                 }
                 else
                 {
@@ -597,7 +596,7 @@ namespace System.Json
             {
                 if (ex is FormatException || ex is NotSupportedException || ex is InvalidCastException)
                 {
-                    throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidCastException(SR.GetString(SR.CannotCastJsonValue, value.GetType().FullName, typeof(T).FullName), ex));
+                    throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidCastException(SG.GetString(SR.CannotCastJsonValue, value.GetType().FullName, typeof(T).FullName), ex));
                 }
 
                 throw;
@@ -747,7 +746,7 @@ namespace System.Json
         {
             if (this.JsonType == JsonType.Default)
             {
-                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.GetString(SR.UseOfDefaultNotAllowed)));
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SG.GetString(SR.UseOfDefaultNotAllowed)));
             }
 
             if (stream == null)
@@ -771,7 +770,7 @@ namespace System.Json
         {
             if (this.JsonType == JsonType.Default)
             {
-                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.GetString(SR.UseOfDefaultNotAllowed)));
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SG.GetString(SR.UseOfDefaultNotAllowed)));
             }
 
             if (textWriter == null)
@@ -939,7 +938,7 @@ namespace System.Json
                     }
                     else
                     {
-                        throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgument("indexes", SR.GetString(SR.InvalidIndexType));
+                        throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgument("indexes", SG.GetString(SR.InvalidIndexType));
                     }
                 }
             }
@@ -975,7 +974,7 @@ namespace System.Json
                 return primitive;
             }
 
-            throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgument("value", SR.GetString(SR.TypeNotSupported));
+            throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgument("value", SG.GetString(SR.TypeNotSupported));
         }
 
         internal static bool IsSupportedExplicitCastType(Type type)

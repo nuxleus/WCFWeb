@@ -5,13 +5,8 @@
 namespace System.Json
 {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
-    using System.Collections.Specialized;
     using System.ComponentModel.DataAnnotations;
-    using System.Runtime.Serialization;
-    using System.Web;
-    using System.Xml;
 
     /// <summary>
     /// Class which contains many extension methods to do validation on <see cref="System.Json.JsonObject"/> instances.
@@ -38,7 +33,7 @@ namespace System.Json
             }
             else
             {
-                ValidationResult failedResult = new ValidationResult(SR.GetString(SR.NamedValueNotPresent, key), new List<string> { key });
+                ValidationResult failedResult = new ValidationResult(SG.GetString(SR.NamedValueNotPresent, key), new List<string> { key });
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new ValidationException(failedResult, null, null));
             }
         }
@@ -168,7 +163,7 @@ namespace System.Json
             T tempOfT;
             if (!value[key].TryReadAs<T>(out tempOfT))
             {
-                ValidationResult failedResult = new ValidationResult(SR.GetString(SR.NamedValueNotOfType, key, typeof(T).FullName), new List<string> { key });
+                ValidationResult failedResult = new ValidationResult(SG.GetString(SR.NamedValueNotOfType, key, typeof(T).FullName), new List<string> { key });
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new ValidationException(failedResult, null, null));
             }
 

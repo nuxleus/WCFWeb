@@ -10,7 +10,6 @@ namespace System.Json
     using System.Dynamic;
     using System.Linq.Expressions;
     using System.Reflection;
-    using System.Runtime.Serialization;
 
     /// <summary>
     /// This class provides dynamic behavior support for the JsonValue types.
@@ -218,7 +217,7 @@ namespace System.Json
                     }
                     else
                     {
-                        string exceptionMessage = SR.GetString(SR.CannotCastJsonValue, this.LimitType.FullName, binder.Type.FullName);
+                        string exceptionMessage = SG.GetString(SR.CannotCastJsonValue, this.LimitType.FullName, binder.Type.FullName);
                         expression = Expression.Throw(Expression.Constant(new InvalidCastException(exceptionMessage)), typeof(object));
                     }
                 }
@@ -249,7 +248,7 @@ namespace System.Json
 
             if ((indexes[0].LimitType != typeof(int) && indexes[0].LimitType != typeof(string)) || indexes.Length != 1)
             {
-                return new DynamicMetaObject(Expression.Throw(Expression.Constant(new ArgumentException(SR.GetString(SR.IndexTypeNotSupported))), typeof(object)), this.DefaultRestrictions);
+                return new DynamicMetaObject(Expression.Throw(Expression.Constant(new ArgumentException(SG.GetString(SR.IndexTypeNotSupported))), typeof(object)), this.DefaultRestrictions);
             }
 
             MethodInfo methodInfo = indexes[0].LimitType == typeof(int) ? GetValueByIndexMethodInfo : GetValueByKeyMethodInfo;
@@ -284,7 +283,7 @@ namespace System.Json
 
             if ((indexes[0].LimitType != typeof(int) && indexes[0].LimitType != typeof(string)) || indexes.Length != 1 || !indexes[0].HasValue)
             {
-                return new DynamicMetaObject(Expression.Throw(Expression.Constant(new ArgumentException(SR.GetString(SR.IndexTypeNotSupported))), typeof(object)), this.DefaultRestrictions);
+                return new DynamicMetaObject(Expression.Throw(Expression.Constant(new ArgumentException(SG.GetString(SR.IndexTypeNotSupported))), typeof(object)), this.DefaultRestrictions);
             }
 
             MethodInfo methodInfo = indexes[0].LimitType == typeof(int) ? SetValueByIndexMethodInfo : SetValueByKeyMethodInfo;
@@ -542,13 +541,13 @@ namespace System.Json
                 case OperationSupport.NotSupported:
                 case OperationSupport.NotSupportedOnJsonType:
                 case OperationSupport.NotSupportedOnValueType:
-                    exceptionMessage = SR.GetString(SR.OperatorNotDefinedForJsonType, operation, thisValue.JsonType);
+                    exceptionMessage = SG.GetString(SR.OperatorNotDefinedForJsonType, operation, thisValue.JsonType);
                     break;
 
                 case OperationSupport.NotSupportedOnOperand:
                     Debug.Assert(operand != null, "Operand is null!");
                     string operandTypeName = operand != null ? operand.GetType().FullName : "'Operand'";
-                    exceptionMessage = SR.GetString(SR.OperatorNotAllowedOnOperands, operation, thisValue.GetType().FullName, operandTypeName);
+                    exceptionMessage = SG.GetString(SR.OperatorNotAllowedOnOperands, operation, thisValue.GetType().FullName, operandTypeName);
                     break;
             }
 
