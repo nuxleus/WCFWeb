@@ -3,11 +3,9 @@
     using System;
     using System.Collections;
     using System.Collections.Generic;
-    using System.Dynamic;
     using System.Globalization;
     using System.IO;
     using System.Json;
-    using System.Linq.Expressions;
     using System.Runtime.Serialization.Json;
     using System.Text;
     using System.Xml;
@@ -505,23 +503,6 @@
             ExceptionTestHelper.ExpectException<ArgumentException>(delegate { var c = AnyInstance.AnyJsonValue1.ValueOrDefault(AnyInstance.AnyLong); });
             ExceptionTestHelper.ExpectException<ArgumentException>(delegate { var c = AnyInstance.AnyJsonValue1.ValueOrDefault("str", AnyInstance.AnyShort); });
             ExceptionTestHelper.ExpectException<ArgumentException>(delegate { var c = AnyInstance.AnyJsonValue1.ValueOrDefault("str", AnyInstance.AnyUInt); });
-        }
-
-        [TestMethod()]
-        public void CreateFromTest()
-        {
-            JsonValue[] values =
-            {
-                AnyInstance.AnyJsonObject,
-                AnyInstance.AnyJsonArray,
-                AnyInstance.AnyJsonPrimitive,
-                AnyInstance.DefaultJsonValue
-            };
-
-            foreach (JsonValue value in values)
-            {
-                Assert.AreSame(value, JsonValueExtensions.CreateFrom(value));
-            }
         }
     }
 }

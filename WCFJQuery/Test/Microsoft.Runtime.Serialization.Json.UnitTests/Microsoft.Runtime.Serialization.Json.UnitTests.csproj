@@ -59,8 +59,10 @@
     <Compile Include="System\Json\JsonArrayTest.cs" />
     <Compile Include="System\Json\JsonObjectTest.cs" />
     <Compile Include="System\Json\JsonPrimitiveTest.cs" />
+    <Compile Include="System\Json\JsonValueExtensionsTest.cs" />
     <Compile Include="System\Json\JsonValueTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="System\Json\JsonValueLinqExtensionsTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Src\Microsoft.Runtime.Serialization.Json\Microsoft.Runtime.Serialization.Json.csproj">

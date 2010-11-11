@@ -61,6 +61,7 @@
     <Compile Include="System\Json\JsonValueChangeEventArgs.cs" />
     <Compile Include="System\Json\JsonObjectValidation.cs" />
     <Compile Include="System\Json\JsonValueDynamicMetaObject.cs" />
+    <Compile Include="System\Json\JsonValueLinqExtensions.cs" />
     <Compile Include="System\Runtime\Serialization\Json\JsonValueExtensions.cs" />
     <Compile Include="System\Json\JXmlToJsonValueConverter.cs" />
     <Compile Include="System\Json\DiagnosticUtility.cs" />

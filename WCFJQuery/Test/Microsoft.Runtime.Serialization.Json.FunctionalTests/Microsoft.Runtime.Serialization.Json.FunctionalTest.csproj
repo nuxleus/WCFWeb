@@ -65,6 +65,7 @@
     <Compile Include="System\Json\JsonStringRoundTripTests.cs" />
     <Compile Include="System\Json\JObjectFunctionalTest.cs" />
     <Compile Include="System\Json\JsonPrimitiveTests.cs" />
+    <Compile Include="System\Json\JsonValueLinqExtensionsTest.cs" />
     <Compile Include="System\Json\JsonValuePartialTrustTests.cs" />
     <Compile Include="System\Json\JsonValueTestHelper.cs" />
     <Compile Include="System\Json\JsonValueTests.cs" />
