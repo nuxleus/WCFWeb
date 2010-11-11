@@ -149,6 +149,34 @@
             }
         }
 
+        [TestMethod]
+        public void CreateFromDateTimeTest()
+        {
+            DateTime dt = DateTime.Now;
+            DateTimeOffset dto = DateTimeOffset.Now;
+
+            JsonValue jvDt1 = (JsonValue)dt;
+            JsonValue jvDt2 = JsonValueExtensions.CreateFrom(dt);
+
+            JsonValue jvDto1 = (JsonValue)dto;
+            JsonValue jvDto2 = JsonValueExtensions.CreateFrom(dto);
+
+            Assert.AreEqual(dt, (DateTime)jvDt1);
+            Assert.AreEqual(dt, (DateTime)jvDt2);
+
+            Assert.AreEqual(dto, (DateTimeOffset)jvDto1);
+            Assert.AreEqual(dto, (DateTimeOffset)jvDto2);
+
+            Assert.AreEqual(dt, jvDt1.ReadAs<DateTime>());
+            Assert.AreEqual(dt, jvDt2.ReadAs<DateTime>());
+
+            Assert.AreEqual(dto, jvDto1.ReadAs<DateTimeOffset>());
+            Assert.AreEqual(dto, jvDto2.ReadAs<DateTimeOffset>());
+
+            Assert.AreEqual(jvDt1.ToString(), jvDt2.ToString());
+            Assert.AreEqual(jvDto1.ToString(), jvDto2.ToString());
+        }
+
         void ReadAsTest<T>(Random rndGen)
         {
             T instance = InstanceCreator.CreateInstanceOf<T>(rndGen);

@@ -24,25 +24,30 @@ namespace System.Runtime.Serialization.Json
         /// object.</remarks>
         public static JsonValue CreateFrom(object value)
         {
-            if (value == null)
+            JsonValue jsonValue = null;
+
+            if (value != null)
             {
-                return null;
+                jsonValue = value as JsonValue;
+
+                if (jsonValue == null)
+                {
+                    jsonValue = JsonValueExtensions.CreatePrimitive(value);
+
+                    if (jsonValue == null)
+                    {
+                        DataContractJsonSerializer dcjs = new DataContractJsonSerializer(value.GetType());
+                        using (MemoryStream ms = new MemoryStream())
+                        {
+                            dcjs.WriteObject(ms, value);
+                            ms.Position = 0;
+                            jsonValue = JsonValue.Load(ms);
+                        }
+                    }
+                }
             }
 
-            JsonValue jsonValue = value as JsonValue;
-
-            if (jsonValue != null)
-            {
-                return jsonValue;
-            }
-
-            DataContractJsonSerializer dcjs = new DataContractJsonSerializer(value.GetType());
-            using (MemoryStream ms = new MemoryStream())
-            {
-                dcjs.WriteObject(ms, value);
-                ms.Position = 0;
-                return JsonValue.Load(ms);
-            }
+            return jsonValue;
         }
 
         /// <summary>
@@ -197,6 +202,78 @@ namespace System.Runtime.Serialization.Json
 
                 value = null;
                 return false;
+            }
+        }
+
+        private static JsonValue CreatePrimitive(object value)
+        {
+            Type type = value.GetType();
+            TypeCode typeCode = Type.GetTypeCode(type);
+
+            switch (typeCode)
+            {
+                case TypeCode.Boolean:
+                    return new JsonPrimitive((bool)value);
+
+                case TypeCode.Byte:
+                    return new JsonPrimitive((byte)value);
+
+                case TypeCode.Char:
+                    return new JsonPrimitive((char)value);
+
+                case TypeCode.DateTime:
+                    return new JsonPrimitive((DateTime)value);
+
+                case TypeCode.Decimal:
+                    return new JsonPrimitive((decimal)value);
+
+                case TypeCode.Double:
+                    return new JsonPrimitive((double)value);
+
+                case TypeCode.Int16:
+                    return new JsonPrimitive((short)value);
+
+                case TypeCode.Int32:
+                    return new JsonPrimitive((int)value);
+
+                case TypeCode.Int64:
+                    return new JsonPrimitive((long)value);
+
+                case TypeCode.SByte:
+                    return new JsonPrimitive((sbyte)value);
+
+                case TypeCode.Single:
+                    return new JsonPrimitive((float)value);
+
+                case TypeCode.String:
+                    return new JsonPrimitive((string)value);
+
+                case TypeCode.UInt16:
+                    return new JsonPrimitive((ushort)value);
+
+                case TypeCode.UInt32:
+                    return new JsonPrimitive((uint)value);
+
+                case TypeCode.UInt64:
+                    return new JsonPrimitive((ulong)value);
+
+                default:
+                    if (type == typeof(DateTimeOffset))
+                    {
+                        return new JsonPrimitive((DateTimeOffset)value);
+                    }
+
+                    if (type == typeof(Guid))
+                    {
+                        return new JsonPrimitive((Guid)value);
+                    }
+
+                    if (type == typeof(Uri))
+                    {
+                        return new JsonPrimitive((Uri)value);
+                    }
+
+                    return null;
             }
         }
     }

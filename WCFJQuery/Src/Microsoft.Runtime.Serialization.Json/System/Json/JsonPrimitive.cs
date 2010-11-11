@@ -835,7 +835,7 @@ namespace System.Json
                 long millisecondsSinceUnixEpoch;
                 if (long.TryParse(ticksValue, NumberStyles.Integer, CultureInfo.InvariantCulture, out millisecondsSinceUnixEpoch))
                 {
-                    long ticks = millisecondsSinceUnixEpoch * 10000 + UnixEpochTicks;
+                    long ticks = (millisecondsSinceUnixEpoch * 10000) + UnixEpochTicks;
                     if (ticks < DateTime.MaxValue.Ticks)
                     {
                         dateTime = new DateTime(ticks);

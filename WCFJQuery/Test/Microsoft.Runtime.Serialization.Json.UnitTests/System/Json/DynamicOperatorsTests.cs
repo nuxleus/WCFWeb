@@ -14,8 +14,6 @@ namespace Microsoft.ServiceModel.Web.UnitTests
         const string OperatorNotDefinedMsgFormat = "The binary operator {0} is not defined for the types '{1}' and '{2}'.";
         const string OperatorCannotBeAppliedMsgFormat = "Operator '{0}' cannot be applied to operand of type '{1}'";
 
-        // TODO: add operations between JV types.
-
         [TestMethod]
         public void ComparisonOperatorsTest()
         {
@@ -46,12 +44,11 @@ namespace Microsoft.ServiceModel.Web.UnitTests
             uint result;
             uint expected;
 
-            // TODO (miguell): fix this cast for shift operators.
-            result = (uint) dyn << 2;
+            result = dyn << 2;
             expected = number << 2;
             Assert.AreEqual(expected, result);
 
-            result = (uint) dyn >> 1;
+            result = dyn >> 1;
             expected = number >> 1;
             Assert.AreEqual(expected, result);
         }

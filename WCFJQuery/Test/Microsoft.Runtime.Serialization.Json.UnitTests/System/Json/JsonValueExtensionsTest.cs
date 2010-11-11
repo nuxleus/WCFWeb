@@ -35,6 +35,7 @@ namespace Microsoft.ServiceModel.Web.UnitTests
                 AnyInstance.AnyByte,
                 AnyInstance.AnyChar,
                 AnyInstance.AnyDateTime,
+                AnyInstance.AnyDateTimeOffset,
                 AnyInstance.AnyDecimal,
                 AnyInstance.AnyDouble,
                 AnyInstance.AnyFloat,
@@ -58,22 +59,6 @@ namespace Microsoft.ServiceModel.Web.UnitTests
                 Assert.AreEqual(value, JsonValueExtensions.CreateFrom(value).ReadAs(valueType), "Test failed on value of type: " + valueType);
             }
         }
-
-        [TestMethod]
-        public void CreateFromDateTimeTest()
-        {
-            DateTime dt = AnyInstance.AnyDateTime;
-
-            JsonValue jvDt1 = (JsonValue)dt;
-            JsonValue jvDt2 = JsonValueExtensions.CreateFrom(dt);
-
-            Assert.AreEqual(dt, (DateTime)jvDt1);
-            Assert.AreEqual(dt, (DateTime)jvDt2);
-
-            Assert.AreEqual(dt, jvDt1.ReadAs<DateTime>());
-            Assert.AreEqual(dt, jvDt2.ReadAs<DateTime>());
-        }
-
 
         [TestMethod()]
         public void CreateFromComplexTest()
