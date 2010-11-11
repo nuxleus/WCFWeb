@@ -10,3 +10,4 @@ TestResults/
 relre:/StyleCop\.Cache
 relre:/Settings\.StyleCop
 \.orig
+\.log

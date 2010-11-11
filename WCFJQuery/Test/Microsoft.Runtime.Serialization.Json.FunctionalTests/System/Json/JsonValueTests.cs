@@ -75,7 +75,7 @@
                 }
             }
 
-            ExpectException<XmlException>(delegate
+            ExpectException<FormatException>(delegate
             {
                 using (MemoryStream ms = new MemoryStream(new byte[10]))
                 {

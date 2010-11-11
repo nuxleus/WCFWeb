@@ -53,10 +53,7 @@ namespace System.Json
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("jsonStream");
             }
 
-            using (XmlDictionaryReader jsonReader = JsonReaderWriterFactory.CreateJsonReader(jsonStream, XmlDictionaryReaderQuotas.Max))
-            {
-                return JXMLToJsonValue(jsonReader);
-            }
+            return JXMLToJsonValue(jsonStream, null);
         }
 
         public static JsonValue JXMLToJsonValue(string jsonString)
@@ -74,10 +71,7 @@ namespace System.Json
 
             byte[] jsonBytes = Encoding.UTF8.GetBytes(jsonString);
 
-            using (XmlDictionaryReader jsonReader = JsonReaderWriterFactory.CreateJsonReader(jsonBytes, XmlDictionaryReaderQuotas.Max))
-            {
-                return JXMLToJsonValue(jsonReader);
-            }
+            return JXMLToJsonValue(null, jsonBytes);
         }
 
         public static JsonValue JXMLToJsonValue(XmlDictionaryReader jsonReader)
@@ -160,6 +154,23 @@ namespace System.Json
             }
 
             return parent[RootObjectName];
+        }
+
+        private static JsonValue JXMLToJsonValue(Stream jsonStream, byte[] jsonBytes)
+        {
+            try
+            {
+                using (XmlDictionaryReader jsonReader = jsonStream != null ?
+                    JsonReaderWriterFactory.CreateJsonReader(jsonStream, XmlDictionaryReaderQuotas.Max) :
+                    JsonReaderWriterFactory.CreateJsonReader(jsonBytes, XmlDictionaryReaderQuotas.Max))
+                {
+                    return JXMLToJsonValue(jsonReader);
+                }
+            }
+            catch (XmlException)
+            {
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new FormatException(SG.GetString(SR.IncorrectJsonFormat)));
+            }
         }
 
         private static void InsertJsonValue(Stack<JsonValue> jsonStack, ref JsonValue parent, ref string currentName, JsonValue jsonValue, bool isEmptyElement)
