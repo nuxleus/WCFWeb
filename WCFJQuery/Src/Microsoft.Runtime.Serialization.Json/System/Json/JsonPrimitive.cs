@@ -22,6 +22,7 @@ namespace System.Json
         private static readonly string[] JSDateOrTimeLocalFormats = new string[] { "yyyy-MM-dd", "HH:mm:ss", "HH:mm", "yyyy-MM-ddTHH:mm:ss" };
         private static readonly string[] JSDateUtcFormats = { @"ddd, d MMM yyyy HH:mm:ss \U\T\C", @"ddd, d MMM yyyy HH:mm:ss \G\M\T" };
         private static readonly string[] JSDateWithTimezoneFormats = { "yyyy-MM-ddTHH:mm:ssK", DateTimeIsoFormat, "yyyy-MM-ddTHH:mm:sszzz" };
+        private static readonly long UnixEpochTicks = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).Ticks;
         private static readonly char[] FloatingPointChars = new char[] { '.', 'e', 'E' };
         private static readonly Dictionary<Type, Func<string, ConvertResult>> stringConverters = new Dictionary<Type, Func<string, ConvertResult>>
             {
@@ -797,6 +798,55 @@ namespace System.Json
             if (DateTime.TryParseExact(valueString, JSDateOrTimeLocalFormats, CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal, out dateTime))
             {
                 return true;
+            }
+
+            if (TryParseAspNetDateTimeFormat(valueString, out dateTime))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private static bool TryParseAspNetDateTimeFormat(string valueString, out DateTime dateTime)
+        {
+            const string DateTimePrefix = "/Date(";
+            const int DateTimePrefixLength = 6;
+            const string DateTimeSuffix = ")/";
+            const int DateTimeSuffixLength = 2;
+
+            if (valueString.StartsWith(DateTimePrefix, StringComparison.Ordinal) && valueString.EndsWith(DateTimeSuffix, StringComparison.Ordinal))
+            {
+                string ticksValue = valueString.Substring(DateTimePrefixLength, valueString.Length - DateTimePrefixLength - DateTimeSuffixLength);
+                DateTimeKind dateTimeKind = DateTimeKind.Utc;
+                int indexOfTimeZoneOffset = ticksValue.IndexOf('+', 1);
+
+                if (indexOfTimeZoneOffset < 0)
+                {
+                    indexOfTimeZoneOffset = ticksValue.IndexOf('-', 1);
+                }
+
+                if (indexOfTimeZoneOffset != -1)
+                {
+                    dateTimeKind = DateTimeKind.Local;
+                    ticksValue = ticksValue.Substring(0, indexOfTimeZoneOffset);
+                }
+
+                long millisecondsSinceUnixEpoch;
+                if (long.TryParse(ticksValue, NumberStyles.Integer, CultureInfo.InvariantCulture, out millisecondsSinceUnixEpoch))
+                {
+                    long ticks = millisecondsSinceUnixEpoch * 10000 + UnixEpochTicks;
+                    if (ticks < DateTime.MaxValue.Ticks)
+                    {
+                        dateTime = new DateTime(ticks);
+                        if (dateTimeKind == DateTimeKind.Local)
+                        {
+                            dateTime = dateTime.ToLocalTime();
+                        }
+
+                        return true;
+                    }
+                }
             }
 
             dateTime = new DateTime();

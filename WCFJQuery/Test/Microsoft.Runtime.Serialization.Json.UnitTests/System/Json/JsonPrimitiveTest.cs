@@ -3,7 +3,10 @@
     using System;
     using System.Collections.Generic;
     using System.Globalization;
+    using System.IO;
     using System.Json;
+    using System.Runtime.Serialization.Json;
+    using System.Text;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [TestClass]
@@ -212,6 +215,12 @@
             Assert.AreEqual<DateTimeOffset>(AnyInstance.AnyDateTimeOffset, new JsonPrimitive(AnyInstance.AnyDateTimeOffset.ToString(DateTimeWithOffsetFormat2, CultureInfo.InvariantCulture)).ReadAs<DateTimeOffset>());
             Assert.AreEqual<DateTimeOffset>(AnyInstance.AnyDateTimeOffset.ToLocalTime(), (DateTimeOffset)(new JsonPrimitive(AnyInstance.AnyDateTimeOffset.ToLocalTime().ToString(DateTimeWithoutOffsetFormat, CultureInfo.InvariantCulture))));
             Assert.AreEqual<DateTimeOffset>(AnyInstance.AnyDateTimeOffset.ToLocalTime(), (DateTimeOffset)(new JsonPrimitive(AnyInstance.AnyDateTimeOffset.ToLocalTime().ToString(DateTimeWithoutOffsetFormat2, CultureInfo.InvariantCulture))));
+
+            DataContractJsonSerializer dcjs = new DataContractJsonSerializer(typeof(DateTime));
+            MemoryStream ms = new MemoryStream();
+            dcjs.WriteObject(ms, AnyInstance.AnyDateTime);
+            string dcjsSerializedDateTime = Encoding.UTF8.GetString(ms.ToArray());
+            Assert.AreEqual(AnyInstance.AnyDateTime, JsonValue.Parse(dcjsSerializedDateTime).ReadAs<DateTime>());
 
             ExceptionTestHelper.ExpectException<InvalidCastException>(delegate { var b = (bool)(new JsonPrimitive("notBool")); });
             ExceptionTestHelper.ExpectException<UriFormatException>(delegate { var u = new JsonPrimitive("not an uri - " + new string('r', 100000)).ReadAs<Uri>(); });
