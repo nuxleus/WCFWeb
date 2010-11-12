@@ -810,6 +810,11 @@ namespace System.Json
 
         private static bool TryParseAspNetDateTimeFormat(string valueString, out DateTime dateTime)
         {
+            //// The format for the value is given by the following regex:
+            //// \/Date\((?<milliseconds>\-?\d+)(?<offset>[\+\-]?\d{4})\)\/
+            //// where milliseconds is the number of milliseconds since 1970/01/01:00:00:00.000 UTC (the "unix baseline")
+            //// and offset is an optional which indicates whether the value is local or UTC.
+
             const string DateTimePrefix = "/Date(";
             const int DateTimePrefixLength = 6;
             const string DateTimeSuffix = ")/";

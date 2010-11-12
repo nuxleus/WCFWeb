@@ -367,18 +367,22 @@
                 Assert.AreEqual(dateLocal.Second, timeOnly.Second);
 
                 DataContractJsonSerializer dcjs = new DataContractJsonSerializer(typeof(DateTime));
-                MemoryStream ms = new MemoryStream();
-                dcjs.WriteObject(ms, dateLocal);
-                ms.Position = 0;
-                JsonValue jvFromString = JsonValue.Load(ms);
-                Assert.AreEqual(dateLocal, jvFromString.ReadAs<DateTime>());
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    dcjs.WriteObject(ms, dateLocal);
+                    ms.Position = 0;
+                    JsonValue jvFromString = JsonValue.Load(ms);
+                    Assert.AreEqual(dateLocal, jvFromString.ReadAs<DateTime>());
+                }
 
-                ms = new MemoryStream();
-                DateTime dateUtc = dateLocal.ToUniversalTime();
-                dcjs.WriteObject(ms, dateUtc);
-                ms.Position = 0;
-                jvFromString = JsonValue.Load(ms);
-                Assert.AreEqual(dateUtc, jvFromString.ReadAs<DateTime>());
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    DateTime dateUtc = dateLocal.ToUniversalTime();
+                    dcjs.WriteObject(ms, dateUtc);
+                    ms.Position = 0;
+                    JsonValue jvFromString = JsonValue.Load(ms);
+                    Assert.AreEqual(dateUtc, jvFromString.ReadAs<DateTime>());
+                }
             }
         }
 
