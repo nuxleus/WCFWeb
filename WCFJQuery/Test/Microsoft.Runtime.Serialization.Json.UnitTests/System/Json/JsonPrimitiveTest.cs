@@ -232,7 +232,7 @@
         }
 
         [TestMethod]
-        public void SaveTest()
+        public void ToStringTest()
         {
             char anyUnescapedChar = 'c';
             string anyUnescapedString = "hello";

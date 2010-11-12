@@ -336,7 +336,7 @@
         }
 
         [TestMethod]
-        public void SaveTest()
+        public void ToStringTest()
         {
             JsonObject target = new JsonObject();
             JsonValue item1 = AnyInstance.AnyJsonValue1 ?? "not null";
@@ -350,6 +350,11 @@
 
             string expected = string.Format(CultureInfo.InvariantCulture, "{{\"item1\":{0},\"item2\":null,\"item3\":{1},\"\":{2}}}", item1, item3, item4);
             Assert.AreEqual(expected, target.ToString());
+
+            string json = "{\r\n  \"item1\": \"hello\",\r\n  \"item2\": null,\r\n  \"item3\": [\r\n    1,\r\n    2,\r\n    3\r\n  ],\r\n  \"\": \"notnull\"\r\n}";
+            target = JsonValue.Parse(json) as JsonObject;
+            json = json.Replace("\r\n", "").Replace(" ", "");
+            Assert.AreEqual<string>(json, target.ToString());
         }
 
         [TestMethod]
@@ -452,6 +457,7 @@
         public void GetValueOrDefaultTest()
         {
             bool boolValue;
+            JsonValue target;
             JsonValue jsonValue;
 
             Person person = AnyInstance.AnyPerson;
@@ -461,8 +467,6 @@
             Assert.AreEqual<string>(person.Address.ToString(), jo.ValueOrDefault("Address").ReadAsComplex<Address>().ToString()); // JsonObject
             Assert.AreEqual<int>(person.Friends.Count, jo.ValueOrDefault("Friends").Count); // JsonArray
 
-            JsonValue target;
-            
             target = jo.ValueOrDefault("Address").ValueOrDefault("City"); // JsonPrimitive
             Assert.IsNotNull(target);
             Assert.AreEqual<string>(person.Address.City, target.ReadAs<string>());

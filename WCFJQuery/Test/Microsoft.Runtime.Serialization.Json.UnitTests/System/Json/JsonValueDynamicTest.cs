@@ -140,7 +140,7 @@
             target = jo.Friends;  // JsonArray
             Assert.IsNotNull(target);
             jsonValue = target as JsonValue;
-            Assert.AreEqual<int>(jsonValue.ReadAsComplex<List<Person>>().Count, person.Friends.Count);
+            Assert.AreEqual<int>(person.Friends.Count, jsonValue.ReadAsComplex<List<Person>>().Count);
 
             target = jo.Friends[1].Address.City;
             Assert.IsNotNull(target);
@@ -413,10 +413,12 @@
 
             // fixup string
             retstr1 = retstr1.Replace("\'Person\'", string.Format("\'{0}\'", typeof(Person).FullName));
+            if (retstr1.EndsWith(".")) retstr1 = retstr1.Substring(0, retstr1.Length - 1);
 
             // fixup string
             retstr2 = retstr2.Replace("\'string\'", string.Format("\'{0}\'", typeof(string).FullName));
             retstr2 = retstr2.Replace("\'int\'", string.Format("\'{0}\'", typeof(int).FullName));
+            if (retstr2.EndsWith(".")) retstr2 = retstr2.Substring(0, retstr2.Length - 1);
 
             Assert.AreEqual<string>(retstr1, retstr2);
         }

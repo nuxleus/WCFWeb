@@ -247,15 +247,22 @@
         }
 
         [TestMethod]
-        public void SaveTest()
+        public void ToStringTest()
         {
+            JsonArray target;
             JsonValue item1 = AnyInstance.AnyJsonValue1;
             JsonValue item2 = null;
             JsonValue item3 = AnyInstance.AnyJsonValue2;
-            JsonArray target = new JsonArray(item1, item2, item3);
+            
+            target = new JsonArray(item1, item2, item3);
 
             string expected = string.Format(CultureInfo.InvariantCulture, "[{0},null,{1}]", item1, item3);
             Assert.AreEqual(expected, target.ToString());
+
+            string json = "[\r\n  \"hello\",\r\n  null,\r\n  [\r\n    1,\r\n    2,\r\n    3\r\n  ]\r\n]";
+            target = JsonValue.Parse(json) as JsonArray;
+            json = json.Replace("\r\n", "").Replace(" ", "");
+            Assert.AreEqual(json, target.ToString());
         }
 
         [TestMethod]
@@ -421,7 +428,8 @@
             child = new JsonArray(1, 2);
             TestEvents(
                 target,
-                arr => {
+                arr => 
+                {
                     arr.Add(child);
                     ((JsonArray)arr[0]).Add(5);
                 },
@@ -499,12 +507,12 @@
             ValidateExpectedEvents(expectedEvents, actualEvents);
         }
 
-        static void TestEvents(JsonArray array, Action<JsonArray> actionToTriggerEvent, List<Tuple<bool, JsonValue, JsonValueChangeEventArgs>> expectedEvents)
+        private static void TestEvents(JsonArray array, Action<JsonArray> actionToTriggerEvent, List<Tuple<bool, JsonValue, JsonValueChangeEventArgs>> expectedEvents)
         {
             TestEvents<JsonArray>(array, actionToTriggerEvent, expectedEvents);
         }
 
-        internal static void ValidateExpectedEvents(List<Tuple<bool, JsonValue, JsonValueChangeEventArgs>> expectedEvents, List<Tuple<bool, JsonValue, JsonValueChangeEventArgs>> actualEvents)
+        private static void ValidateExpectedEvents(List<Tuple<bool, JsonValue, JsonValueChangeEventArgs>> expectedEvents, List<Tuple<bool, JsonValue, JsonValueChangeEventArgs>> actualEvents)
         {
             Assert.AreEqual(expectedEvents.Count, actualEvents.Count);
             for (int i = 0; i < expectedEvents.Count; i++)
@@ -581,7 +589,7 @@
             }
         }
 
-        static void ValidateJsonArrayItems(JsonArray jsonArray, IEnumerable<JsonValue> expectedItems)
+        private static void ValidateJsonArrayItems(JsonArray jsonArray, IEnumerable<JsonValue> expectedItems)
         {
             List<JsonValue> expected = new List<JsonValue>(expectedItems);
             Assert.AreEqual(expected.Count, jsonArray.Count);

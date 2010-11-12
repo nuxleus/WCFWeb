@@ -61,23 +61,23 @@
 
             object value;
 
-            Assert.IsFalse(target.TryReadAs(typeof(bool), out value), "TryReadAs expected to fail");
-            Assert.IsNull(value, "expected from failed TryReadAs should be null!");
+            Assert.IsFalse(target.TryReadAs(typeof(bool), out value), "TryReadAs expected to return false");
+            Assert.IsNull(value, "value from failed TryReadAs should be null!");
             
-            Assert.IsFalse(target.TryReadAs(typeof(string), out value), "TryReadAs expected to fail");
-            Assert.IsNull(value, "expected from failed TryReadAs should be null!");
+            Assert.IsFalse(target.TryReadAs(typeof(string), out value), "TryReadAs expected to return false");
+            Assert.IsNull(value, "value from failed TryReadAs should be null!");
 
-            Assert.IsFalse(target.TryReadAs(typeof(JsonObject), out value), "TryReadAs expected to fail");
-            Assert.IsNull(value, "expected from failed TryReadAs should be null!");
+            Assert.IsFalse(target.TryReadAs(typeof(JsonObject), out value), "TryReadAs expected to return false");
+            Assert.IsNull(value, "value from failed TryReadAs should be null!");
 
-            Assert.IsFalse(target.TryReadAs<bool>(out boolValue), "TryReadAs expected to fail");
-            Assert.IsFalse(boolValue, "expected from failed TryReadAs should be default!");
+            Assert.IsFalse(target.TryReadAs<bool>(out boolValue), "TryReadAs expected to return false");
+            Assert.IsFalse(boolValue, "value from failed TryReadAs should be default!");
 
-            Assert.IsFalse(target.TryReadAs<string>(out stringValue), "TryReadAs expected to fail");
-            Assert.IsNull(stringValue, "expected from failed TryReadAs should be null!");
+            Assert.IsFalse(target.TryReadAs<string>(out stringValue), "TryReadAs expected to return false");
+            Assert.IsNull(stringValue, "value from failed TryReadAs should be null!");
 
-            Assert.IsFalse(target.TryReadAs<JsonObject>(out objValue), "TryReadAs expected to fail");
-            Assert.IsNull(objValue, "expected from failed TryReadAs should be null!");
+            Assert.IsFalse(target.TryReadAs<JsonObject>(out objValue), "TryReadAs expected to return false");
+            Assert.IsNull(objValue, "value from failed TryReadAs should be null!");
         }
 
         [TestMethod()]

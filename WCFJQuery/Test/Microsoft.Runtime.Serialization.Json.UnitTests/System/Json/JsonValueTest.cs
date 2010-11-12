@@ -507,6 +507,8 @@
             Assert.AreEqual(JsonType.Default, jv.ValueOrDefault("Friends", null).JsonType);
             Assert.AreEqual(JsonType.Default, AnyInstance.AnyJsonValue1.ValueOrDefault((string)null).JsonType);
 
+            Assert.AreSame(AnyInstance.AnyJsonValue1, AnyInstance.AnyJsonValue1.ValueOrDefault());
+
             ExceptionTestHelper.ExpectException<ArgumentException>(delegate { var c = AnyInstance.AnyJsonValue1.ValueOrDefault(AnyInstance.AnyLong); });
             ExceptionTestHelper.ExpectException<ArgumentException>(delegate { var c = AnyInstance.AnyJsonValue1.ValueOrDefault("str", AnyInstance.AnyShort); });
             ExceptionTestHelper.ExpectException<ArgumentException>(delegate { var c = AnyInstance.AnyJsonValue1.ValueOrDefault("str", AnyInstance.AnyUInt); });
