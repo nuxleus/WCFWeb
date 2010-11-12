@@ -281,6 +281,19 @@
         }
 
         [TestMethod]
+        public void HasExactlyOneJsonValueTest()
+        {
+            TestSendRequest<BadServices.NegativeTestService, BadServices.IInputWithMoreThanOneJsonValueInputs>(
+                new WebHttpBehavior3(),
+                "POST",
+                TestService.BaseAddress + "/Operation",
+                "application/json",
+                "{\"input1\":123,\"input2\":456}",
+                Encoding.UTF8,
+                CreateResponseValidator(HttpStatusCode.BadRequest, null, null));
+        }
+
+        [TestMethod]
         public void AutomaticFormatSelectionEnabledTest()
         {
             WebHttpBehavior3 target = new WebHttpBehavior3();
@@ -485,14 +498,7 @@
             public interface IInputWithMoreThanOneJsonValueInputs
             {
                 [OperationContract, WebInvoke(BodyStyle = WebMessageBodyStyle.WrappedRequest)]
-                void Operation(JsonValue input1, JsonValue input2);
-            }
-
-            [ServiceContract]
-            public interface IInputWithMoreThanOneJsonValueInputs2
-            {
-                [OperationContract, WebInvoke(BodyStyle = WebMessageBodyStyle.WrappedRequest)]
-                void Operation(JsonValue input1, JsonValue input2);
+                JsonValue Operation(JsonValue input1, JsonValue input2);
             }
 
             [ServiceContract]
@@ -527,7 +533,6 @@
                 IJsonValueReturnWithResponseFormatXml2,
                 IJsonValueWebGetAndWebInvoke,
                 IInputWithMoreThanOneJsonValueInputs,
-                IInputWithMoreThanOneJsonValueInputs2,
                 IParameterInTemplateNotInOperation,
                 IParameterInTemplateQueryNotInOperation,
                 IParameterInTemplateQueryNotConvertible
@@ -577,14 +582,9 @@
                     throw new NotSupportedException("This should never be reached");
                 }
 
-                void IInputWithMoreThanOneJsonValueInputs.Operation(JsonValue input1, JsonValue input2)
+                JsonValue IInputWithMoreThanOneJsonValueInputs.Operation(JsonValue input1, JsonValue input2)
                 {
-                    throw new NotSupportedException("This should never be reached");
-                }
-
-                void IInputWithMoreThanOneJsonValueInputs2.Operation(JsonValue input1, JsonValue input2)
-                {
-                    throw new NotSupportedException("This should never be reached");
+                    return input1;
                 }
 
                 void IParameterInTemplateNotInOperation.Operation(JsonValue input)

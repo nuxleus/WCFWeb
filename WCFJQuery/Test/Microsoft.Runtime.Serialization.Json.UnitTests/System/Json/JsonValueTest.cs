@@ -480,6 +480,13 @@
             ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { AnyInstance.AnyJsonArray["here"] = 123; });
         }
 
+        [TestMethod]
+        public void NonSerializableTest()
+        {
+            DataContractJsonSerializer dcjs = new DataContractJsonSerializer(typeof(JsonValue));
+            ExceptionTestHelper.ExpectException<NotSupportedException>(() => dcjs.WriteObject(Stream.Null, AnyInstance.DefaultJsonValue));
+        }
+
         [TestMethod()]
         public void DefaultConcatTest()
         {

@@ -11,6 +11,7 @@ namespace System.Json
     using System.Dynamic;
     using System.IO;
     using System.Linq.Expressions;
+    using System.Runtime.Serialization;
     using System.Runtime.Serialization.Json;
     using System.Text;
     using System.Xml;
@@ -1182,25 +1183,15 @@ namespace System.Json
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Event methods are called on this instance")]
-        private void OnSerializing()
+        [OnSerializing]
+        private void OnSerializing(StreamingContext context)
         {
             throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new NotSupportedException());
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Event methods are called on this instance")]
-        private void OnDeserializing()
-        {
-            throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new NotSupportedException());
-        }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Event methods are called on this instance")]
-        private void OnSerialized()
-        {
-            throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new NotSupportedException());
-        }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Event methods are called on this instance")]
-        private void OnDeserialized()
+        [OnDeserializing]
+        private void OnDeserializing(StreamingContext context)
         {
             throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new NotSupportedException());
         }

@@ -5,6 +5,7 @@
     using System.Globalization;
     using System.IO;
     using System.Json;
+    using System.Runtime.Serialization;
     using System.Runtime.Serialization.Json;
     using System.Text;
     using System.Xml;
@@ -329,6 +330,45 @@
                 Console.WriteLine("Bad JXML: {0}", badJXML);
                 byte[] xmlBytes = Encoding.UTF8.GetBytes(badJXML);
                 ExpectException<FormatException>(() => JsonValueExtensions.Load(XmlDictionaryReader.CreateTextReader(xmlBytes, XmlDictionaryReaderQuotas.Max)));
+            }
+        }
+
+        [TestMethod]
+        public void NonSerializableTests()
+        {
+            foreach (bool useJsonSerializer in new bool[] { false, true })
+            {
+                foreach (JsonValue jv in new JsonValue[] { "hello", new JsonArray(1, 2), new JsonObject { { "key", "value" } }, new JsonPrimitive(1).ValueOrDefault("default") })
+                {
+                    Console.WriteLine("Testing with {0} serializer for JsonType.{1}", useJsonSerializer ? "DCJS" : "DCS", jv.JsonType);
+                    XmlObjectSerializer serializer;
+                    if (useJsonSerializer)
+                    {
+                        serializer = new DataContractJsonSerializer(jv.GetType());
+                    }
+                    else
+                    {
+                        serializer = new DataContractSerializer(jv.GetType());
+                    }
+
+                    if (jv.JsonType == JsonType.Default)
+                    {
+                        ExpectException<NotSupportedException>(() => serializer.WriteObject(Stream.Null, jv));
+                        if (useJsonSerializer)
+                        {
+                            ExpectException<NotSupportedException>(() => serializer.ReadObject(new MemoryStream(Encoding.UTF8.GetBytes("{}"))));
+                        }
+                    }
+                    else
+                    {
+                        ExpectException<InvalidDataContractException>(() => serializer.WriteObject(Stream.Null, jv));
+                        if (useJsonSerializer)
+                        {
+                            string json = jv.ToString();
+                            ExpectException<InvalidDataContractException>(() => serializer.ReadObject(new MemoryStream(Encoding.UTF8.GetBytes(json))));
+                        }
+                    }
+                }
             }
         }
 
