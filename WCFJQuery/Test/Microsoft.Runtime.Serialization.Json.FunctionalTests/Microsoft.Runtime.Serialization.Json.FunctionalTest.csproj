@@ -61,7 +61,6 @@
     <Compile Include="System\Json\JsonValueAndComplexTypesTests.cs" />
     <Compile Include="System\Json\FormUrlEncodedTests.cs" />
     <Compile Include="System\Json\JsonValueDynamicTests.cs" />
-    <Compile Include="System\Json\JLinqUsageTests.cs" />
     <Compile Include="System\Json\JsonStringRoundTripTests.cs" />
     <Compile Include="System\Json\JObjectFunctionalTest.cs" />
     <Compile Include="System\Json\JsonPrimitiveTests.cs" />
@@ -69,6 +68,7 @@
     <Compile Include="System\Json\JsonValuePartialTrustTests.cs" />
     <Compile Include="System\Json\JsonValueTestHelper.cs" />
     <Compile Include="System\Json\JsonValueTests.cs" />
+    <Compile Include="System\Json\JsonValueUsageTest.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

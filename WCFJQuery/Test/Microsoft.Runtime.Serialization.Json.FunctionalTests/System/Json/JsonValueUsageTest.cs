@@ -9,7 +9,7 @@
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [TestClass]
-    public class JLinqUsageTests
+    public class JsonValueUsageTest
     {
         static TextWriter Log
         {
