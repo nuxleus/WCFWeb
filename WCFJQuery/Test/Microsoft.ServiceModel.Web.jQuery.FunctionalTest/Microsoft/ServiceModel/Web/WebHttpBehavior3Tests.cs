@@ -65,7 +65,7 @@
         {
             string queryString = "/JQueryGet/Foo/Bar?Address=Capital+Hill&customer%5BName%5D=Pete&customer%5BAddress%5D=Redmond&" +
                 "customer%5BAge%5D%5B0%5D%5B%5D=23&customer%5BAge%5D%5B0%5D%5B%5D=24&customer%5BAge%5D%5B1%5D%5B%5D=25&" +
-                "customer%5BAge%5D%5B1%5D%5B%5D=26&customer%5BPhones%5D%5B%5D=425+888+1111&customer%5BPhones%5D%5B%5D=425+345+7777&" + 
+                "customer%5BAge%5D%5B1%5D%5B%5D=26&customer%5BPhones%5D%5B%5D=425+888+1111&customer%5BPhones%5D%5B%5D=425+345+7777&" +
                 "customer%5BPhones%5D%5B%5D=425+888+4564&customer%5BEnrolmentDate%5D=%2FDate(1277243030667)%2F&role=PM&changeDate=3&count=15";
             string expectedReturn = @"{""Name"":""Yavor"",""Address"":""Capital Hill"",""Age"":[[""23"",""24""],[""25"",""26""]],""Phones"":[""425 888 1111"",""425 345 7777"",""425 888 4564""],""EnrolmentDate"":""\/Date(1277243030667)\/""}";
 
@@ -151,7 +151,7 @@
             {
                 string contentType = contentTypes[contentTypeIndex];
                 Console.WriteLine("Sending JSON {0} with content-type {1}", json, contentType);
-                WebHttpBehavior3Tests.Test("POST", Endpoint + "/Echo", contentType, json, HttpStatusCode.OK, ApplicationJsonContentTypeWithCharset, json == "null" ? "" : json);
+                WebHttpBehavior3Tests.Test("POST", Endpoint + "/Echo", contentType, json, HttpStatusCode.OK, json == "null" ? "" : ApplicationJsonContentTypeWithCharset, json == "null" ? "" : json);
                 contentTypeIndex = (contentTypeIndex + 1) % contentTypes.Length;
             }
         }

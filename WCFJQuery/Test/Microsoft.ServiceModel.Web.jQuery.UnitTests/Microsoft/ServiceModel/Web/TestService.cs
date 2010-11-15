@@ -20,6 +20,9 @@
         [WebGet]
         JsonValue EchoGet();
 
+        [WebGet]
+        JsonValue EchoNull();
+
         [WebInvoke(Method = "HEAD")]
         void EchoHead();
 
@@ -40,6 +43,19 @@
 
         [WebInvoke(ResponseFormat = WebMessageFormat.Json)]
         Customer ThrowValidation(Customer customer);
+    }
+
+    [ServiceContract]
+    public interface ITestService35
+    {
+        [OperationContract]
+        Customer EchoPost(Customer input);
+
+        [WebInvoke(UriTemplate = "/{id}")]
+        Customer GetField(string id, Customer input);
+
+        [WebGet]
+        Customer EchoNull();
     }
 
     public class TestService : ITestService
@@ -67,6 +83,11 @@
         public JsonValue EchoGet()
         {
             return WebOperationContext.Current.IncomingRequest.GetQueryStringAsJsonObject();
+        }
+
+        public JsonValue EchoNull()
+        {
+            return null;
         }
 
         public void EchoHead()
@@ -132,6 +153,26 @@
         public Customer ThrowValidation(Customer customer)
         {
             return customer;
+        }
+    }
+
+    public class TestService35 : ITestService35
+    {
+        public const string BaseAddress = "http://localhost:8000/Service";
+
+        public Customer EchoPost(Customer input)
+        {
+            return input;
+        }
+
+        public Customer GetField(string id, Customer input)
+        {
+            return input;
+        }
+
+        public Customer EchoNull()
+        {
+            return null;
         }
     }
 

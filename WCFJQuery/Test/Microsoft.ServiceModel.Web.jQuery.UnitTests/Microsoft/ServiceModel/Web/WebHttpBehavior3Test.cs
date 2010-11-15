@@ -4,8 +4,8 @@
     using System.IO;
     using System.Json;
     using System.Net;
-    using System.Runtime.Serialization;
     using System.ServiceModel;
+    using System.ServiceModel.Description;
     using System.ServiceModel.Web;
     using System.Text;
     using Microsoft.ServiceModel.Web;
@@ -15,6 +15,7 @@
     public class WebHttpBehavior3Test
     {
         internal const string ApplicationJsonContentType = "application/json; charset=utf-8";
+        internal const string ApplicationXmlContentType = "application/xml; charset=utf-8";
 
         [TestMethod]
         public void DefaultPropertiesTest()
@@ -172,23 +173,44 @@
         [TestMethod]
         public void EmptyRequestsTest()
         {
-            TestSendRequest<TestService, ITestService>(
-                new WebHttpBehavior3(),
-                "POST",
-                TestService.BaseAddress + "/EchoPOST",
-                null,
-                "", 
-                null,
-                CreateResponseValidator(HttpStatusCode.OK, ApplicationJsonContentType, "{}"));
+            WebHttpBehavior[] webHttpBehaviors = { new WebHttpBehavior3(), new WebHttpBehavior() };
+            Type[] serviceTypes = { typeof(TestService), typeof(TestService35) };
+            Type[] interfaceTypes = { typeof(ITestService), typeof(ITestService35) };
+            for (int i = 0; i < 2; i++)
+            {
+                TestSendRequest(
+                    serviceTypes[i],
+                    interfaceTypes[i],
+                    webHttpBehaviors[i],
+                    "POST",
+                    TestService.BaseAddress + "/EchoPOST",
+                    null,
+                    "",
+                    null,
+                    CreateResponseValidator(HttpStatusCode.OK, "", ""));
 
-            TestSendRequest<TestService, ITestService>(
-                new WebHttpBehavior3(),
-                "GET",
-                TestService.BaseAddress + "/EchoGET", 
-                null,
-                null,
-                null,
-                CreateResponseValidator(HttpStatusCode.OK, ApplicationJsonContentType, "{}"));
+                TestSendRequest(
+                    serviceTypes[i],
+                    interfaceTypes[i],
+                    webHttpBehaviors[i],
+                    "GET",
+                    TestService.BaseAddress + "/EchoNull",
+                    null,
+                    null,
+                    null,
+                    CreateResponseValidator(HttpStatusCode.OK, "", ""));
+
+                TestSendRequest(
+                    serviceTypes[i],
+                    interfaceTypes[i],
+                    webHttpBehaviors[i],
+                    "POST",
+                    TestService.BaseAddress + "/EchoPOST",
+                    ApplicationJsonContentType,
+                    "",
+                    null,
+                    CreateResponseValidator(HttpStatusCode.OK, "", ""));
+            }
         }
 
         [TestMethod]
@@ -376,12 +398,17 @@
             };
         }
 
-        void TestSendRequest<TService, TInterface>(WebHttpBehavior3 behavior, string method, string uri, string contentType, string body, Encoding bodyEncoding, Action<HttpWebResponse> responseValidator)
+        static void TestSendRequest<TService, TInterface>(WebHttpBehavior behavior, string method, string uri, string contentType, string body, Encoding bodyEncoding, Action<HttpWebResponse> responseValidator)
+        {
+            TestSendRequest(typeof(TService), typeof(TInterface), behavior, method, uri, contentType, body, bodyEncoding, responseValidator);
+        }
+
+        static void TestSendRequest(Type serviceType, Type interfaceType, WebHttpBehavior behavior, string method, string uri, string contentType, string body, Encoding bodyEncoding, Action<HttpWebResponse> responseValidator)
         {
             string baseAddress = TestService.BaseAddress;
-            using (ServiceHost host = new ServiceHost(typeof(TService), new Uri(baseAddress)))
+            using (ServiceHost host = new ServiceHost(serviceType, new Uri(baseAddress)))
             {
-                host.AddServiceEndpoint(typeof(TInterface), new WebHttpBinding(), "").Behaviors.Add(behavior);
+                host.AddServiceEndpoint(interfaceType, new WebHttpBinding(), "").Behaviors.Add(behavior);
                 host.Open();
                 HttpWebRequest request = CreateRequest(method, uri, contentType, body, bodyEncoding);
                 HttpWebResponse resp;

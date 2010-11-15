@@ -20,7 +20,7 @@ namespace Microsoft.ServiceModel.Web
     internal class JsonValueFormatter : IDispatchMessageFormatter
     {
         internal const string BinaryElementName = "Binary";
-        internal const string ApplicationJsonContentType = "application/json"; 
+        internal const string ApplicationJsonContentType = "application/json";
         private const string FormUrlEncodedContentType = "application/x-www-form-urlencoded";
         private static readonly Regex contentTypeCharset = new Regex(@"[^;]+\s*\;\s*charset\s*=\s*(?<charset>\S+)", RegexOptions.IgnoreCase);
         private OperationDescription operationDescription;
@@ -37,7 +37,7 @@ namespace Microsoft.ServiceModel.Web
 
             BindingElementCollection bindingElements = endpoint.Binding.CreateBindingElements();
             WebMessageEncodingBindingElement webEncoding = bindingElements.Find<WebMessageEncodingBindingElement>();
-            
+
             this.charset = CharsetFromEncoding(webEncoding);
             this.readerQuotas = new XmlDictionaryReaderQuotas();
             XmlDictionaryReaderQuotas.Max.CopyTo(this.readerQuotas);
@@ -52,20 +52,33 @@ namespace Microsoft.ServiceModel.Web
             JsonValue jsonValue = null;
             bool isJsonInput = false;
 
-            if (message != null && message.Properties.ContainsKey(WebBodyFormatMessageProperty.Name))
+            if (message != null)
             {
-                WebBodyFormatMessageProperty bodyFormatProperty = (WebBodyFormatMessageProperty)message.Properties[WebBodyFormatMessageProperty.Name];
-                if (bodyFormatProperty.Format == WebContentFormat.Json)
+                if (message.IsEmpty)
                 {
-                    isJsonInput = true;
-                    jsonValue = DeserializeFromJXML(message);
+                    Encoding contentEncoding;
+                    if (IsContentTypeSupported(WebOperationContext.Current.IncomingRequest.ContentType, ApplicationJsonContentType, out contentEncoding))
+                    {
+                        isJsonInput = true;
+                        jsonValue = null;
+                    }
+                }
+                else if (message.Properties.ContainsKey(WebBodyFormatMessageProperty.Name))
+                {
+                    WebBodyFormatMessageProperty bodyFormatProperty =
+                        (WebBodyFormatMessageProperty)message.Properties[WebBodyFormatMessageProperty.Name];
+                    if (bodyFormatProperty.Format == WebContentFormat.Json)
+                    {
+                        isJsonInput = true;
+                        jsonValue = DeserializeFromJXML(message);
+                    }
                 }
             }
 
             if (!isJsonInput)
             {
                 Encoding contentEncoding;
-                if (!IsContentTypeSupported(WebOperationContext.Current.IncomingRequest.ContentType, out contentEncoding))
+                if (!IsContentTypeSupported(WebOperationContext.Current.IncomingRequest.ContentType, FormUrlEncodedContentType, out contentEncoding))
                 {
                     throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.ExpectUrlEncodedOrJson));
                 }
@@ -106,10 +119,16 @@ namespace Microsoft.ServiceModel.Web
         public Message SerializeReply(MessageVersion messageVersion, object[] parameters, object result)
         {
             CheckMessageVersion(messageVersion);
+            string contentType = string.Empty;
+            if (result != null)
+            {
+                contentType = ApplicationJsonContentType + "; charset=" + this.charset;
+            }
+
             Message reply = StreamMessageHelper.CreateMessage(
                 messageVersion,
                 this.operationDescription.Messages[1].Action,
-                ApplicationJsonContentType + "; charset=" + this.charset,
+                contentType,
                 (JsonValue)result);
             return reply;
         }
@@ -122,7 +141,7 @@ namespace Microsoft.ServiceModel.Web
             }
         }
 
-        private static bool IsContentTypeSupported(string contentType, out Encoding contentEncoding)
+        private static bool IsContentTypeSupported(string contentType, string expectedContentType, out Encoding contentEncoding)
         {
             contentEncoding = null;
             if (string.IsNullOrEmpty(contentType))
@@ -130,12 +149,12 @@ namespace Microsoft.ServiceModel.Web
                 // body is empty
                 return true;
             }
-            else if (FormUrlEncodedContentType.Equals(contentType, StringComparison.OrdinalIgnoreCase))
+            else if (expectedContentType.Equals(contentType, StringComparison.OrdinalIgnoreCase))
             {
                 // no charset
                 return true;
             }
-            else if (contentType.StartsWith(FormUrlEncodedContentType, StringComparison.OrdinalIgnoreCase))
+            else if (contentType.StartsWith(expectedContentType, StringComparison.OrdinalIgnoreCase))
             {
                 // possibly charset parameter
                 Match match = contentTypeCharset.Match(contentType);
