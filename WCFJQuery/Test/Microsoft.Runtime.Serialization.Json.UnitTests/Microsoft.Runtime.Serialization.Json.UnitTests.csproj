@@ -63,6 +63,7 @@
     <Compile Include="System\Json\JsonValueTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="System\Json\JsonValueLinqExtensionsTest.cs" />
+    <Compile Include="System\Json\WebMatrixCompatTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Src\Microsoft.Runtime.Serialization.Json\Microsoft.Runtime.Serialization.Json.csproj">

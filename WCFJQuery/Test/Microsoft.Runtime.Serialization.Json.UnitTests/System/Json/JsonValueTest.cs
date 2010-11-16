@@ -162,6 +162,39 @@
             Assert.IsNull(value, "expected from failed TryReadAs should be null!");
         }
 
+
+        [TestMethod]
+        public void ReadAsCollectionTest()
+        {
+            JsonValue jsonValue;
+            jsonValue = JsonValue.Parse("[1,2,3]");
+            IList[] collections = 
+            {
+                jsonValue.ReadAs<List<object>>(),
+                jsonValue.ReadAs<Array>(),
+                jsonValue.ReadAs<object[]>()
+            };
+
+            foreach(IList collection in collections)
+            {
+                Assert.AreEqual<int>(jsonValue.Count, collection.Count);
+
+                for (int i = 0; i < jsonValue.Count; i++)
+                {
+                    Assert.AreEqual<int>((int)jsonValue[i], (int)collection[i]);
+                }
+            }
+
+            jsonValue = JsonValue.Parse("{\"A\":1,\"B\":2,\"C\":3}");
+            Dictionary<string, object> dictionary = jsonValue.ReadAs<Dictionary<string, object>>();
+
+            Assert.AreEqual<int>(jsonValue.Count, dictionary.Count);
+            foreach (KeyValuePair<string, JsonValue> pair in jsonValue)
+            {
+                Assert.AreEqual((int)jsonValue[pair.Key], (int)dictionary[pair.Key]);
+            }
+        }
+
         [TestMethod]
         public void SaveTest()
         {
@@ -303,6 +336,34 @@
             ExceptionTestHelper.ExpectException<InvalidCastException>(delegate { int i = JsonValue.CastValue<int>(null); });
             ExceptionTestHelper.ExpectException<InvalidCastException>(delegate { int i = JsonValue.CastValue<int>(defaultJv); });
             ExceptionTestHelper.ExpectException<InvalidCastException>(delegate { int i = JsonValue.CastValue<char>(target); });
+        }
+
+        [TestMethod]
+        public void CollectionsCastingTest()
+        {
+            JsonValue target;
+            object[] array;
+
+            target = AnyInstance.AnyJsonArray;
+            array = (object[])target;
+
+            Assert.AreEqual(target.Count, array.Length);
+
+            for (int i = 0; i < target.Count; i++)
+            { 
+                Assert.AreEqual(array[i], target[i].ReadAs(array[i].GetType()));
+            }
+
+            target = AnyInstance.AnyJsonObject;
+            IDictionary<string, object> dictionary = (Dictionary<string, object>)target;
+
+            Assert.AreEqual(target.Count, dictionary.Count);
+
+            foreach (KeyValuePair<string, JsonValue> pair in target)
+            {
+                Assert.IsTrue(dictionary.ContainsKey(pair.Key));
+                Assert.AreEqual<string>(target[pair.Key].ToString(), dictionary[pair.Key].ToString());
+            }
         }
 
         [TestMethod]

@@ -5,6 +5,8 @@
 namespace System.Runtime.Serialization.Json
 {
     using System;
+    using System.Collections.Generic;
+    using System.Dynamic;
     using System.IO;
     using System.Json;
     using System.Xml;
@@ -36,12 +38,11 @@ namespace System.Runtime.Serialization.Json
 
                     if (jsonValue == null)
                     {
-                        DataContractJsonSerializer dcjs = new DataContractJsonSerializer(value.GetType());
-                        using (MemoryStream ms = new MemoryStream())
+                        jsonValue = JsonValueExtensions.CreateFromDynamic(value);
+
+                        if (jsonValue == null)
                         {
-                            dcjs.WriteObject(ms, value);
-                            ms.Position = 0;
-                            jsonValue = JsonValue.Load(ms);
+                            jsonValue = JsonValueExtensions.CreateFromComplex(value);
                         }
                     }
                 }
@@ -274,6 +275,117 @@ namespace System.Runtime.Serialization.Json
                     }
 
                     return null;
+            }
+        }
+
+        private static JsonValue CreateFromComplex(object value)
+        {
+            DataContractJsonSerializer dcjs = new DataContractJsonSerializer(value.GetType());
+            using (MemoryStream ms = new MemoryStream())
+            {
+                dcjs.WriteObject(ms, value);
+                ms.Position = 0;
+                return JsonValue.Load(ms);
+            }
+        }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily", Justification = "value is not the same")]
+        private static JsonValue CreateFromDynamic(object value)
+        {
+            JsonObject parent = null;
+            DynamicObject dynObj = value as DynamicObject;
+
+            if (dynObj != null)
+            {
+                parent = new JsonObject(); 
+                Stack<CreateFromStackInfo> infoStack = new Stack<CreateFromStackInfo>();
+                IEnumerator<string> keys = null;
+
+                do
+                {
+                    if (keys == null)
+                    {
+                        keys = dynObj.GetDynamicMemberNames().GetEnumerator();
+                    }
+
+                    while (keys.MoveNext())
+                    {
+                        JsonValue child;
+                        string key = keys.Current;
+                        SimpleGetMemberBinder binder = new SimpleGetMemberBinder(key);
+
+                        if (dynObj.TryGetMember(binder, out value))
+                        {
+                            DynamicObject childDynObj = value as DynamicObject;
+
+                            if (childDynObj != null)
+                            {
+                                child = new JsonObject();
+                                parent.Add(key, child);
+
+                                infoStack.Push(new CreateFromStackInfo(parent, dynObj, keys));
+
+                                parent = child as JsonObject;
+                                dynObj = childDynObj;
+                                keys = null;
+                                
+                                break;
+                            }
+                            else
+                            {
+                                child = JsonValueExtensions.CreatePrimitive(value);
+
+                                if (child == null)
+                                {
+                                    child = JsonValueExtensions.CreateFromComplex(value);
+                                }
+
+                                parent.Add(key, child);
+                            }
+                        }
+                    }
+
+                    if (infoStack.Count > 0 && keys != null)
+                    {
+                        CreateFromStackInfo info = infoStack.Pop();
+
+                        parent = info.JsonObject;
+                        dynObj = info.DynamicObject;
+                        keys = info.Keys;
+                    }
+                }
+                while (infoStack.Count > 0);
+            }
+
+            return parent;
+        }
+
+        private class CreateFromStackInfo
+        {
+            public CreateFromStackInfo(JsonObject jsonObject, DynamicObject dynamicObject, IEnumerator<string> keyEnumerator)
+            {
+                this.JsonObject = jsonObject;
+                this.DynamicObject = dynamicObject;
+                this.Keys = keyEnumerator;
+            }
+
+            public JsonObject JsonObject { get; set; }
+
+            public DynamicObject DynamicObject { get; set; }
+
+            public IEnumerator<string> Keys { get; set; }
+        }
+
+        private class SimpleGetMemberBinder : GetMemberBinder
+        {
+            public SimpleGetMemberBinder(string name)
+                : base(name, false)
+            {
+            }
+
+            public override DynamicMetaObject FallbackGetMember(DynamicMetaObject target, DynamicMetaObject errorSuggestion)
+            {
+                return errorSuggestion;
             }
         }
     }

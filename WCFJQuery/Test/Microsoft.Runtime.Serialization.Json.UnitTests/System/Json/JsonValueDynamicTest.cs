@@ -5,7 +5,6 @@
     using System.Dynamic;
     using System.Json;
     using System.Runtime.Serialization.Json;
-    using Microsoft.CSharp.RuntimeBinder;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [TestClass]
@@ -198,8 +197,8 @@
         public void ConcatDynamicAssignmentTest()
         {
             string value = "MyValue";
-            dynamic dynArray = AnyInstance.AnyJsonArray;
-            dynamic dynObj = AnyInstance.AnyJsonObject;
+            dynamic dynArray = JsonValue.Parse(AnyInstance.AnyJsonArray.ToString());
+            dynamic dynObj = JsonValue.Parse(AnyInstance.AnyJsonObject.ToString());
 
             JsonValue target;
             
@@ -214,6 +213,11 @@
             Assert.AreEqual((string)dynObj["key0"], value);
             Assert.AreEqual((string)dynObj["key1"], value);
             Assert.AreEqual((string)dynObj["key2"], value);
+
+            foreach (KeyValuePair<string, JsonValue> pair in AnyInstance.AnyJsonObject)
+            { 
+                Assert.AreEqual<string>(AnyInstance.AnyJsonObject[pair.Key].ToString(), dynObj[pair.Key].ToString());
+            }
         }
 
         [TestMethod]
@@ -252,7 +256,7 @@
         }
 
         [TestMethod]
-        public void CastingTests()
+        public void CastTests()
         {
             dynamic dyn = JsonValueExtensions.CreateFrom(AnyInstance.AnyPerson) as JsonObject;
             string city = dyn.Address.City;
@@ -303,6 +307,42 @@
 
             EvaluateNoExceptions<IDictionary<string, JsonValue>>(AnyInstance.AnyJsonObject, false);
             EvaluateNoExceptions<IList<JsonValue>>(AnyInstance.AnyJsonArray, false);
+        }
+
+        [TestMethod]
+        public void InvalidCollectionCastTests()
+        {
+            dynamic jo = AnyInstance.AnyJsonObject;
+            dynamic ja = AnyInstance.AnyJsonArray;
+            dynamic jp = AnyInstance.AnyJsonPrimitive;
+            dynamic jd = AnyInstance.DefaultJsonValue;
+
+            object[] objArr = jd;
+            Assert.IsNull(objArr);
+
+            Array arr = jd;
+            Assert.IsNull(arr);
+
+            List<object> list = jd;
+            Assert.IsNull(list);
+
+            Dictionary<string, object> dic = jd;
+            Assert.IsNull(dic);
+
+            ExceptionTestHelper.ExpectException<InvalidCastException>(delegate { object[] ret = jo; });
+            ExceptionTestHelper.ExpectException<InvalidCastException>(delegate { object[] ret = jp; });
+
+            ExceptionTestHelper.ExpectException<InvalidCastException>(delegate { Array ret = jo; });
+            ExceptionTestHelper.ExpectException<InvalidCastException>(delegate { Array ret = jp; });
+
+            ExceptionTestHelper.ExpectException<InvalidCastException>(delegate { List<object> ret = jo; });
+            ExceptionTestHelper.ExpectException<InvalidCastException>(delegate { List<object> ret = jp; });
+
+            ExceptionTestHelper.ExpectException<InvalidCastException>(delegate { Dictionary<string, object> ret = ja; });
+            ExceptionTestHelper.ExpectException<InvalidCastException>(delegate { Dictionary<string, object> ret = jp; });
+
+            ExceptionTestHelper.ExpectException<InvalidCastException>(delegate { List<string> ret = ja; });
+            ExceptionTestHelper.ExpectException<InvalidCastException>(delegate { Dictionary<string, string> ret = jo; });
         }
 
         static void EvaluateNoExceptions<T>(JsonValue value, bool cast)

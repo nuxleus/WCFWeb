@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Dynamic;
     using System.Json;
     using System.Reflection;
 
@@ -40,6 +41,8 @@
         public static readonly Person AnyPerson = Person.CreateSample();
         public static readonly Address AnyAddress = Address.CreateSample();
 
+        public static readonly dynamic AnyDynamic = TestDynamicObject.CreatePersonAsDynamic(AnyPerson);
+
         public static JsonValue GetDefaultJsonValue()
         {
             PropertyInfo propInfo = typeof(JsonValue).GetProperty("DefaultInstance", BindingFlags.Static | BindingFlags.NonPublic);
@@ -74,9 +77,12 @@
         {
             string s = "";
 
-            foreach (Person p in this.Friends)
+            if (this.Friends != null)
             {
-                s += p + ",";
+                foreach (Person p in this.Friends)
+                {
+                    s += p + ",";
+                }
             }
 
             return s;
@@ -117,6 +123,42 @@
         public override string ToString()
         {
             return string.Format("{0}, {1}, {2}", this.Street, this.City, this.State);
+        }
+    }
+
+    public class TestDynamicObject : DynamicObject
+    {
+        private IDictionary<string, object> _values = new Dictionary<string, object>();
+
+        public override IEnumerable<string> GetDynamicMemberNames()
+        {
+            return _values.Keys;
+        }
+
+        public override bool TrySetMember(SetMemberBinder binder, object value)
+        {
+            _values[binder.Name] = value;
+            return true;
+        }
+
+        public override bool TryGetMember(GetMemberBinder binder, out object result)
+        {
+            return _values.TryGetValue(binder.Name, out result);
+        }
+
+        public static dynamic CreatePersonAsDynamic(Person person)
+        {
+            dynamic dynObj = new TestDynamicObject();
+
+            dynObj.Name = person.Name;
+            dynObj.Age = person.Age;
+            dynObj.Address = new Address();
+            dynObj.Address.City = person.Address.City;
+            dynObj.Address.Street = person.Address.Street;
+            dynObj.Address.State = person.Address.State;
+            dynObj.Friends = person.Friends;
+
+            return dynObj;
         }
     }
 }

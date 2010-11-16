@@ -1,7 +1,10 @@
 ﻿namespace System.Json.Test
 {
+    using System.Collections.Generic;
+    using System.Dynamic;
     using System.Json;
     using System.Reflection;
+    using System.Runtime.Serialization.Json;
     using Microsoft.ServiceModel.Web.Test.Common;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -348,6 +351,91 @@
             Log.Info("Right shift: {0}", i1 >> i2);
             Assert.AreEqual<int>(i1 >> i2, dyn1 >> dyn2);
             Assert.AreEqual<int>(i1 >> i2, dyn1 >> i2);
+        }
+
+        /// <summary>
+        /// Test for creating a JsonValue from a deep-nested dynamic object.
+        /// </summary>
+        [TestMethod]
+        public void CreateFromDeepNestedDynamic()
+        {
+            int count = 10000;
+            string expected = "";
+
+            dynamic dyn = new TestDynamicObject();
+            dynamic cur = dyn;
+
+            for (int i = 0; i < count; i++)
+            {
+                expected += "{\"" + i + "\":";
+                cur[i.ToString()] = new TestDynamicObject();
+                cur = cur[i.ToString()];
+            }
+
+            expected += "{}";
+
+            for (int i = 0; i < count; i++)
+            {
+                expected += "}";
+            }
+
+            JsonValue jv = JsonValueExtensions.CreateFrom(dyn);
+            Assert.AreEqual<string>(expected, jv.ToString());
+        }
+
+        /// <summary>
+        /// Concrete DynamicObject class for testing purposes.
+        /// </summary>
+        internal class TestDynamicObject : DynamicObject
+        {
+            private IDictionary<string, object> _values = new Dictionary<string, object>();
+
+            public override IEnumerable<string> GetDynamicMemberNames()
+            {
+                return _values.Keys;
+            }
+
+            public override bool TrySetMember(SetMemberBinder binder, object value)
+            {
+                _values[binder.Name] = value;
+                return true;
+            }
+
+            public override bool TryGetMember(GetMemberBinder binder, out object result)
+            {
+                return _values.TryGetValue(binder.Name, out result);
+            }
+
+            public override bool TrySetIndex(SetIndexBinder binder, object[] indexes, object value)
+            {
+                string key = indexes[0].ToString();
+
+                if (_values.ContainsKey(key))
+                {
+                    _values[key] = value;
+                }
+                else
+                {
+                    _values.Add(key, value);
+                }
+                return true;
+            }
+
+            public override bool TryGetIndex(GetIndexBinder binder, object[] indexes, out object result)
+            {
+                string key = indexes[0].ToString();
+
+                if (_values.ContainsKey(key))
+                {
+                    result = _values[key];
+                    return true;
+                }
+                else
+                {
+                    result = null;
+                    return false;
+                }
+            }
         }
     }
 }
