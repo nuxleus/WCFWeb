@@ -5,17 +5,19 @@
     using System.Globalization;
     using System.IO;
     using System.Json;
+    using Microsoft.ServiceModel.Web.Test.Common;
     using Microsoft.Silverlight.Cdf.Test.Common.Utility;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+    /// <summary>
+    /// Tests for round-tripping <see cref="JsonValue"/> instances via JSON strings.
+    /// </summary>
     [TestClass]
     public class JsonStringRoundTripTests
     {
-        static TextWriter Log
-        {
-            get { return Console.Out; }
-        }
-
+        /// <summary>
+        /// Tests for <see cref="JsonObject"/> round-trip.
+        /// </summary>
         [TestMethod]
         public void ValidJsonObjectRoundTrip()
         {
@@ -24,7 +26,7 @@
             try
             {
                 int seed = 1;
-                Console.WriteLine("Seed: {0}", seed);
+                Log.Info("Seed: {0}", seed);
                 Random rndGen = new Random(seed);
 
                 JsonObject sourceJson = new JsonObject(new Dictionary<string, JsonValue>()
@@ -46,7 +48,7 @@
                     Assert.Fail("Test failed!  JsonObject.Remove failed to remove the targeted key value pair, the Key = NewItem1");
                 }
 
-                if (!JsonValueVerifier.Compare(sourceJson, newJson, Log))
+                if (!JsonValueVerifier.Compare(sourceJson, newJson))
                 {
                     Assert.Fail("Test failed!  The new JsonValue does not equal to the original one.");
                 }
@@ -57,6 +59,9 @@
             }
         }
 
+        /// <summary>
+        /// Test for <see cref="JsonPrimitive"/> round-trip created via <see cref="DateTime"/>.
+        /// </summary>
         [TestMethod]
         public void SimpleDateTimeTest()
         {
@@ -65,22 +70,28 @@
             Assert.AreEqual(jv.ToString(), jv2.ToString());
         }
 
+        /// <summary>
+        /// Test for <see cref="JsonPrimitive"/> round-trip created via <see cref="DateTimeOffset"/>.
+        /// </summary>
         [TestMethod]
         public void ValidJsonObjectDateTimeOffsetRoundTrip()
         {
             int seed = 1;
-            Console.WriteLine("Seed: {0}", seed);
+            Log.Info("Seed: {0}", seed);
             Random rndGen = new Random(seed);
 
             JsonPrimitive sourceJson = new JsonPrimitive(PrimitiveCreator.CreateInstanceOfDateTimeOffset(rndGen));
             JsonPrimitive newJson = (JsonPrimitive)JsonValue.Parse(sourceJson.ToString());
 
-            if (!JsonValueVerifier.Compare(sourceJson, newJson, Log))
+            if (!JsonValueVerifier.Compare(sourceJson, newJson))
             {
                 Assert.Fail("Test failed!  The new JsonObject DateTimeOffset value does not equal to the original one.");
             }
         }
 
+        /// <summary>
+        /// Tests for <see cref="JsonArray"/> round-trip.
+        /// </summary>
         [TestMethod]
         public void ValidJsonArrayRoundTrip()
         {
@@ -89,7 +100,7 @@
             try
             {
                 int seed = 1;
-                Console.WriteLine("Seed: {0}", seed);
+                Log.Info("Seed: {0}", seed);
                 Random rndGen = new Random(seed);
 
                 JsonArray sourceJson = new JsonArray(new JsonValue[]
@@ -113,10 +124,10 @@
 
                 JsonArray newJson = (JsonArray)JsonValue.Parse(sourceJson.ToString());
 
-                Console.WriteLine("Original JsonArray object is: {0}", sourceJson);
-                Console.WriteLine("Round-tripped JsonArray object is: {0}", newJson);
+                Log.Info("Original JsonArray object is: {0}", sourceJson);
+                Log.Info("Round-tripped JsonArray object is: {0}", newJson);
 
-                if (!JsonValueVerifier.Compare(sourceJson, newJson, Log))
+                if (!JsonValueVerifier.Compare(sourceJson, newJson))
                 {
                     Assert.Fail("Test failed!  The new JsonValue does not equal to the original one.");
                 }
@@ -126,13 +137,19 @@
                 CreatorSettings.CreateDateTimeWithSubMilliseconds = oldValue;
             }
         }
-        
+
+        /// <summary>
+        /// Test for <see cref="JsonPrimitive"/> round-trip created via <see cref="String"/>.
+        /// </summary>
         [TestMethod]
         public void ValidPrimitiveStringRoundTrip()
         {
             Assert.IsTrue(this.TestPrimitiveType("String"));
         }
 
+        /// <summary>
+        /// Test for <see cref="JsonPrimitive"/> round-trip created via <see cref="DateTime"/>.
+        /// </summary>
         [TestMethod]
         public void ValidPrimitiveDateTimeRoundTrip()
         {
@@ -148,103 +165,185 @@
             }
         }
 
+        /// <summary>
+        /// Test for <see cref="JsonPrimitive"/> round-trip created via <see cref="Boolean"/>.
+        /// </summary>
         [TestMethod]
         public void ValidPrimitiveBooleanRoundTrip()
         {
             Assert.IsTrue(this.TestPrimitiveType("Boolean"));
         }
 
+        /// <summary>
+        /// Test for <see cref="JsonPrimitive"/> round-trip created via <see cref="Byte"/>.
+        /// </summary>
         [TestMethod]
         public void ValidPrimitiveByteRoundTrip()
         {
             Assert.IsTrue(this.TestPrimitiveType("Byte"));
         }
 
+        /// <summary>
+        /// Test for <see cref="JsonPrimitive"/> round-trip created via <see cref="Decimal"/>.
+        /// </summary>
         [TestMethod]
         public void ValidPrimitiveDecimalRoundTrip()
         {
             Assert.IsTrue(this.TestPrimitiveType("Decimal"));
         }
 
+        /// <summary>
+        /// Test for <see cref="JsonPrimitive"/> round-trip created via <see cref="Double"/>.
+        /// </summary>
         [TestMethod]
         public void ValidPrimitiveDoubleRoundTrip()
         {
             Assert.IsTrue(this.TestPrimitiveType("Double"));
         }
 
+        /// <summary>
+        /// Test for <see cref="JsonPrimitive"/> round-trip created via <see cref="Int16"/>.
+        /// </summary>
         [TestMethod]
         public void ValidPrimitiveInt16RoundTrip()
         {
             Assert.IsTrue(this.TestPrimitiveType("Int16"));
         }
 
+        /// <summary>
+        /// Test for <see cref="JsonPrimitive"/> round-trip created via <see cref="Int32"/>.
+        /// </summary>
         [TestMethod]
         public void ValidPrimitiveInt32RoundTrip()
         {
             Assert.IsTrue(this.TestPrimitiveType("Int32"));
         }
 
+        /// <summary>
+        /// Test for <see cref="JsonPrimitive"/> round-trip created via <see cref="Int64"/>.
+        /// </summary>
         [TestMethod]
         public void ValidPrimitiveInt64RoundTrip()
         {
             Assert.IsTrue(this.TestPrimitiveType("Int64"));
         }
 
+        /// <summary>
+        /// Test for <see cref="JsonPrimitive"/> round-trip created via <see cref="SByte"/>.
+        /// </summary>
         [TestMethod]
         public void ValidPrimitiveSByteRoundTrip()
         {
             Assert.IsTrue(this.TestPrimitiveType("SByte"));
         }
 
+        /// <summary>
+        /// Test for <see cref="JsonPrimitive"/> round-trip created via <see cref="UInt16"/>.
+        /// </summary>
         [TestMethod]
         public void ValidPrimitiveUInt16RoundTrip()
         {
             Assert.IsTrue(this.TestPrimitiveType("Uint16"));
         }
 
+        /// <summary>
+        /// Test for <see cref="JsonPrimitive"/> round-trip created via <see cref="UInt32"/>.
+        /// </summary>
         [TestMethod]
         public void ValidPrimitiveUInt32RoundTrip()
         {
             Assert.IsTrue(this.TestPrimitiveType("UInt32"));
         }
 
+        /// <summary>
+        /// Test for <see cref="JsonPrimitive"/> round-trip created via <see cref="UInt64"/>.
+        /// </summary>
         [TestMethod]
         public void ValidPrimitiveUInt64RoundTrip()
         {
             Assert.IsTrue(this.TestPrimitiveType("UInt64"));
         }
 
+        /// <summary>
+        /// Test for <see cref="JsonPrimitive"/> round-trip created via <see cref="Char"/>.
+        /// </summary>
         [TestMethod]
         public void ValidPrimitiveCharRoundTrip()
         {
             Assert.IsTrue(this.TestPrimitiveType("Char"));
         }
 
+        /// <summary>
+        /// Test for <see cref="JsonPrimitive"/> round-trip created via <see cref="Guid"/>.
+        /// </summary>
         [TestMethod]
         public void ValidPrimitiveGuidRoundTrip()
         {
             Assert.IsTrue(this.TestPrimitiveType("Guid"));
         }
 
+        /// <summary>
+        /// Test for <see cref="JsonPrimitive"/> round-trip created via <see cref="Uri"/>.
+        /// </summary>
         [TestMethod]
         public void ValidPrimitiveUriRoundTrip()
         {
             Assert.IsTrue(this.TestPrimitiveType("Uri"));
         }
 
+        /// <summary>
+        /// Tests for <see cref="JsonValue"/> round-trip created via <code>null</code> values.
+        /// </summary>
         [TestMethod]
         public void ValidPrimitiveNullRoundTrip()
         {
             Assert.IsTrue(this.TestPrimitiveType("Null"));
         }
 
-        public bool TestPrimitiveType(string typeName)
+        /// <summary>
+        /// Tests for round-tripping <see cref="JsonPrimitive"/> objects via casting to CLR instances.
+        /// </summary>
+        [TestMethod]
+        public void JsonValueRoundTripCastTests()
+        {
+            int seed = 1;
+            Log.Info("Seed: {0}", seed);
+            Random rndGen = new Random(seed);
+
+            this.DoRoundTripCasting(String.Empty, typeof(string));
+            this.DoRoundTripCasting("null", typeof(string));
+            string str;
+            do
+            {
+                str = PrimitiveCreator.CreateInstanceOfString(rndGen);
+            } while (str == null);
+
+            this.DoRoundTripCasting(str, typeof(string));
+            this.DoRoundTripCasting(PrimitiveCreator.CreateInstanceOfInt16(rndGen), typeof(int));
+            this.DoRoundTripCasting(PrimitiveCreator.CreateInstanceOfInt32(rndGen), typeof(int));
+            this.DoRoundTripCasting(PrimitiveCreator.CreateInstanceOfInt64(rndGen), typeof(int));
+            this.DoRoundTripCasting(PrimitiveCreator.CreateInstanceOfUInt16(rndGen), typeof(int));
+            this.DoRoundTripCasting(PrimitiveCreator.CreateInstanceOfUInt32(rndGen), typeof(int));
+            this.DoRoundTripCasting(PrimitiveCreator.CreateInstanceOfUInt64(rndGen), typeof(int));
+            this.DoRoundTripCasting(PrimitiveCreator.CreateInstanceOfGuid(rndGen), typeof(Guid));
+            this.DoRoundTripCasting(new Uri("http://bug/test?param=hello%0a"), typeof(Uri));
+            this.DoRoundTripCasting(PrimitiveCreator.CreateInstanceOfChar(rndGen), typeof(char));
+            this.DoRoundTripCasting(PrimitiveCreator.CreateInstanceOfBoolean(rndGen), typeof(bool));
+            this.DoRoundTripCasting(PrimitiveCreator.CreateInstanceOfDateTime(rndGen), typeof(DateTime));
+            this.DoRoundTripCasting(PrimitiveCreator.CreateInstanceOfDateTimeOffset(rndGen), typeof(DateTimeOffset));
+            this.DoRoundTripCasting(PrimitiveCreator.CreateInstanceOfDouble(rndGen), typeof(double));
+            this.DoRoundTripCasting(PrimitiveCreator.CreateInstanceOfDouble(rndGen), typeof(float));
+            this.DoRoundTripCasting(0.12345f, typeof(double));
+            this.DoRoundTripCasting(0.12345f, typeof(float));
+        }
+
+        private bool TestPrimitiveType(string typeName)
         {
             bool retValue = true;
             bool specialCase = false;
 
             int seed = 1;
-            Console.WriteLine("Seed: {0}", seed);
+            Log.Info("Seed: {0}", seed);
             Random rndGen = new Random(seed);
 
             JsonPrimitive sourceJson = null;
@@ -311,7 +410,11 @@
                     sourceJson2 = new JsonPrimitive(fltValue);
                     break;
                 case "string":
-                    tempValue = PrimitiveCreator.CreateInstanceOfString(rndGen, false);
+                    do
+                    {
+                        tempValue = PrimitiveCreator.CreateInstanceOfString(rndGen);
+                    } while (tempValue == null);
+
                     sourceJson2 = new JsonPrimitive((string)tempValue);
                     sourceJson = (JsonPrimitive)JsonValue.Parse(sourceJson2.ToString());
                     break;
@@ -331,7 +434,19 @@
                     sourceJson2 = new JsonPrimitive((ulong)tempValue);
                     break;
                 case "uri":
-                    sourceJson2 = new JsonPrimitive(PrimitiveCreator.CreateInstanceOfUri(rndGen));
+                    Uri uri = null;
+                    do
+                    {
+                        try
+                        {
+                            uri = PrimitiveCreator.CreateInstanceOfUri(rndGen);
+                        }
+                        catch (UriFormatException)
+                        {
+                        }
+                    } while (uri == null);
+
+                    sourceJson2 = new JsonPrimitive(uri);
                     specialCase = true;
                     break;
                 case "null":
@@ -347,9 +462,9 @@
             if (!specialCase)
             {
                 // comparison between two constructors
-                if (!JsonValueVerifier.Compare(sourceJson, sourceJson2, Log))
+                if (!JsonValueVerifier.Compare(sourceJson, sourceJson2))
                 {
-                    Console.WriteLine("(JsonPrimitive)JsonValue.Parse(string) failed to match the results from default JsonPrimitive(obj)constructor for type {0}", typeName);
+                    Log.Info("(JsonPrimitive)JsonValue.Parse(string) failed to match the results from default JsonPrimitive(obj)constructor for type {0}", typeName);
                     retValue = false;
                 }
 
@@ -362,9 +477,9 @@
                         newJson = (JsonPrimitive)JsonValue.Load(sr);
                     }
 
-                    if (!JsonValueVerifier.Compare(sourceJson, newJson, Log))
+                    if (!JsonValueVerifier.Compare(sourceJson, newJson))
                     {
-                        Console.WriteLine("JsonValue.Load(TextReader) failed to function properly for type {0}", typeName);
+                        Log.Info("JsonValue.Load(TextReader) failed to function properly for type {0}", typeName);
                         retValue = false;
                     }
 
@@ -373,9 +488,9 @@
                     // test JsonValue.Parse(string)
                     newJson = null;
                     newJson = (JsonPrimitive)JsonValue.Parse(sourceJson.ToString());
-                    if (!JsonValueVerifier.Compare(sourceJson, newJson, Log))
+                    if (!JsonValueVerifier.Compare(sourceJson, newJson))
                     {
-                        Console.WriteLine("JsonValue.Parse(string) failed to function properly for type {0}", typeName);
+                        Log.Info("JsonValue.Parse(string) failed to function properly for type {0}", typeName);
                         retValue = false;
                     }
                 }
@@ -389,9 +504,9 @@
                     newJson2 = (JsonPrimitive)JsonValue.Load(sr);
                 }
 
-                if (!JsonValueVerifier.Compare(sourceJson2, newJson2, Log))
+                if (!JsonValueVerifier.Compare(sourceJson2, newJson2))
                 {
-                    Console.WriteLine("JsonValue.Load(TextReader) failed to function properly for type {0}", typeName);
+                    Log.Info("JsonValue.Load(TextReader) failed to function properly for type {0}", typeName);
                     retValue = false;
                 }
 
@@ -400,9 +515,9 @@
                 // test JsonValue.Parse(string)
                 newJson2 = null;
                 newJson2 = (JsonPrimitive)JsonValue.Parse(sourceJson2.ToString());
-                if (!JsonValueVerifier.Compare(sourceJson2, newJson2, Log))
+                if (!JsonValueVerifier.Compare(sourceJson2, newJson2))
                 {
-                    Console.WriteLine("JsonValue.Parse(string) failed to function properly for type {0}", typeName);
+                    Log.Info("JsonValue.Parse(string) failed to function properly for type {0}", typeName);
                     retValue = false;
                 }
             }
@@ -410,35 +525,7 @@
             return retValue;
         }
 
-        [TestMethod]
-        public void JsonValueImplicitCastTests()
-        {
-            int seed = 1;
-            Console.WriteLine("Seed: {0}", seed);
-            Random rndGen = new Random(seed);
-
-            this.DoImplicitCasting(String.Empty, typeof(string));
-            this.DoImplicitCasting("null", typeof(string));
-            this.DoImplicitCasting(PrimitiveCreator.CreateInstanceOfString(rndGen, false), typeof(string));
-            this.DoImplicitCasting(PrimitiveCreator.CreateInstanceOfInt16(rndGen), typeof(int));
-            this.DoImplicitCasting(PrimitiveCreator.CreateInstanceOfInt32(rndGen), typeof(int));
-            this.DoImplicitCasting(PrimitiveCreator.CreateInstanceOfInt64(rndGen), typeof(int));
-            this.DoImplicitCasting(PrimitiveCreator.CreateInstanceOfUInt16(rndGen), typeof(int));
-            this.DoImplicitCasting(PrimitiveCreator.CreateInstanceOfUInt32(rndGen), typeof(int));
-            this.DoImplicitCasting(PrimitiveCreator.CreateInstanceOfUInt64(rndGen), typeof(int));
-            this.DoImplicitCasting(PrimitiveCreator.CreateInstanceOfGuid(rndGen), typeof(Guid));
-            this.DoImplicitCasting(new Uri("http://bug/test?param=hello%0a"), typeof(Uri));
-            this.DoImplicitCasting(PrimitiveCreator.CreateInstanceOfChar(rndGen), typeof(char));
-            this.DoImplicitCasting(PrimitiveCreator.CreateInstanceOfBoolean(rndGen), typeof(bool));
-            this.DoImplicitCasting(PrimitiveCreator.CreateInstanceOfDateTime(rndGen), typeof(DateTime));
-            this.DoImplicitCasting(PrimitiveCreator.CreateInstanceOfDateTimeOffset(rndGen), typeof(DateTimeOffset));
-            this.DoImplicitCasting(PrimitiveCreator.CreateInstanceOfDouble(rndGen), typeof(double));
-            this.DoImplicitCasting(PrimitiveCreator.CreateInstanceOfDouble(rndGen), typeof(float));
-            this.DoImplicitCasting(0.12345f, typeof(double));
-            this.DoImplicitCasting(0.12345f, typeof(float));
-        }
-        
-        public void DoImplicitCasting(JsonValue jo, Type type)
+        private void DoRoundTripCasting(JsonValue jo, Type type)
         {
             bool result = false;
 
@@ -448,27 +535,27 @@
                     JsonValue jstr = (string)jo;
                     if (type == typeof(DateTime))
                     {
-                        Console.WriteLine("{0} Value:{1}", type.Name, ((DateTime)jstr).ToString(DateTimeFormatInfo.InvariantInfo));
+                        Log.Info("{0} Value:{1}", type.Name, ((DateTime)jstr).ToString(DateTimeFormatInfo.InvariantInfo));
                     }
                     else if (type == typeof(DateTimeOffset))
                     {
-                        Console.WriteLine("{0} Value:{1}", type.Name, ((DateTimeOffset)jstr).ToString(DateTimeFormatInfo.InvariantInfo));
+                        Log.Info("{0} Value:{1}", type.Name, ((DateTimeOffset)jstr).ToString(DateTimeFormatInfo.InvariantInfo));
                     }
                     else if (type == typeof(Guid))
                     {
-                        Console.WriteLine("{0} Value:{1}", type.Name, (Guid)jstr);
+                        Log.Info("{0} Value:{1}", type.Name, (Guid)jstr);
                     }
                     else if (type == typeof(char))
                     {
-                        Console.WriteLine("{0} Value:{1}", type.Name, (char)jstr);
+                        Log.Info("{0} Value:{1}", type.Name, (char)jstr);
                     }
                     else if (type == typeof(Uri))
                     {
-                        Console.WriteLine("{0} Value:{1}", type.Name, ((Uri)jstr).AbsoluteUri);
+                        Log.Info("{0} Value:{1}", type.Name, ((Uri)jstr).AbsoluteUri);
                     }
                     else
                     {
-                        Console.WriteLine("{0} Value:{1}", type.Name, (string)jstr);
+                        Log.Info("{0} Value:{1}", type.Name, (string)jstr);
                     }
 
                     if (jo.ToString() == jstr.ToString())
@@ -488,7 +575,7 @@
                 else if (jo.JsonType == JsonType.Number)
                 {
                     JsonPrimitive jprim = (JsonPrimitive)jo;
-                    Console.WriteLine("{0} Value:{1}", type.Name, jprim);
+                    Log.Info("{0} Value:{1}", type.Name, jprim);
 
                     if (jo.ToString() == jprim.ToString())
                     {
@@ -498,7 +585,7 @@
                 else if (jo.JsonType == JsonType.Boolean)
                 {
                     JsonPrimitive jprim = (JsonPrimitive)jo;
-                    Console.WriteLine("{0} Value:{1}", type.Name, (bool)jprim);
+                    Log.Info("{0} Value:{1}", type.Name, (bool)jprim);
 
                     if (jo.ToString() == jprim.ToString())
                     {

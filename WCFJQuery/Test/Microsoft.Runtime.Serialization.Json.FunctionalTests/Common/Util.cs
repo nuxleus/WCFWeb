@@ -5,7 +5,7 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    public static class Util
+    internal static class Util
     {
         public static bool CompareObjects<T>(T o1, T o2) where T : class
         {

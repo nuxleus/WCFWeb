@@ -1,14 +1,18 @@
 ﻿namespace System.Json.Test
 {
-    using System.Collections;
-    using System.Collections.Generic;
     using System.Json;
     using System.Linq;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+    /// <summary>
+    /// Tests for the Linq extensions to the <see cref="JsonValue"/> types.
+    /// </summary>
     [TestClass]
     public class JsonValueLinqExtensionsTest
     {
+        /// <summary>
+        /// Test for the <see cref="JsonValueLinqExtensions.ToJsonArray"/> method.
+        /// </summary>
         [TestMethod]
         public void ToJsonArrayTest()
         {
@@ -25,6 +29,9 @@
             Assert.AreEqual<string>(expected, ja.ToString());
         }
 
+        /// <summary>
+        /// Test for the <see cref="JsonValueLinqExtensions.ToJsonObject"/> method.
+        /// </summary>
         [TestMethod]
         public void ToJsonObjectTest()
         {
@@ -41,6 +48,9 @@
             Assert.AreEqual<string>(expected, jo.ToString());
         }
 
+        /// <summary>
+        /// Test for the <see cref="JsonValueLinqExtensions.ToJsonObject"/> method where the origin is a <see cref="JsonArray"/>.
+        /// </summary>
         [TestMethod]
         public void ToJsonObjectFromArrayTest()
         {

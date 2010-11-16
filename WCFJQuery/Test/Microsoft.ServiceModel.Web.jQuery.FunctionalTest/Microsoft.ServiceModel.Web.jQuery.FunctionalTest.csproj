@@ -61,10 +61,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Common\Util.cs" />
-    <Compile Include="Common\InstanceCreator.cs" />
-    <Compile Include="Common\TypeLibrary.cs" />
+    <Compile Include="Common\InstanceCreator.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Microsoft\ServiceModel\Web\ConfigTests.cs" />
+    <Compile Include="Microsoft\ServiceModel\Web\FormUrlEncodedTests.cs" />
     <Compile Include="Microsoft\ServiceModel\Web\WebHttpBehavior3WebFaultsTests.cs" />
     <Compile Include="Microsoft\ServiceModel\Web\WebHttpBehavior3PropertiesTests.cs" />
     <Compile Include="Microsoft\ServiceModel\Web\WebHttpBehavior3NegativeTests.cs" />

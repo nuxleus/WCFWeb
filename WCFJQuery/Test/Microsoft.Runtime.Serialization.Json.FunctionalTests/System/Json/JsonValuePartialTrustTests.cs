@@ -10,10 +10,18 @@
     using Microsoft.ServiceModel.Web.Test.Common;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+    /// <summary>
+    /// Tests for using the <see cref="JsonValue"/> types in partial trust.
+    /// </summary>
     [Serializable]
     [TestClass]
     public class JsonValuePartialTrustTests
     {
+        /// <summary>
+        /// Validates the condition, throwing an exception if it is false.
+        /// </summary>
+        /// <param name="condition">The condition to be evaluated.</param>
+        /// <param name="msg">The exception message to be thrown, in case the condition is false.</param>
         public static void AssertIsTrue(bool condition, string msg)
         {
             if (!condition)
@@ -22,6 +30,12 @@
             }
         }
 
+        /// <summary>
+        /// Validates that the two objects are equal, throwing an exception if it is false.
+        /// </summary>
+        /// <param name="obj1">The first object to be compared.</param>
+        /// <param name="obj2">The second object to be compared.</param>
+        /// <param name="msg">The exception message to be thrown, in case the condition is false.</param>
         public static void AssertAreEqual(object obj1, object obj2, string msg)
         {
             if (obj1 == obj2)
@@ -35,22 +49,31 @@
             }
         }
 
+        /// <summary>
+        /// Partial trust tests for <see cref="JsonValue"/> instances where no dynamic references are used.
+        /// </summary>
         [TestMethod]
         public void RunNonDynamicTest()
         {
             RunInPartialTrust(this.NonDynamicTest);
         }
 
+        /// <summary>
+        /// Partial trust tests for <see cref="JsonValue"/> with dynamic references.
+        /// </summary>
         [TestMethod]
         public void RunDynamicTest()
         {
             RunInPartialTrust(this.DynamicTest);
         }
 
+        /// <summary>
+        /// Tests for <see cref="JsonValue"/> instances without dynamic references.
+        /// </summary>
         public void NonDynamicTest()
         {
             int seed = GetRandomSeed();
-            Console.WriteLine("Seed: {0}", seed);
+            Log.Info("Seed: {0}", seed);
             Random rndGen = new Random(seed);
 
             AssertIsTrue(Assembly.GetExecutingAssembly().IsFullyTrusted == false, "Executing assembly not expected to be fully trusted!");
@@ -86,10 +109,13 @@
             AssertAreEqual(newAge, (int)ageValue, "Friends[1].Age4");
         }
 
+        /// <summary>
+        /// Tests for <see cref="JsonValue"/> instances with dynamic references.
+        /// </summary>
         public void DynamicTest()
         {
             int seed = GetRandomSeed();
-            Console.WriteLine("Seed: {0}", seed);
+            Log.Info("Seed: {0}", seed);
             Random rndGen = new Random(seed);
 
             AssertIsTrue(Assembly.GetExecutingAssembly().IsFullyTrusted == false, "Executing assembly not expected to be fully trusted!");
@@ -99,8 +125,7 @@
 
             dynamic jo = JsonValueExtensions.CreateFrom(person);
 
-            AssertAreEqual(jo.Friends[0].ToString(), jo.Friends[0].ToString(), "Friends[0].ToString()");
-
+            AssertAreEqual(person.Friends[0].Name, jo.Friends[0].Name.ReadAs<string>(), "Friends[0].Name");
             AssertAreEqual(person.Address.City, jo.Address.City.ReadAs<string>(), "Address.City");
             AssertAreEqual(person.Friends[0].Age, (int)jo.Friends[0].Age, "Friends[0].Age");
 
@@ -123,7 +148,7 @@
             AssertIsTrue(jo.NonExistentProperty.JsonType == JsonType.Default, "Expected default JsonValue");
         }
 
-        internal static void RunInPartialTrust(CrossAppDomainDelegate testMethod)
+        private static void RunInPartialTrust(CrossAppDomainDelegate testMethod)
         {
             Assert.IsTrue(Assembly.GetExecutingAssembly().IsFullyTrusted);
 

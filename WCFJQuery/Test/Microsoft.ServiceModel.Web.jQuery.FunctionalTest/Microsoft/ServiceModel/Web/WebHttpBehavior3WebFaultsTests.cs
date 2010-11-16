@@ -54,7 +54,7 @@
             HttpStatusCode[] statusCodes = new HttpStatusCode[] { HttpStatusCode.Unauthorized, HttpStatusCode.ServiceUnavailable, HttpStatusCode.RequestTimeout };
             foreach (HttpStatusCode statusCode in statusCodes)
             {
-                string detail = PrimitiveCreator.CreateInstanceOfString(rndGen, 30, "abcdefghijklmnopqrstuvwxyz");
+                string detail = PrimitiveCreator.CreateRandomString(rndGen, 30, "abcdefghijklmnopqrstuvwxyz");
                 string requestBody = "{\"statusCode\":" + (int)statusCode + ",\"detail\":\"" + detail + "\"}";
                 Test(binding, behavior, "POST", WebHttpBehavior3Tests.Endpoint + "/ThrowWebFaultExceptionOfT", "text/json", requestBody, statusCode, WebHttpBehavior3Tests.ApplicationJsonContentTypeWithCharset, "\"" + detail + "\"");
             }

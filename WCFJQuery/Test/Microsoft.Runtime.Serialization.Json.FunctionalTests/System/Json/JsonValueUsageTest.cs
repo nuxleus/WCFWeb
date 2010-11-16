@@ -2,20 +2,21 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.IO;
     using System.Json;
     using System.Linq;
+    using Microsoft.ServiceModel.Web.Test.Common;
     using Microsoft.Silverlight.Cdf.Test.Common.Utility;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+    /// <summary>
+    /// Test class for some scenario usages for <see cref="JsonValue"/> types.
+    /// </summary>
     [TestClass]
     public class JsonValueUsageTest
     {
-        static TextWriter Log
-        {
-            get { return Console.Out; }
-        }
-
+        /// <summary>
+        /// Test for consuming <see cref="JsonValue"/> objects in a Linq query.
+        /// </summary>
         [TestMethod]
         public void JLinqSimpleCreationQueryTest()
         {
@@ -39,12 +40,12 @@
             var adults = from JsonValue adult in sourceJson
                          where (int)adult["Age"] > 21
                          select adult;
-            Log.WriteLine("Team contains: ");
+            Log.Info("Team contains: ");
             int count = 0;
             foreach (JsonValue adult in adults)
             {
                 count++;
-                Log.WriteLine((string)adult["Name"]);
+                Log.Info((string)adult["Name"]);
             }
 
             if (count != 6)
@@ -53,6 +54,9 @@
             }
         }
 
+        /// <summary>
+        /// Test for consuming <see cref="JsonValue"/> arrays in a Linq query.
+        /// </summary>
         [TestMethod]
         public void JLinqSimpleQueryTest()
         {
@@ -61,12 +65,12 @@
             var adults = from JsonValue adult in sourceJson
                          where (int)adult["Age"] > 21
                          select adult;
-            Log.WriteLine("Team contains: ");
+            Log.Info("Team contains: ");
             int count = 0;
             foreach (JsonValue adult in adults)
             {
                 count++;
-                Log.WriteLine((string)adult["Name"]);
+                Log.Info((string)adult["Name"]);
             }
 
             if (count != 6)
@@ -75,13 +79,16 @@
             }
         }
 
+        /// <summary>
+        /// Test for consuming deep <see cref="JsonValue"/> objects in a Linq query.
+        /// </summary>
         [TestMethod]
         public void JLinqDeepQueryTest()
         {
             int seed = 1;
 
             JsonArray mixedOrderJsonObj;
-            JsonArray myJsonObj = SpecialJsonValueHelper.CreateDeepLevelJsonValuePair(seed, out mixedOrderJsonObj, Log);
+            JsonArray myJsonObj = SpecialJsonValueHelper.CreateDeepLevelJsonValuePair(seed, out mixedOrderJsonObj);
 
             if (myJsonObj != null && mixedOrderJsonObj != null)
             {
@@ -147,6 +154,9 @@
             }
         }
 
+        /// <summary>
+        /// Test for consuming <see cref="JsonValue"/> objects in a Linq query using the dynamic notation.
+        /// </summary>
         [TestMethod]
         public void LinqToDynamicJsonArrayTest()
         {
@@ -170,6 +180,9 @@
             Assert.IsTrue(match.Count() == 2, "Number of matches was expected to be 2 but was " + match.Count());
         }
 
+        /// <summary>
+        /// Test for consuming <see cref="JsonValue"/> objects in a Linq query.
+        /// </summary>
         [TestMethod]
         public void LinqToJsonObjectTest()
         {
@@ -187,6 +200,9 @@
             Assert.IsTrue(missingNames.Count == 0, "Not all JsonObject properties were present in the enumeration");
         }
 
+        /// <summary>
+        /// Test for consuming <see cref="JsonValue"/> objects in a Linq query.
+        /// </summary>
         [TestMethod]
         public void LinqToJsonObjectAsAssociativeArrayTest()
         {
@@ -206,6 +222,9 @@
             Assert.IsTrue(match.Count() == 1, "Incorrect number of matching game scores");
         }
 
+        /// <summary>
+        /// Test for consuming <see cref="JsonPrimitive"/> objects in a Linq query.
+        /// </summary>
         [TestMethod]
         public void LinqToJsonPrimitiveTest()
         {
@@ -216,6 +235,9 @@
             Assert.IsTrue(kv.Length == 0);            
         }
 
+        /// <summary>
+        /// Test for consuming <see cref="JsonValue"/> objects with <see cref="JsonType">JsonType.Default</see> in a Linq query.
+        /// </summary>
         [TestMethod]
         public void LinqToJsonUndefinedTest()
         {
@@ -226,13 +248,16 @@
             Assert.IsTrue(match.Count() == 0);
         }
 
+        /// <summary>
+        /// Test for consuming calling <see cref="JsonValue.ReadAs{T}(T)"/> in a Linq query.
+        /// </summary>
         [TestMethod]
         public void LinqToDynamicJsonUndefinedWithFallbackTest()
         {
             JsonValue people = this.CreateArrayOfPeople();
 
             var match = from person in people
-                        where ((dynamic)person.Value).IDontExist.IAlsoDontExist.ReadAs<int>(5) > 2
+                        where person.Value.AsDynamic().IDontExist.IAlsoDontExist.ReadAs<int>(5) > 2
                         select person;
             Assert.IsTrue(match.Count() == people.Count, "Number of matches was expected to be " + people.Count + " but was " + match.Count());
 
@@ -322,7 +347,7 @@
                 countByName++;
             }
 
-            Log.WriteLine("Collection contains: " + countByName + " item By Name " + name);
+            Log.Info("Collection contains: " + countByName + " item By Name " + name);
 
             var itemsByIndex = from JsonValue itemByIndex in sourceJson
                                where (itemByIndex != null && (int)itemByIndex["Index"] == index)
@@ -333,12 +358,12 @@
                 countByIndex++;
             }
 
-            Log.WriteLine("Collection contains: " + countByIndex + " item By Index " + index);
+            Log.Info("Collection contains: " + countByIndex + " item By Index " + index);
 
             if (countByIndex != countByName)
             {
-                Log.WriteLine("Count by Name = " + countByName + "; Count by Index = " + countByIndex);
-                Log.WriteLine("The number of items matching the provided Name does NOT equal to that matching the provided Index, The two JsonValues are not equal!");
+                Log.Info("Count by Name = " + countByName + "; Count by Index = " + countByIndex);
+                Log.Info("The number of items matching the provided Name does NOT equal to that matching the provided Index, The two JsonValues are not equal!");
                 return false;
             }
             else
@@ -358,7 +383,7 @@
                 countByName++;
             }
 
-            Log.WriteLine("Original Collection contains: " + countByName + " item By Name " + name);
+            Log.Info("Original Collection contains: " + countByName + " item By Name " + name);
 
             var newItemsByName = from JsonValue newItemByName in newJson
                                  where (newItemByName != null && (string)newItemByName["Name"] == name)
@@ -369,12 +394,12 @@
                 newcountByName++;
             }
 
-            Log.WriteLine("New Collection contains: " + newcountByName + " item By Name " + name);
+            Log.Info("New Collection contains: " + newcountByName + " item By Name " + name);
             
             if (countByName != newcountByName)
             {
-                Log.WriteLine("Count by Original JsonValue = " + countByName + "; Count by New JsonValue = " + newcountByName);
-                Log.WriteLine("The number of items matching the provided Name does NOT equal between these two JsonValues!");
+                Log.Info("Count by Original JsonValue = " + countByName + "; Count by New JsonValue = " + newcountByName);
+                Log.Info("The number of items matching the provided Name does NOT equal between these two JsonValues!");
                 return false;
             }
             else
@@ -394,7 +419,7 @@
                 countByIndex++;
             }
 
-            Log.WriteLine("Original Collection contains: " + countByIndex + " item By Index " + index);
+            Log.Info("Original Collection contains: " + countByIndex + " item By Index " + index);
 
             var newItemsByIndex = from JsonValue newItemByIndex in newJson
                                   where (newItemByIndex != null && (int)newItemByIndex["Index"] == index)
@@ -405,12 +430,12 @@
                 newcountByIndex++;
             }
 
-            Log.WriteLine("New Collection contains: " + newcountByIndex + " item By Index " + index);
+            Log.Info("New Collection contains: " + newcountByIndex + " item By Index " + index);
             
             if (countByIndex != newcountByIndex)
             {
-                Log.WriteLine("Count by Original JsonValue = " + countByIndex + "; Count by New JsonValue = " + newcountByIndex);
-                Log.WriteLine("The number of items matching the provided Index does NOT equal between these two JsonValues!");
+                Log.Info("Count by Original JsonValue = " + countByIndex + "; Count by New JsonValue = " + newcountByIndex);
+                Log.Info("The number of items matching the provided Index does NOT equal between these two JsonValues!");
                 return false;
             }
             else

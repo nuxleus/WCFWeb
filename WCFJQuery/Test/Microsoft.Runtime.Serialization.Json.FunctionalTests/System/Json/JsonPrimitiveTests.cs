@@ -8,6 +8,7 @@
     using System.Reflection;
     using System.Runtime.Serialization.Json;
     using System.Text;
+    using Microsoft.ServiceModel.Web.Test.Common;
     using Microsoft.Silverlight.Cdf.Test.Common.Utility;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -19,6 +20,9 @@
     {
         const string DateTimeFormat = "yyyy-MM-ddTHH:mm:ss.fffK";
 
+        /// <summary>
+        /// Validates round-trip of <see cref="JsonPrimitive"/> values created from <see cref="Int16"/> values.
+        /// </summary>
         [TestMethod]
         public void JsonPrimitiveFromInt16()
         {
@@ -30,6 +34,9 @@
             }
         }
 
+        /// <summary>
+        /// Validates round-trip of <see cref="JsonPrimitive"/> values created from <see cref="Int32"/> values.
+        /// </summary>
         [TestMethod]
         public void JsonPrimitiveFromInt32()
         {
@@ -41,6 +48,9 @@
             }
         }
 
+        /// <summary>
+        /// Validates round-trip of <see cref="JsonPrimitive"/> values created from <see cref="Int64"/> values.
+        /// </summary>
         [TestMethod]
         public void JsonPrimitiveFromInt64()
         {
@@ -52,6 +62,9 @@
             }
         }
 
+        /// <summary>
+        /// Validates round-trip of <see cref="JsonPrimitive"/> values created from <see cref="UInt64"/> values.
+        /// </summary>
         [TestMethod]
         public void JsonPrimitiveFromUInt64()
         {
@@ -63,6 +76,9 @@
             }
         }
 
+        /// <summary>
+        /// Validates round-trip of <see cref="JsonPrimitive"/> values created from <see cref="UInt32"/> values.
+        /// </summary>
         [TestMethod]
         public void JsonPrimitiveFromUInt32()
         {
@@ -74,6 +90,9 @@
             }
         }
 
+        /// <summary>
+        /// Validates round-trip of <see cref="JsonPrimitive"/> values created from <see cref="UInt16"/> values.
+        /// </summary>
         [TestMethod]
         public void JsonPrimitiveFromUInt16()
         {
@@ -85,6 +104,9 @@
             }
         }
 
+        /// <summary>
+        /// Validates round-trip of <see cref="JsonPrimitive"/> values created from <see cref="Byte"/> values.
+        /// </summary>
         [TestMethod]
         public void JsonPrimitiveFromByte()
         {
@@ -96,6 +118,9 @@
             }
         }
 
+        /// <summary>
+        /// Validates round-trip of <see cref="JsonPrimitive"/> values created from <see cref="SByte"/> values.
+        /// </summary>
         [TestMethod]
         public void JsonPrimitiveFromSByte()
         {
@@ -107,6 +132,9 @@
             }
         }
 
+        /// <summary>
+        /// Validates round-trip of <see cref="JsonPrimitive"/> values created from <see cref="Single"/> values.
+        /// </summary>
         [TestMethod]
         public void JsonPrimitiveFromFloat()
         {
@@ -118,6 +146,9 @@
             }
         }
 
+        /// <summary>
+        /// Validates round-trip of <see cref="JsonPrimitive"/> values created from <see cref="Double"/> values.
+        /// </summary>
         [TestMethod]
         public void JsonPrimitiveFromDouble()
         {
@@ -129,6 +160,9 @@
             }
         }
 
+        /// <summary>
+        /// Validates round-trip of <see cref="JsonPrimitive"/> values created from <see cref="Decimal"/> values.
+        /// </summary>
         [TestMethod]
         public void JsonPrimitiveFromDecimal()
         {
@@ -140,6 +174,9 @@
             }
         }
 
+        /// <summary>
+        /// Validates round-trip of <see cref="JsonPrimitive"/> values created from <see cref="Boolean"/> values.
+        /// </summary>
         [TestMethod]
         public void JsonPrimitiveFromBoolean()
         {
@@ -151,6 +188,9 @@
             }
         }
 
+        /// <summary>
+        /// Validates round-trip of <see cref="JsonPrimitive"/> values created from <see cref="Char"/> values.
+        /// </summary>
         [TestMethod]
         public void JsonPrimitiveFromChar()
         {
@@ -162,6 +202,9 @@
             }
         }
 
+        /// <summary>
+        /// Validates round-trip of <see cref="JsonPrimitive"/> values created from <see cref="String"/> values.
+        /// </summary>
         [TestMethod]
         public void JsonPrimitiveFromString()
         {
@@ -173,6 +216,9 @@
             }
         }
 
+        /// <summary>
+        /// Validates round-trip of <see cref="JsonPrimitive"/> values created from <see cref="DateTime"/> values.
+        /// </summary>
         [TestMethod]
         public void JsonPrimitiveFromDateTime()
         {
@@ -188,6 +234,9 @@
             }
         }
 
+        /// <summary>
+        /// Validates round-trip of <see cref="JsonPrimitive"/> values created from <see cref="Uri"/> values.
+        /// </summary>
         [TestMethod]
         public void JsonPrimitiveFromUri()
         {
@@ -199,6 +248,9 @@
             }
         }
 
+        /// <summary>
+        /// Validates round-trip of <see cref="JsonPrimitive"/> values created from <see cref="Guid"/> values.
+        /// </summary>
         [TestMethod]
         public void JsonPrimitiveFromGuid()
         {
@@ -210,6 +262,9 @@
             }
         }
 
+        /// <summary>
+        /// Validates round-trip of <see cref="JsonPrimitive"/> values created from different types of values.
+        /// </summary>
         [TestMethod]
         public void JsonPrimitiveFromObject()
         {
@@ -242,6 +297,9 @@
             }
         }
 
+        /// <summary>
+        /// Negative tests for <see cref="JsonPrimitive"/> constructors with null values.
+        /// </summary>
         [TestMethod]
         public void NullChecks()
         {
@@ -249,6 +307,9 @@
             ExpectException<ArgumentNullException>(() => new JsonPrimitive((Uri)null));
         }
 
+        /// <summary>
+        /// Tests for casting string values into non-string values.
+        /// </summary>
         [TestMethod]
         public void CastingFromStringTests()
         {
@@ -316,6 +377,9 @@
             Assert.AreEqual<ulong>(ui64, (ulong)(new JsonPrimitive(ui64.ToString(CultureInfo.InvariantCulture))));
         }
 
+        /// <summary>
+        /// Tests for casting <see cref="JsonPrimitive"/> created from special floating point values (infinity, NaN).
+        /// </summary>
         [TestMethod]
         public void CastingNumbersTest()
         {
@@ -328,6 +392,9 @@
             Assert.AreEqual<double>(double.NaN, (double)(new JsonPrimitive(float.NaN)));
         }
 
+        /// <summary>
+        /// Tests for the many formats which can be cast to a <see cref="DateTime"/>.
+        /// </summary>
         [TestMethod]
         public void CastingDateTimeTest()
         {
@@ -386,6 +453,9 @@
             }
         }
 
+        /// <summary>
+        /// Tests for the <see cref="System.Json.JsonValue.ReadAs{T}()"/> function from string values.
+        /// </summary>
         [TestMethod]
         public void ReadAsFromStringTests()
         {
@@ -427,7 +497,19 @@
             TestReadAsFromStringRoundtrip<Guid>(guid, guid.ToString("X", CultureInfo.InvariantCulture).Replace("}", " } "));
             TestReadAsFromStringRoundtrip<Guid>(guid, guid.ToString("X", CultureInfo.InvariantCulture).Replace(",", "  ,    "));
             TestReadAsFromStringRoundtrip<Guid>(guid, guid.ToString("X", CultureInfo.InvariantCulture).Replace("0x", "0x0000"));
-            TestReadAsFromStringRoundtrip<Uri>(PrimitiveCreator.CreateInstanceOfUri(rndGen));
+            Uri uri = null;
+            do
+            {
+                try
+                {
+                    uri = PrimitiveCreator.CreateInstanceOfUri(rndGen);
+                }
+                catch (UriFormatException)
+                {
+                }
+            } while (uri == null);
+
+            TestReadAsFromStringRoundtrip<Uri>(uri);
             TestReadAsFromStringRoundtrip<string>(PrimitiveCreator.CreateInstanceOfString(rndGen));
 
             // Roundtrip reference DateTime to remove some of the precision in the ticks. Otherwise, value is too precise.
@@ -459,6 +541,9 @@
             ExpectException<FormatException>(delegate { new JsonPrimitive("Nan").ReadAs<double>(); });
         }
 
+        /// <summary>
+        /// Tests for the <see cref="System.Json.JsonValue.ReadAs{T}()">JsonValue.ReadAs&lt;string&gt;</see> method from number values.
+        /// </summary>
         [TestMethod]
         public void TestReadAsStringFromNumbers()
         {
@@ -472,7 +557,7 @@
 
             uint uintValue = PrimitiveCreator.CreateInstanceOfUInt32(rndGen);
             jv = uintValue;
-            Assert.AreEqual<string>(uintValue.ToString(CultureInfo.InvariantCulture), jv.ReadAs<string>());
+            Assert.AreEqual<string>(uintValue.ToString(CultureInfo.InvariantCulture), jv.ToString());
             Assert.AreEqual<string>(uintValue.ToString(CultureInfo.InvariantCulture), jv.ReadAs<string>());
 
             long longValue = PrimitiveCreator.CreateInstanceOfInt64(rndGen);
@@ -521,6 +606,9 @@
             Assert.AreEqual<string>(dblValue.ToString("R", CultureInfo.InvariantCulture), jv.ReadAs<string>());
         }
 
+        /// <summary>
+        /// Tests for the <see cref="System.Json.JsonValue.ReadAs{T}()">JsonValue.ReadAs&lt;string&gt;</see> method from date values.
+        /// </summary>
         [TestMethod]
         public void TestReadAsStringFromDates()
         {
@@ -533,6 +621,9 @@
             Assert.AreEqual<string>(dateTimeValue.ToString(DateTimeFormat, CultureInfo.InvariantCulture), jv.ReadAs<string>());
         }
 
+        /// <summary>
+        /// Tests for the <see cref="System.Json.JsonValue.ReadAs{T}()">JsonValue.ReadAs&lt;string&gt;</see> method from char values.
+        /// </summary>
         [TestMethod]
         public void TestReadAsStringFromChar()
         {
@@ -550,6 +641,9 @@
             }
         }
 
+        /// <summary>
+        /// Tests for the <see cref="System.Json.JsonValue.ReadAs{T}()"/> method where T is a number type and the value is created from a string.
+        /// </summary>
         [TestMethod]
         public void TestReadAsNumberFromStrings()
         {
@@ -631,6 +725,10 @@
             }
         }
 
+        /// <summary>
+        /// Tests for the <see cref="System.Json.JsonValue.ReadAs{T}()"/> method where T is a number type and the value is created from a number.
+        /// This is essentially a number conversion test.
+        /// </summary>
         [TestMethod]
         public void TestReadAsNumberFromNumber()
         {
@@ -701,7 +799,7 @@
         {
             JsonValue jsonValue = CastToJsonValue(mapping.Key);
 
-            Console.WriteLine("Converting value {0} of type {1} to type {2}.", mapping.Key, mapping.Key.GetType().Name, typeof(T).Name);
+            Log.Info("Converting value {0} of type {1} to type {2}.", mapping.Key, mapping.Key.GetType().Name, typeof(T).Name);
 
             if (mapping.Value.Contains(typeof(T)))
             {
@@ -726,7 +824,7 @@
                 });
             }
 
-            Console.WriteLine("Success!");
+            Log.Info("Success!");
         }
 
         static JsonValue CastToJsonValue(object o)

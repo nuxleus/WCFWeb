@@ -4,27 +4,25 @@
     using System.Collections;
     using System.Collections.Generic;
     using System.Globalization;
-    using System.IO;
     using System.Json;
     using System.Text;
     using System.Threading;
+    using Microsoft.ServiceModel.Web.Test.Common;
     using Microsoft.Silverlight.Cdf.Test.Common.Utility;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+    /// <summary>
+    /// Functional tests for the JsonObject class.
+    /// </summary>
     [TestClass]
     public class JObjectFunctionalTest
     {
         static int iterationCount = 500;
         static int arrayLength = 10;
 
-        static TextWriter Log
-        {
-            get
-            {
-                return Console.Out;
-            }
-        }
-
+        /// <summary>
+        /// Validates round-trip of a JsonArray containing both primitives and objects.
+        /// </summary>
         [TestMethod]
         public void MixedJsonTypeFunctionalTest()
         {
@@ -37,7 +35,7 @@
                 for (int i = 0; i < iterationCount; i++)
                 {
                     seed++;
-                    Log.WriteLine("Seed: {0}", seed);
+                    Log.Info("Seed: {0}", seed);
                     Random rndGen = new Random(seed);
 
                     JsonArray sourceJson = new JsonArray(new List<JsonValue>()
@@ -78,7 +76,7 @@
                     });
 
                     JsonArray newJson = (JsonArray)JsonValue.Parse(sourceJson.ToString());
-                    if (!JsonValueVerifier.Compare(sourceJson, newJson, Log))
+                    if (!JsonValueVerifier.Compare(sourceJson, newJson))
                     {
                         Assert.Fail("MixedJsonTypeFunctionalTest failed!  The new JsonValue does not equal to the original one.");
                     }
@@ -90,6 +88,9 @@
             }
         }
 
+        /// <summary>
+        /// Tests for the <see cref="System.Json.JsonArray.CopyTo"/> method.
+        /// </summary>
         [TestMethod]
         public void JsonArrayCopytoFunctionalTest()
         {
@@ -98,7 +99,7 @@
             for (int i = 0; i < iterationCount / 10; i++)
             {
                 seed++;
-                Log.WriteLine("Seed: {0}", seed);
+                Log.Info("Seed: {0}", seed);
                 Random rndGen = new Random(seed);
 
                 bool retValue = true;
@@ -122,6 +123,9 @@
             }
         }
 
+        /// <summary>
+        /// Tests for add and remove methods in the <see cref="System.Json.JsonArray"/> class.
+        /// </summary>
         [TestMethod]
         public void JsonArrayAddRemoveFunctionalTest()
         {
@@ -130,7 +134,7 @@
             for (int i = 0; i < iterationCount / 10; i++)
             {
                 seed++;
-                Log.WriteLine("Seed: {0}", seed);
+                Log.Info("Seed: {0}", seed);
                 Random rndGen = new Random(seed);
                 bool retValue = true;
 
@@ -141,12 +145,12 @@
                 sourceJson.AddRange(cloneJson);
                 if (sourceJson.Count != arrayLength + cloneJson.Length)
                 {
-                    Log.WriteLine("[JsonArrayAddRemoveFunctionalTest] JsonArray.AddRange(JsonValue[]) failed to function properly.");
+                    Log.Info("[JsonArrayAddRemoveFunctionalTest] JsonArray.AddRange(JsonValue[]) failed to function properly.");
                     retValue = false;
                 }
                 else
                 {
-                    Log.WriteLine("[JsonArrayAddRemoveFunctionalTest] JsonArray.AddRange(JsonValue[]) passed test.");
+                    Log.Info("[JsonArrayAddRemoveFunctionalTest] JsonArray.AddRange(JsonValue[]) passed test.");
                 }
 
                 // JsonArray.RemoveAt(int)
@@ -158,18 +162,18 @@
 
                 if (sourceJson.Count > 0)
                 {
-                    Log.WriteLine("[JsonArrayAddRemoveFunctionalTest] JsonArray.RemoveAt(int) failed to function properly.");
+                    Log.Info("[JsonArrayAddRemoveFunctionalTest] JsonArray.RemoveAt(int) failed to function properly.");
                     retValue = false;
                 }
                 else
                 {
-                    Log.WriteLine("[JsonArrayAddRemoveFunctionalTest] JsonArray.RemoveAt(int) passed test.");
+                    Log.Info("[JsonArrayAddRemoveFunctionalTest] JsonArray.RemoveAt(int) passed test.");
                 }
 
                 // JsonArray.JsonType
                 if (sourceJson.JsonType != JsonType.Array)
                 {
-                    Log.WriteLine("[JsonArrayAddRemoveFunctionalTest] JsonArray.JsonType failed to function properly.");
+                    Log.Info("[JsonArrayAddRemoveFunctionalTest] JsonArray.JsonType failed to function properly.");
                     retValue = false;
                 }
 
@@ -178,12 +182,12 @@
                 sourceJson.Clear();
                 if (sourceJson.Count > 0)
                 {
-                    Log.WriteLine("[JsonArrayAddRemoveFunctionalTest] JsonArray.Clear() failed to function properly.");
+                    Log.Info("[JsonArrayAddRemoveFunctionalTest] JsonArray.Clear() failed to function properly.");
                     retValue = false;
                 }
                 else
                 {
-                    Log.WriteLine("[JsonArrayAddRemoveFunctionalTest] JsonArray.Clear() passed test.");
+                    Log.Info("[JsonArrayAddRemoveFunctionalTest] JsonArray.Clear() passed test.");
                 }
 
                 // JsonArray.AddRange(JsonValue)
@@ -193,45 +197,56 @@
                 sourceJson.AddRange(SpecialJsonValueHelper.GetRandomJsonPrimitives(seed));
                 if (sourceJson.Count != arrayLength + 1)
                 {
-                    Log.WriteLine("[JsonArrayAddRemoveFunctionalTest] JsonArray.AddRange(JsonValue) failed to function properly.");
+                    Log.Info("[JsonArrayAddRemoveFunctionalTest] JsonArray.AddRange(JsonValue) failed to function properly.");
                     retValue = false;
                 }
                 else
                 {
-                    Log.WriteLine("[JsonArrayAddRemoveFunctionalTest] JsonArray.AddRange(JsonValue) passed test.");
+                    Log.Info("[JsonArrayAddRemoveFunctionalTest] JsonArray.AddRange(JsonValue) passed test.");
                 }
 
                 // JsonArray.AddRange(IEnumerable<JsonValue> items)
                 sourceJson = SpecialJsonValueHelper.CreatePrePopulatedJsonArray(seed, arrayLength);
                 MyJsonValueCollection<JsonValue> myCols = new MyJsonValueCollection<JsonValue>();
                 myCols.Add(new JsonPrimitive(PrimitiveCreator.CreateInstanceOfUInt32(rndGen)));
-                myCols.Add(new JsonPrimitive(PrimitiveCreator.CreateInstanceOfString(rndGen, false)));
+                string str;
+                do
+                {
+                    str = PrimitiveCreator.CreateInstanceOfString(rndGen);
+                } while (str == null);
+
+                myCols.Add(new JsonPrimitive(str));
                 myCols.Add(new JsonPrimitive(PrimitiveCreator.CreateInstanceOfDateTime(rndGen)));
 
                 // adding 3 additional value to the array
                 sourceJson.AddRange(myCols);
                 if (sourceJson.Count != arrayLength + 3)
                 {
-                    Log.WriteLine("[JsonArrayAddRemoveFunctionalTest] JsonArray.AddRange(IEnumerable<JsonValue> items) failed to function properly.");
+                    Log.Info("[JsonArrayAddRemoveFunctionalTest] JsonArray.AddRange(IEnumerable<JsonValue> items) failed to function properly.");
                     retValue = false;
                 }
                 else
                 {
-                    Log.WriteLine("[JsonArrayAddRemoveFunctionalTest] JsonArray.AddRange(IEnumerable<JsonValue> items) passed test.");
+                    Log.Info("[JsonArrayAddRemoveFunctionalTest] JsonArray.AddRange(IEnumerable<JsonValue> items) passed test.");
                 }
 
                 // JsonArray[index].set_Item
                 sourceJson = SpecialJsonValueHelper.CreatePrePopulatedJsonArray(seed, arrayLength);
-                string temp = PrimitiveCreator.CreateInstanceOfString(rndGen, false);
+                string temp;
+                do
+                {
+                    temp = PrimitiveCreator.CreateInstanceOfString(rndGen);
+                } while (temp == null);
+
                 sourceJson[1] = temp;
                 if ((string)sourceJson[1] != temp)
                 {
-                    Log.WriteLine("[JsonArrayAddRemoveFunctionalTest] JsonArray[index].set_Item failed to function properly.");
+                    Log.Info("[JsonArrayAddRemoveFunctionalTest] JsonArray[index].set_Item failed to function properly.");
                     retValue = false;
                 }
                 else
                 {
-                    Log.WriteLine("[JsonArrayAddRemoveFunctionalTest] JsonArray[index].set_Item passed test.");
+                    Log.Info("[JsonArrayAddRemoveFunctionalTest] JsonArray[index].set_Item passed test.");
                 }
 
                 // JsonArray.Remove(JsonValue)
@@ -243,7 +258,7 @@
 
                 if (sourceJson.Count > 0)
                 {
-                    Log.WriteLine("[JsonArrayAddRemoveFunctionalTest] JsonArray.Remove(JsonValue) failed to function properly.");
+                    Log.Info("[JsonArrayAddRemoveFunctionalTest] JsonArray.Remove(JsonValue) failed to function properly.");
                     retValue = false;
                 }
 
@@ -254,6 +269,9 @@
             }
         }
 
+        /// <summary>
+        /// Tests for indexers in the <see cref="System.Json.JsonArray"/> class.
+        /// </summary>
         [TestMethod]
         public void JsonArrayItemsFunctionalTest()
         {
@@ -262,7 +280,7 @@
             for (int i = 0; i < iterationCount / 10; i++)
             {
                 seed++;
-                Log.WriteLine("Seed: {0}", seed);
+                Log.Info("Seed: {0}", seed);
                 Random rndGen = new Random(seed);
                 bool retValue = true;
 
@@ -273,22 +291,22 @@
                 {
                     if (!sourceJson.Contains(sourceJson[j]))
                     {
-                        Log.WriteLine("[JsonArrayItemsFunctionalTest] JsonArray.Contains(JsonValue) failed to function properly.");
+                        Log.Info("[JsonArrayItemsFunctionalTest] JsonArray.Contains(JsonValue) failed to function properly.");
                         retValue = false;
                     }
                     else
                     {
-                        Log.WriteLine("[JsonArrayItemsFunctionalTest] JsonArray.Contains(JsonValue) passed test.");
+                        Log.Info("[JsonArrayItemsFunctionalTest] JsonArray.Contains(JsonValue) passed test.");
                     }
 
                     if (sourceJson.IndexOf(sourceJson[j]) != j)
                     {
-                        Log.WriteLine("[JsonArrayItemsFunctionalTest] JsonArray.IndexOf(JsonValue) failed to function properly.");
+                        Log.Info("[JsonArrayItemsFunctionalTest] JsonArray.IndexOf(JsonValue) failed to function properly.");
                         retValue = false;
                     }
                     else
                     {
-                        Log.WriteLine("[JsonArrayItemsFunctionalTest] JsonArray.IndexOf(JsonValue) passed test.");
+                        Log.Info("[JsonArrayItemsFunctionalTest] JsonArray.IndexOf(JsonValue) passed test.");
                     }
                 }
 
@@ -297,12 +315,12 @@
                 sourceJson.Insert(3, newItem);
                 if (sourceJson[3] != newItem || sourceJson.Count != arrayLength + 1)
                 {
-                    Log.WriteLine("[JsonArrayItemsFunctionalTest] JsonArray.Insert(int, JsonValue) failed to function properly.");
+                    Log.Info("[JsonArrayItemsFunctionalTest] JsonArray.Insert(int, JsonValue) failed to function properly.");
                     retValue = false;
                 }
                 else
                 {
-                    Log.WriteLine("[JsonArrayItemsFunctionalTest] JsonArray.Insert(int, JsonValue) passed test.");
+                    Log.Info("[JsonArrayItemsFunctionalTest] JsonArray.Insert(int, JsonValue) passed test.");
                 }
 
                 if (!retValue)
@@ -312,6 +330,9 @@
             }
         }
 
+        /// <summary>
+        /// Tests for the CopyTo methods in the <see cref="System.Json.JsonObject"/> class.
+        /// </summary>
         [TestMethod]
         public void JsonObjectCopytoFunctionalTest()
         {
@@ -320,7 +341,7 @@
             for (int i = 0; i < iterationCount / 10; i++)
             {
                 seed++;
-                Log.WriteLine("Seed: {0}", seed);
+                Log.Info("Seed: {0}", seed);
                 Random rndGen = new Random(seed);
 
                 bool retValue = true;
@@ -333,8 +354,8 @@
                 }
                 else
                 {
-                    Log.WriteLine("[JsonObjectCopytoFunctionalTest] sourceJson.ToString() = " + sourceJson.ToString());
-                    Log.WriteLine("[JsonObjectCopytoFunctionalTest] destJson.ToString() = " + destJson.ToString());
+                    Log.Info("[JsonObjectCopytoFunctionalTest] sourceJson.ToString() = " + sourceJson.ToString());
+                    Log.Info("[JsonObjectCopytoFunctionalTest] destJson.ToString() = " + destJson.ToString());
                     Assert.Fail("[JsonObjectCopytoFunctionalTest] failed to create the source JsonObject object.");
                     return;
                 }
@@ -363,6 +384,9 @@
             }
         }
 
+        /// <summary>
+        /// Tests for the add and remove methods in the <see cref="System.Json.JsonObject"/> class.
+        /// </summary>
         [TestMethod]
         public void JsonObjectAddRemoveFunctionalTest()
         {
@@ -371,7 +395,7 @@
             for (int i = 0; i < iterationCount / 10; i++)
             {
                 seed++;
-                Log.WriteLine("Seed: {0}", seed);
+                Log.Info("Seed: {0}", seed);
                 Random rndGen = new Random(seed);
                 bool retValue = true;
 
@@ -380,7 +404,7 @@
                 // JsonObject.JsonType
                 if (sourceJson.JsonType != JsonType.Object)
                 {
-                    Log.WriteLine("[JsonObjectAddRemoveFunctionalTest] JsonArray.JsonType failed to function properly.");
+                    Log.Info("[JsonObjectAddRemoveFunctionalTest] JsonArray.JsonType failed to function properly.");
                     retValue = false;
                 }
 
@@ -408,24 +432,24 @@
                 sourceJson.Add(kvp);
                 if (sourceJson.Count != arrayLength + 3)
                 {
-                    Log.WriteLine("[JsonObjectAddRemoveFunctionalTest] JsonObject.Add() failed to function properly.");
+                    Log.Info("[JsonObjectAddRemoveFunctionalTest] JsonObject.Add() failed to function properly.");
                     retValue = false;
                 }
                 else
                 {
-                    Log.WriteLine("[JsonObjectAddRemoveFunctionalTest] JsonObject.Add() passed test.");
+                    Log.Info("[JsonObjectAddRemoveFunctionalTest] JsonObject.Add() passed test.");
                 }
 
                 // JsonObject.Clear()
                 sourceJson.Clear();
                 if (sourceJson.Count > 0)
                 {
-                    Log.WriteLine("[JsonObjectAddRemoveFunctionalTest] JsonObject.Clear() failed to function properly.");
+                    Log.Info("[JsonObjectAddRemoveFunctionalTest] JsonObject.Clear() failed to function properly.");
                     retValue = false;
                 }
                 else
                 {
-                    Log.WriteLine("[JsonObjectAddRemoveFunctionalTest] JsonObject.Clear() passed test.");
+                    Log.Info("[JsonObjectAddRemoveFunctionalTest] JsonObject.Clear() passed test.");
                 }
 
                 // JsonObject.AddRange(IEnumerable<KeyValuePair<string, JsonValue>> items)
@@ -435,12 +459,12 @@
                 sourceJson.AddRange(SpecialJsonValueHelper.CreatePrePopulatedListofKeyValuePair(seed + 13 + (arrayLength * 2), 5));
                 if (sourceJson.Count != arrayLength + 5)
                 {
-                    Log.WriteLine("[JsonObjectAddRemoveFunctionalTest] JsonObject.AddRange(IEnumerable<KeyValuePair<string, JsonValue>> items) failed to function properly.");
+                    Log.Info("[JsonObjectAddRemoveFunctionalTest] JsonObject.AddRange(IEnumerable<KeyValuePair<string, JsonValue>> items) failed to function properly.");
                     retValue = false;
                 }
                 else
                 {
-                    Log.WriteLine("[JsonObjectAddRemoveFunctionalTest] JsonObject.AddRange(IEnumerable<KeyValuePair<string, JsonValue>> items) passed test.");
+                    Log.Info("[JsonObjectAddRemoveFunctionalTest] JsonObject.AddRange(IEnumerable<KeyValuePair<string, JsonValue>> items) passed test.");
                 }
 
                 // JsonObject.AddRange(params KeyValuePair<string, JsonValue>[] items)
@@ -453,12 +477,12 @@
                 sourceJson.AddRange(new KeyValuePair<string, JsonValue>[] { item1, item2, item3 });
                 if (sourceJson.Count != arrayLength + 3)
                 {
-                    Log.WriteLine("[JsonObjectAddRemoveFunctionalTest] JsonObject.AddRange(params KeyValuePair<string, JsonValue>[] items) failed to function properly.");
+                    Log.Info("[JsonObjectAddRemoveFunctionalTest] JsonObject.AddRange(params KeyValuePair<string, JsonValue>[] items) failed to function properly.");
                     retValue = false;
                 }
                 else
                 {
-                    Log.WriteLine("[JsonObjectAddRemoveFunctionalTest] JsonObject.AddRange(params KeyValuePair<string, JsonValue>[] items) passed test.");
+                    Log.Info("[JsonObjectAddRemoveFunctionalTest] JsonObject.AddRange(params KeyValuePair<string, JsonValue>[] items) passed test.");
                 }
 
                 sourceJson.Clear();
@@ -474,12 +498,12 @@
 
                 if (sourceJson.Count > 0)
                 {
-                    Log.WriteLine("[JsonObjectAddRemoveFunctionalTest] JsonObject.Remove(Key) failed to function properly.");
+                    Log.Info("[JsonObjectAddRemoveFunctionalTest] JsonObject.Remove(Key) failed to function properly.");
                     retValue = false;
                 }
                 else
                 {
-                    Log.WriteLine("[JsonObjectAddRemoveFunctionalTest] JsonObject.Remove(Key) passed test.");
+                    Log.Info("[JsonObjectAddRemoveFunctionalTest] JsonObject.Remove(Key) passed test.");
                 }
 
                 if (!retValue)
@@ -489,6 +513,9 @@
             }
         }
 
+        /// <summary>
+        /// Tests for the indexers in the <see cref="System.Json.JsonObject"/> class.
+        /// </summary>
         [TestMethod]
         public void JsonObjectItemsFunctionalTest()
         {
@@ -497,7 +524,7 @@
             for (int i = 0; i < iterationCount / 10; i++)
             {
                 seed++;
-                Log.WriteLine("Seed: {0}", seed);
+                Log.Info("Seed: {0}", seed);
                 Random rndGen = new Random(seed);
                 bool retValue = true;
 
@@ -507,35 +534,35 @@
                 sourceJson["1"] = new JsonPrimitive(true);
                 if (sourceJson["1"].ToString() != "true")
                 {
-                    Log.WriteLine("[JsonObjectItemsFunctionalTest] JsonObject[key].set_Item failed to function properly.");
+                    Log.Info("[JsonObjectItemsFunctionalTest] JsonObject[key].set_Item failed to function properly.");
                     retValue = false;
                 }
                 else
                 {
-                    Log.WriteLine("[JsonObjectItemsFunctionalTest] JsonObject[key].set_Item passed test.");
+                    Log.Info("[JsonObjectItemsFunctionalTest] JsonObject[key].set_Item passed test.");
                 }
 
                 // ICollection<KeyValuePair<string, JsonValue>>.Contains(KeyValuePair<string, JsonValue> item)
                 KeyValuePair<string, System.Json.JsonValue> kp = new KeyValuePair<string, JsonValue>("5", sourceJson["5"]);
                 if (!((ICollection<KeyValuePair<string, JsonValue>>)sourceJson).Contains(kp))
                 {
-                    Log.WriteLine("[JsonObjectItemsFunctionalTest] ICollection<KeyValuePair<string, JsonValue>>.Contains(KeyValuePair<string, JsonValue> item) failed to function properly.");
+                    Log.Info("[JsonObjectItemsFunctionalTest] ICollection<KeyValuePair<string, JsonValue>>.Contains(KeyValuePair<string, JsonValue> item) failed to function properly.");
                     retValue = false;
                 }
                 else
                 {
-                    Log.WriteLine("[JsonObjectItemsFunctionalTest] ICollection<KeyValuePair<string, JsonValue>>.Contains(KeyValuePair<string, JsonValue> item) passed test.");
+                    Log.Info("[JsonObjectItemsFunctionalTest] ICollection<KeyValuePair<string, JsonValue>>.Contains(KeyValuePair<string, JsonValue> item) passed test.");
                 }
 
                 // ICollection<KeyValuePair<string, JsonValue>>.IsReadOnly
                 if (((ICollection<KeyValuePair<string, JsonValue>>)sourceJson).IsReadOnly)
                 {
-                    Log.WriteLine("[JsonObjectItemsFunctionalTest] ICollection<KeyValuePair<string, JsonValue>>.IsReadOnly failed to function properly.");
+                    Log.Info("[JsonObjectItemsFunctionalTest] ICollection<KeyValuePair<string, JsonValue>>.IsReadOnly failed to function properly.");
                     retValue = false;
                 }
                 else
                 {
-                    Log.WriteLine("[JsonObjectItemsFunctionalTest] ICollection<KeyValuePair<string, JsonValue>>.IsReadOnly passed test.");
+                    Log.Info("[JsonObjectItemsFunctionalTest] ICollection<KeyValuePair<string, JsonValue>>.IsReadOnly passed test.");
                 }
 
                 // ICollection<KeyValuePair<string, JsonValue>>.Add(KeyValuePair<string, JsonValue> item)
@@ -543,24 +570,24 @@
                 ((ICollection<KeyValuePair<string, JsonValue>>)sourceJson).Add(kp);
                 if (sourceJson.Count != arrayLength + 1)
                 {
-                    Log.WriteLine("[JsonObjectItemsFunctionalTest] ICollection<KeyValuePair<string, JsonValue>>.Add(KeyValuePair<string, JsonValue> item) failed to function properly.");
+                    Log.Info("[JsonObjectItemsFunctionalTest] ICollection<KeyValuePair<string, JsonValue>>.Add(KeyValuePair<string, JsonValue> item) failed to function properly.");
                     retValue = false;
                 }
                 else
                 {
-                    Log.WriteLine("[JsonObjectItemsFunctionalTest] ICollection<KeyValuePair<string, JsonValue>>.Add(KeyValuePair<string, JsonValue> item) passed test.");
+                    Log.Info("[JsonObjectItemsFunctionalTest] ICollection<KeyValuePair<string, JsonValue>>.Add(KeyValuePair<string, JsonValue> item) passed test.");
                 }
 
                 // ICollection<KeyValuePair<string, JsonValue>>.Remove(KeyValuePair<string, JsonValue> item)
                 ((ICollection<KeyValuePair<string, JsonValue>>)sourceJson).Remove(kp);
                 if (sourceJson.Count != arrayLength)
                 {
-                    Log.WriteLine("[JsonObjectItemsFunctionalTest] ICollection<KeyValuePair<string, JsonValue>>.Remove(KeyValuePair<string, JsonValue> item) failed to function properly.");
+                    Log.Info("[JsonObjectItemsFunctionalTest] ICollection<KeyValuePair<string, JsonValue>>.Remove(KeyValuePair<string, JsonValue> item) failed to function properly.");
                     retValue = false;
                 }
                 else
                 {
-                    Log.WriteLine("[JsonObjectItemsFunctionalTest] ICollection<KeyValuePair<string, JsonValue>>.Remove(KeyValuePair<string, JsonValue> item) passed test.");
+                    Log.Info("[JsonObjectItemsFunctionalTest] ICollection<KeyValuePair<string, JsonValue>>.Remove(KeyValuePair<string, JsonValue> item) passed test.");
                 }
 
                 // ICollection<KeyValuePair<string, JsonValue>>.GetEnumerator()
@@ -574,7 +601,7 @@
                 do
                 {
                     actual.Add(String.Format("{0} - {1}", ko.Current.Key, ko.Current.Value));
-                    Log.WriteLine("added one item: {0}", String.Format("{0} - {1}", ko.Current.Key, ko.Current.Value));
+                    Log.Info("added one item: {0}", String.Format("{0} - {1}", ko.Current.Key, ko.Current.Value));
                     ko.MoveNext();
                 }
                 while (ko.Current.Value != null);
@@ -582,12 +609,12 @@
                 actual.Sort();
                 if (!JsonValueVerifier.CompareStringLists(expected, actual))
                 {
-                    Log.WriteLine("[JsonObjectItemsFunctionalTest] ICollection<KeyValuePair<string, JsonValue>>.GetEnumerator() failed to function properly.");
+                    Log.Info("[JsonObjectItemsFunctionalTest] ICollection<KeyValuePair<string, JsonValue>>.GetEnumerator() failed to function properly.");
                     retValue = false;
                 }
                 else
                 {
-                    Log.WriteLine("[JsonObjectItemsFunctionalTest] ICollection<KeyValuePair<string, JsonValue>>.GetEnumerator() passed test.");
+                    Log.Info("[JsonObjectItemsFunctionalTest] ICollection<KeyValuePair<string, JsonValue>>.GetEnumerator() passed test.");
                 }
 
                 // JsonObject.Values
@@ -615,12 +642,12 @@
                 actualList.Sort();
                 if (!JsonValueVerifier.CompareStringLists(expectedList, actualList))
                 {
-                    Log.WriteLine("[JsonObjectItemsFunctionalTest] JsonObject.Values failed to function properly.");
+                    Log.Info("[JsonObjectItemsFunctionalTest] JsonObject.Values failed to function properly.");
                     retValue = false;
                 }
                 else
                 {
-                    Log.WriteLine("[JsonObjectItemsFunctionalTest] JsonObject.Values passed test.");
+                    Log.Info("[JsonObjectItemsFunctionalTest] JsonObject.Values passed test.");
                 }
 
                 for (int j = 0; j < sourceJson.Count; j++)
@@ -628,30 +655,30 @@
                     // JsonObject.Contains(Key)
                     if (!sourceJson.ContainsKey(j.ToString()))
                     {
-                        Log.WriteLine("[JsonObjectItemsFunctionalTest] JsonObject.Contains(Key) failed to function properly.");
+                        Log.Info("[JsonObjectItemsFunctionalTest] JsonObject.Contains(Key) failed to function properly.");
                         retValue = false;
                     }
                     else
                     {
-                        Log.WriteLine("[JsonObjectItemsFunctionalTest] JsonObject.Contains(Key) passed test.");
+                        Log.Info("[JsonObjectItemsFunctionalTest] JsonObject.Contains(Key) passed test.");
                     }
 
                     // JsonObject.TryGetValue(String, out JsonValue)
                     JsonValue retJson;
                     if (!sourceJson.TryGetValue(j.ToString(), out retJson))
                     {
-                        Log.WriteLine("[JsonObjectItemsFunctionalTest] JsonObject.TryGetValue(String, out JsonValue) failed to function properly.");
+                        Log.Info("[JsonObjectItemsFunctionalTest] JsonObject.TryGetValue(String, out JsonValue) failed to function properly.");
                         retValue = false;
                     }
                     else if (retJson != sourceJson[j.ToString()])
                     {
                         // JsonObjectthis[string key]
-                        Log.WriteLine("[JsonObjectItemsFunctionalTest] JsonObject[string key] or JsonObject.TryGetValue(String, out JsonValue) failed to function properly.");
+                        Log.Info("[JsonObjectItemsFunctionalTest] JsonObject[string key] or JsonObject.TryGetValue(String, out JsonValue) failed to function properly.");
                         retValue = false;
                     }
                     else
                     {
-                        Log.WriteLine("[JsonObjectItemsFunctionalTest] JsonObject.TryGetValue(String, out JsonValue) & JsonObject[string key] passed test.");
+                        Log.Info("[JsonObjectItemsFunctionalTest] JsonObject.TryGetValue(String, out JsonValue) & JsonObject[string key] passed test.");
                     }
                 }
 
@@ -662,6 +689,9 @@
             }
         }
 
+        /// <summary>
+        /// Tests for casting to integer values.
+        /// </summary>
         [TestMethod]
         public void GettingIntegerValueTest()
         {
@@ -682,7 +712,7 @@
             foreach (string key in jo.Keys)
             {
                 object expectedObj = expected[key];
-                Log.WriteLine("Testing for type = {0}", key);
+                Log.Info("Testing for type = {0}", key);
                 try
                 {
                     switch (key)
@@ -715,7 +745,7 @@
                 }
                 catch (InvalidCastException e)
                 {
-                    Log.WriteLine("Caught InvalidCastException (Bug 15713): {0}", e);
+                    Log.Info("Caught InvalidCastException: {0}", e);
                     success = false;
                 }
             }
@@ -723,6 +753,9 @@
             Assert.IsTrue(success);
         }
 
+        /// <summary>
+        /// Tests for casting to floating point values.
+        /// </summary>
         [TestMethod]
         public void GettingFloatingPointValueTest()
         {
@@ -736,7 +769,7 @@
             foreach (string key in jo.Keys)
             {
                 object expectedObj = expected[key];
-                Log.WriteLine("Testing for type = {0}", key);
+                Log.Info("Testing for type = {0}", key);
                 try
                 {
                     switch (key)
@@ -754,7 +787,7 @@
                 }
                 catch (InvalidCastException e)
                 {
-                    Log.WriteLine("Caught InvalidCastException (Bug 15713): {0}", e);
+                    Log.Info("Caught InvalidCastException: {0}", e);
                     success = false;
                 }
             }
@@ -762,6 +795,9 @@
             Assert.IsTrue(success);
         }
 
+        /// <summary>
+        /// Negative tests for invalid operations.
+        /// </summary>
         [TestMethod]
         public void TestInvalidOperations()
         {
@@ -876,6 +912,9 @@
             }
         }
         
+        /// <summary>
+        /// Test for consuming deeply nested object graphs.
+        /// </summary>
         [TestMethod]
         public void TestDeeplyNestedObjectGraph()
         {
@@ -901,6 +940,9 @@
             Assert.AreEqual(builderExpected.ToString(), jo.ToString());
         }
 
+        /// <summary>
+        /// Test for consuming deeply nested array graphs.
+        /// </summary>
         [TestMethod]
         public void TestDeeplyNestedArrayGraph()
         {
@@ -925,6 +967,9 @@
             Assert.AreEqual(builderExpected.ToString(), ja.ToString());
         }
 
+        /// <summary>
+        /// Test for consuming deeply nested object and array graphs.
+        /// </summary>
         [TestMethod]
         public void TestDeeplyNestedObjectAndArrayGraph()
         {
@@ -952,6 +997,9 @@
             Assert.AreEqual(builderExpected.ToString(), jo.ToString());
         }
 
+        /// <summary>
+        /// Test for calling <see cref="JsonValue.ToString()"/> on the same instance in different threads.
+        /// </summary>
         [TestMethod]
         public void TestConcurrentToString()
         {
@@ -989,13 +1037,13 @@
                             if (str != expected)
                             {
                                 incorrectValue = true;
-                                Console.WriteLine("Value is incorrect");
+                                Log.Info("Value is incorrect");
                             }
                         }
                         catch (Exception e)
                         {
                             exceptionThrown = true;
-                            Console.WriteLine("Exception thrown: {0}", e);
+                            Log.Info("Exception thrown: {0}", e);
                         }
                     }
                 }));
@@ -1033,7 +1081,7 @@
                 return this.internalList.GetEnumerator();
             }
 
-            IEnumerator System.Collections.IEnumerable.GetEnumerator()
+            System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
             {
                 return this.GetEnumerator();
             }

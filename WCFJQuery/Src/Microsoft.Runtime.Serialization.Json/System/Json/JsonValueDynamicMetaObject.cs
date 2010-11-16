@@ -75,8 +75,8 @@ namespace System.Json
         /// <summary>
         /// Performs the binding of the dynamic unary operation.
         /// </summary>
-        /// <param name="binder">An instance of the <see cref="UnaryOperationBinder"/> that represents the details of the dynamic operation</param>
-        /// <returns>The new <see cref="DynamicMetaObject"/> representing the result of the binding</returns>
+        /// <param name="binder">An instance of the <see cref="UnaryOperationBinder"/> that represents the details of the dynamic operation.</param>
+        /// <returns>The new <see cref="DynamicMetaObject"/> representing the result of the binding.</returns>
         public override DynamicMetaObject BindUnaryOperation(UnaryOperationBinder binder)
         {
             if (binder == null)

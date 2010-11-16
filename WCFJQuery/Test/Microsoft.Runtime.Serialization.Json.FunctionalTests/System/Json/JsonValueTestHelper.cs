@@ -3,13 +3,13 @@
     using System;
     using System.Collections.Generic;
     using System.Globalization;
-    using System.IO;
     using System.Json;
+    using Microsoft.ServiceModel.Web.Test.Common;
     using Microsoft.Silverlight.Cdf.Test.Common.Utility;
 
-    public static class JsonValueVerifier
+    internal static class JsonValueVerifier
     {
-        public static bool Compare(JsonValue objA, JsonValue objB, TextWriter log)
+        public static bool Compare(JsonValue objA, JsonValue objB)
         {
             if (objA == null && objB == null)
             {
@@ -18,18 +18,18 @@
 
             if ((objA == null && objB != null) || (objA != null && objB == null))
             {
-                log.WriteLine("JsonValueVerifier Error: At least one of the JsonValue compared is null");
+                Log.Info("JsonValueVerifier Error: At least one of the JsonValue compared is null");
                 return false;
             }
 
             if (objA.JsonType != objB.JsonType)
             {
-                log.WriteLine("JsonValueVerifier Error: These two JsonValues are not of the same Type!");
-                log.WriteLine("objA is of type {0} while objB is of type {1}", objA.JsonType.ToString(), objB.JsonType.ToString());
+                Log.Info("JsonValueVerifier Error: These two JsonValues are not of the same Type!");
+                Log.Info("objA is of type {0} while objB is of type {1}", objA.JsonType.ToString(), objB.JsonType.ToString());
                 return false;
             }
 
-            return CompareJsonValues(objA, objB, log);
+            return CompareJsonValues(objA, objB);
         }
 
         public static bool CompareStringLists(List<string> strListA, List<string> strListB)
@@ -56,31 +56,31 @@
 
         // Because we are currently taking a "flat design" model on JsonValues, the intellense doesn't work, and we have to be smart about what to verify
         // and what not to so to avoid any potentially invalid access
-        private static bool CompareJsonValues(JsonValue objA, JsonValue objB, TextWriter log)
+        private static bool CompareJsonValues(JsonValue objA, JsonValue objB)
         {
             bool retValue = false;
             switch (objA.JsonType)
             {
                 case JsonType.Array:
-                    retValue = CompareJsonArrayTypes((JsonArray)objA, (JsonArray)objB, log);
+                    retValue = CompareJsonArrayTypes((JsonArray)objA, (JsonArray)objB);
                     break;
                 case JsonType.Object:
-                    retValue = CompareJsonObjectTypes((JsonObject)objA, (JsonObject)objB, log);
+                    retValue = CompareJsonObjectTypes((JsonObject)objA, (JsonObject)objB);
                     break;
                 case JsonType.Boolean:
                 case JsonType.Number:
                 case JsonType.String:
-                    retValue = CompareJsonPrimitiveTypes((JsonPrimitive)objA, (JsonPrimitive)objB, log);
+                    retValue = CompareJsonPrimitiveTypes((JsonPrimitive)objA, (JsonPrimitive)objB);
                     break;
                 default:
-                    log.WriteLine("JsonValueVerifier Error: the JsonValue isn’t an array, a complex type or a primitive type!");
+                    Log.Info("JsonValueVerifier Error: the JsonValue isn’t an array, a complex type or a primitive type!");
                     break;
             }
 
             return retValue;
         }
 
-        private static bool CompareJsonArrayTypes(JsonArray objA, JsonArray objB, TextWriter log)
+        private static bool CompareJsonArrayTypes(JsonArray objA, JsonArray objB)
         {
             bool retValue = true;
 
@@ -93,24 +93,24 @@
             {
                 for (int i = 0; i < objA.Count; i++)
                 {
-                    if (!Compare(objA[i], objB[i], log))
+                    if (!Compare(objA[i], objB[i]))
                     {
-                        log.WriteLine("JsonValueVerifier (JsonArrayType) Error: objA[{0}] = {1}", i, objA[i].ToString());
-                        log.WriteLine("JsonValueVerifier (JsonArrayType) Error: objB[{0}] = {1}", i, objB[i].ToString());
+                        Log.Info("JsonValueVerifier (JsonArrayType) Error: objA[{0}] = {1}", i, objA[i].ToString());
+                        Log.Info("JsonValueVerifier (JsonArrayType) Error: objB[{0}] = {1}", i, objB[i].ToString());
                         return false;
                     }
                 }
             }
             catch (Exception e)
             {
-                log.WriteLine("JsonValueVerifier (JsonArrayType) Error: An Exception was thrown: " + e);
+                Log.Info("JsonValueVerifier (JsonArrayType) Error: An Exception was thrown: " + e);
                 return false;
             }
 
             return retValue;
         }
 
-        private static bool CompareJsonObjectTypes(JsonObject objA, JsonObject objB, TextWriter log)
+        private static bool CompareJsonObjectTypes(JsonObject objA, JsonObject objB)
         {
             bool retValue = true;
 
@@ -118,15 +118,15 @@
             {
                 if (objA.Keys.Count != objB.Keys.Count)
                 {
-                    log.WriteLine("JsonValueVerifier (JsonObjectTypes) Error: objA.Keys.Count does not match objB.Keys.Count!");
-                    log.WriteLine("JsonValueVerifier (JsonObjectTypes) Error: objA.Keys.Count = {0}, objB.Keys.Count = {1}", objA.Keys.Count, objB.Keys.Count);
+                    Log.Info("JsonValueVerifier (JsonObjectTypes) Error: objA.Keys.Count does not match objB.Keys.Count!");
+                    Log.Info("JsonValueVerifier (JsonObjectTypes) Error: objA.Keys.Count = {0}, objB.Keys.Count = {1}", objA.Keys.Count, objB.Keys.Count);
                     return false;
                 }
 
                 if (objA.Keys.IsReadOnly != objB.Keys.IsReadOnly)
                 {
-                    log.WriteLine("JsonValueVerifier (JsonObjectTypes) Error: objA.Keys.IsReadOnly does not match objB.Keys.IsReadOnly!");
-                    log.WriteLine("JsonValueVerifier (JsonObjectTypes) Error: objA.Keys.IsReadOnly = {0}, objB.Keys.IsReadOnly = {1}", objA.Keys.IsReadOnly, objB.Keys.IsReadOnly);
+                    Log.Info("JsonValueVerifier (JsonObjectTypes) Error: objA.Keys.IsReadOnly does not match objB.Keys.IsReadOnly!");
+                    Log.Info("JsonValueVerifier (JsonObjectTypes) Error: objA.Keys.IsReadOnly = {0}, objB.Keys.IsReadOnly = {1}", objA.Keys.IsReadOnly, objB.Keys.IsReadOnly);
                     return false;
                 }
                 else
@@ -135,14 +135,14 @@
                     {
                         if (!objB.ContainsKey(keyA))
                         {
-                            log.WriteLine("JsonValueVerifier (JsonObjectTypes) Error: objB does not contain Key " + keyA + "!");
+                            Log.Info("JsonValueVerifier (JsonObjectTypes) Error: objB does not contain Key " + keyA + "!");
                             return false;
                         }
 
-                        if (!Compare(objA[keyA], objB[keyA], log))
+                        if (!Compare(objA[keyA], objB[keyA]))
                         {
-                            log.WriteLine("JsonValueVerifier (JsonObjectTypes) Error: objA[" + keyA + "] = " + objA[keyA]);
-                            log.WriteLine("JsonValueVerifier (JsonObjectTypes) Error: objB[" + keyA + "] = " + objB[keyA]);
+                            Log.Info("JsonValueVerifier (JsonObjectTypes) Error: objA[" + keyA + "] = " + objA[keyA]);
+                            Log.Info("JsonValueVerifier (JsonObjectTypes) Error: objB[" + keyA + "] = " + objB[keyA]);
                             return false;
                         }
                     }
@@ -150,14 +150,14 @@
             }
             catch (Exception e)
             {
-                log.WriteLine("JsonValueVerifier (JsonObjectTypes) Error: An Exception was thrown: " + e);
+                Log.Info("JsonValueVerifier (JsonObjectTypes) Error: An Exception was thrown: " + e);
                 return false;
             }
 
             return retValue;
         }
 
-        private static bool CompareJsonPrimitiveTypes(JsonPrimitive objA, JsonPrimitive objB, TextWriter log)
+        private static bool CompareJsonPrimitiveTypes(JsonPrimitive objA, JsonPrimitive objB)
         {
             try
             {
@@ -172,8 +172,8 @@
                     }
                     else
                     {
-                        log.WriteLine("JsonValueVerifier (JsonPrimitiveTypes) Error: objA = " + objA.ToString());
-                        log.WriteLine("JsonValueVerifier (JsonPrimitiveTypes) Error: objB = " + objB.ToString());
+                        Log.Info("JsonValueVerifier (JsonPrimitiveTypes) Error: objA = " + objA.ToString());
+                        Log.Info("JsonValueVerifier (JsonPrimitiveTypes) Error: objB = " + objB.ToString());
                         return false;
                     }
                 }
@@ -184,7 +184,7 @@
             }
             catch (Exception e)
             {
-                log.WriteLine("JsonValueVerifier (JsonPrimitiveTypes) Error: An Exception was thrown: " + e);
+                Log.Info("JsonValueVerifier (JsonPrimitiveTypes) Error: An Exception was thrown: " + e);
                 return false;
             }
         }
@@ -215,11 +215,11 @@
         }
     }
 
-    public static class SpecialJsonValueHelper
+    internal static class SpecialJsonValueHelper
     {
-        public static JsonArray CreateDeepLevelJsonValuePair(int seed, out JsonArray newOrderJson, TextWriter log)
+        public static JsonArray CreateDeepLevelJsonValuePair(int seed, out JsonArray newOrderJson)
         {
-            log.WriteLine("Seed: {0}", seed);
+            Log.Info("Seed: {0}", seed);
             Random rndGen = new Random(seed);
 
             bool myBool = PrimitiveCreator.CreateInstanceOfBoolean(rndGen);
@@ -252,10 +252,10 @@
             return sourceJson;
         }
 
-        public static JsonValue CreateDeepLevelJsonValue(TextWriter log)
+        public static JsonValue CreateDeepLevelJsonValue()
         {
             int seed = Environment.TickCount;
-            log.WriteLine("Seed: {0}", seed);
+            Log.Info("Seed: {0}", seed);
             Random rndGen = new Random(seed);
 
             bool myBool = PrimitiveCreator.CreateInstanceOfBoolean(rndGen);

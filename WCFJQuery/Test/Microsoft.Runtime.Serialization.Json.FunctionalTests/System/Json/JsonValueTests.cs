@@ -9,6 +9,7 @@
     using System.Runtime.Serialization.Json;
     using System.Text;
     using System.Xml;
+    using Microsoft.ServiceModel.Web.Test.Common;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     /// <summary>
@@ -17,6 +18,9 @@
     [TestClass]
     public class JsonValueTests
     {
+        /// <summary>
+        /// Tests for <see cref="JsonValue.Load(Stream)"/>.
+        /// </summary>
         [TestMethod]
         public void StreamLoading()
         {
@@ -37,7 +41,7 @@
                         StreamWriter sw = new StreamWriter(ms, encoding);
                         sw.Write(jsonString);
                         sw.Flush();
-                        Console.WriteLine("[{0}] {1}: size of the json stream: {2}", useSeekableStream ? "seekable" : "non-seekable", key, ms.Position);
+                        Log.Info("[{0}] {1}: size of the json stream: {2}", useSeekableStream ? "seekable" : "non-seekable", key, ms.Position);
                         ms.Position = 0;
                         JsonValue parsed = JsonValue.Parse(jsonString);
                         JsonValue loaded = useSeekableStream ? JsonValue.Load(ms) : JsonValue.Load(new NonSeekableStream(ms));
@@ -62,7 +66,7 @@
                         StreamWriter sw = new StreamWriter(ms, encoding);
                         sw.Write(jsonString);
                         sw.Flush();
-                        Console.WriteLine("[{0}] {1}: size of the json stream: {2}", useSeekableStream ? "seekable" : "non-seekable", key, ms.Position);
+                        Log.Info("[{0}] {1}: size of the json stream: {2}", useSeekableStream ? "seekable" : "non-seekable", key, ms.Position);
                         ms.Position = 0;
                         JsonValue parsed = JsonValue.Parse(jsonString);
                         JsonValue loaded = useSeekableStream ? JsonValue.Load(ms) : JsonValue.Load(new NonSeekableStream(ms));
@@ -85,6 +89,9 @@
             });
         }
 
+        /// <summary>
+        /// Tests for handling with escaped characters.
+        /// </summary>
         [TestMethod]
         public void EscapedCharacters()
         {
@@ -100,6 +107,9 @@
             Assert.AreEqual("\u0000", str);
         }
 
+        /// <summary>
+        /// Tests for JSON objects with the special '__type' object member.
+        /// </summary>
         [TestMethod]
         public void TypeHintAttributeTests()
         {
@@ -119,6 +129,9 @@
             Assert.AreEqual(json, newJson);
         }
 
+        /// <summary>
+        /// Tests for reading JSON with different member names.
+        /// </summary>
         [TestMethod]
         public void ObjectNameTests()
         {
@@ -147,6 +160,9 @@
             ExpectException<FormatException>(() => JsonValue.Parse("{\"nonXmlChar\u0000\":123}"));
         }
 
+        /// <summary>
+        /// Miscellaneous tests for parsing JSON.
+        /// </summary>
         [TestMethod]
         public void ParseMiscellaneousTest()
         {
@@ -167,13 +183,16 @@
             foreach (string json in jsonValues)
             {
                 JsonValue jv = JsonValue.Parse(json);
-                Console.WriteLine(jv);
+                Log.Info("{0}", jv.ToString());
 
                 string jvstr = jv.ToString();
                 Assert.AreEqual<string>(json, jvstr);
             }
         }
 
+        /// <summary>
+        /// Negative tests for parsing "unbalanced" JSON (i.e., JSON documents which aren't properly closed).
+        /// </summary>
         [TestMethod]
         public void ParseUnbalancedJsonTest()
         {
@@ -196,6 +215,9 @@
             }
         }
 
+        /// <summary>
+        /// Test for parsing a deeply nested JSON object.
+        /// </summary>
         [TestMethod]
         public void ParseDeeplyNestedJsonObjectString()
         {
@@ -220,6 +242,9 @@
             Assert.AreEqual(json, jvstr);
         }
 
+        /// <summary>
+        /// Test for parsing a deeply nested JSON array.
+        /// </summary>
         [TestMethod]
         public void ParseDeeplyNestedJsonArrayString()
         {
@@ -243,6 +268,9 @@
             Assert.AreEqual(json, jvstr);
         }
 
+        /// <summary>
+        /// Test for parsing a deeply nested JSON graph, containing both objects and arrays.
+        /// </summary>
         [TestMethod]
         public void ParseDeeplyNestedJsonString()
         {
@@ -269,6 +297,10 @@
             Assert.AreEqual(json, jvstr);
         }
 
+        /// <summary>
+        /// Tests for the <see cref="JsonValueExtensions.Load(XmlDictionaryReader)"/>, with XML documents
+        /// complying with the JSON-to-XML mapping.
+        /// </summary>
         [TestMethod]
         public void TestJXMLMapping()
         {
@@ -303,7 +335,7 @@
             {
                 string json = pair.Item1;
                 string jxml = pair.Item2;
-                Console.WriteLine("Testing with JSON '{0}' and JXML '{1}'", json, jxml);
+                Log.Info("Testing with JSON '{0}' and JXML '{1}'", json, jxml);
                 byte[] jxmlBytes = Encoding.UTF8.GetBytes(jxml);
                 using (XmlDictionaryReader xdr = XmlDictionaryReader.CreateTextReader(jxmlBytes, XmlDictionaryReaderQuotas.Max))
                 {
@@ -313,6 +345,10 @@
             }
         }
 
+        /// <summary>
+        /// Negative tests for the <see cref="JsonValueExtensions.Load(XmlDictionaryReader)"/>, with XML documents
+        /// which do not comply with the JSON-to-XML mapping.
+        /// </summary>
         [TestMethod]
         public void TestBadJXMLMapping()
         {
@@ -327,12 +363,15 @@
 
             foreach (string badJXML in badJXMLs)
             {
-                Console.WriteLine("Bad JXML: {0}", badJXML);
+                Log.Info("Bad JXML: {0}", badJXML);
                 byte[] xmlBytes = Encoding.UTF8.GetBytes(badJXML);
                 ExpectException<FormatException>(() => JsonValueExtensions.Load(XmlDictionaryReader.CreateTextReader(xmlBytes, XmlDictionaryReaderQuotas.Max)));
             }
         }
 
+        /// <summary>
+        /// Negative test to make sure that one cannot serialize or deserialize <see cref="JsonValue"/> instances.
+        /// </summary>
         [TestMethod]
         public void NonSerializableTests()
         {
@@ -340,7 +379,7 @@
             {
                 foreach (JsonValue jv in new JsonValue[] { "hello", new JsonArray(1, 2), new JsonObject { { "key", "value" } }, new JsonPrimitive(1).ValueOrDefault("default") })
                 {
-                    Console.WriteLine("Testing with {0} serializer for JsonType.{1}", useJsonSerializer ? "DCJS" : "DCS", jv.JsonType);
+                    Log.Info("Testing with {0} serializer for JsonType.{1}", useJsonSerializer ? "DCJS" : "DCS", jv.JsonType);
                     XmlObjectSerializer serializer;
                     if (useJsonSerializer)
                     {

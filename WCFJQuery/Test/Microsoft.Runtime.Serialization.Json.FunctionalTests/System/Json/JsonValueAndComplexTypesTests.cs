@@ -9,6 +9,9 @@
     using Microsoft.Silverlight.Cdf.Test.Common.Utility;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+    /// <summary>
+    /// Tests for the methods to convert between <see cref="JsonValue"/> instances and complex types.
+    /// </summary>
     [TestClass]
     public class JsonValueAndComplexTypesTests
     {
@@ -48,6 +51,9 @@
                 typeof(CollectionsWithPolymorphicMember),
             };
 
+        /// <summary>
+        /// Tests for the <see cref="JsonValueExtensions.CreateFrom"/> method.
+        /// </summary>
         [TestMethod]
         public void CreateFromTests()
         {
@@ -57,7 +63,7 @@
                 CreatorSettings.CreatorSurrogate = new NoInfinityFloatSurrogate();
                 DateTime now = DateTime.Now;
                 int seed = (10000 * now.Year) + (100 * now.Month) + now.Day;
-                Console.WriteLine("Seed: {0}", seed);
+                Log.Info("Seed: {0}", seed);
                 Random rndGen = new Random(seed);
                 foreach (Type testType in testTypes)
                 {
@@ -78,7 +84,7 @@
                             fromDCJS = Encoding.UTF8.GetString(ms.ToArray());
                         }
 
-                        Console.WriteLine("{0}: {1}", testType.Name, fromDCJS);
+                        Log.Info("{0}: {1}", testType.Name, fromDCJS);
 
                         if (instance == null)
                         {
@@ -98,6 +104,9 @@
             }
         }
 
+        /// <summary>
+        /// Tests for the <see cref="JsonValueExtensions.ReadAsComplex{T}"/> method.
+        /// </summary>
         [TestMethod]
         public void ReadAsTests()
         {
@@ -107,7 +116,7 @@
                 CreatorSettings.CreatorSurrogate = new NoInfinityFloatSurrogate();
                 DateTime now = DateTime.Now;
                 int seed = (10000 * now.Year) + (100 * now.Month) + now.Day;
-                Console.WriteLine("Seed: {0}", seed);
+                Log.Info("Seed: {0}", seed);
                 Random rndGen = new Random(seed);
 
                 this.ReadAsTest<DCType_1>(rndGen);
@@ -149,6 +158,10 @@
             }
         }
 
+        /// <summary>
+        /// Tests for the <see cref="JsonValueExtensions.CreateFrom"/> for <see cref="DateTime"/>
+        /// and <see cref="DateTimeOffset"/> values.
+        /// </summary>
         [TestMethod]
         public void CreateFromDateTimeTest()
         {
@@ -180,12 +193,13 @@
         void ReadAsTest<T>(Random rndGen)
         {
             T instance = InstanceCreator.CreateInstanceOf<T>(rndGen);
+            Log.Info("ReadAsTest<{0}>, instance = {1}", typeof(T).Name, instance);
             DataContractJsonSerializer dcjs = new DataContractJsonSerializer(typeof(T));
             JsonValue jv;
             using (MemoryStream ms = new MemoryStream())
             {
                 dcjs.WriteObject(ms, instance);
-                Console.WriteLine("{0}: {1}", typeof(T).Name, Encoding.UTF8.GetString(ms.ToArray()));
+                Log.Info("{0}: {1}", typeof(T).Name, Encoding.UTF8.GetString(ms.ToArray()));
                 ms.Position = 0;
                 jv = JsonValue.Load(ms);
             }

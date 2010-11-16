@@ -10,6 +10,9 @@
     using System.Xml;
     using System.Xml.Linq;
 
+    /// <summary>
+    /// Settings used by the <see cref="InstanceCreator"/> class.
+    /// </summary>
     public static class CreatorSettings
     {
         static CreatorSettings()
@@ -22,40 +25,65 @@
             CreateDateTimeWithSubMilliseconds = true;
             NullValueProbability = 0.01;
             AvoidStackOverflowDueToTypeCycles = false;
-            NormalizeEndOfLineOnXmlNodes = false;
-            DontCreateStringWithCR = false;
             CreatorSurrogate = null;
         }
 
+        /// <summary>
+        /// Gets or sets the maximum length of arrays created by the <see cref="InstanceCreator"/>.
+        /// </summary>
         public static int MaxArrayLength { get; set; }
 
+        /// <summary>
+        /// Gets or sets the maximum length of lists created by the <see cref="InstanceCreator"/>.
+        /// </summary>
         public static int MaxListLength { get; set; }
 
+        /// <summary>
+        /// Gets or sets the maximum length of strings created by the <see cref="InstanceCreator"/>.
+        /// </summary>
         public static int MaxStringLength { get; set; }
 
+        /// <summary>
+        /// Gets or sets a flag indicating whether only ascii chars should be used when creating strings.
+        /// </summary>
         public static bool CreateOnlyAsciiChars { get; set; }
 
+        /// <summary>
+        /// Gets or sets a flag indicating whether chars in the surrogate range can be returned by the
+        /// <see cref="InstanceCreator"/> when creating char instances.
+        /// </summary>
         public static bool DontCreateSurrogateChars { get; set; }
 
+        /// <summary>
+        /// Gets or sets a flag indicating whether <see cref="DateTime"/> values created by the
+        /// <see cref="InstanceCreator"/> can have submillisecond precision.
+        /// </summary>
         public static bool CreateDateTimeWithSubMilliseconds { get; set; }
 
+        /// <summary>
+        /// Gets or sets a value (0-1) indicating the probability of the <see cref="InstanceCreator"/>
+        /// returning a <code>null</code> value when creating instances of class types.
+        /// </summary>
         public static double NullValueProbability { get; set; }
 
+        /// <summary>
+        /// Gets or sets a flag indicating whether the protection against stack overflow
+        /// for cyclic types is enabled. If this flag is set, whenever a type which has already
+        /// been created up in the stack is created again, the <see cref="InstanceCreator"/>
+        /// will return the default value for that type.
+        /// </summary>
         public static bool AvoidStackOverflowDueToTypeCycles { get; set; }
 
-        public static bool NormalizeEndOfLineOnXmlNodes { get; set; }
-
         /// <summary>
-        /// Due to CSD Dev Framework 15879 - "DataContractSerializer cannot
-        /// round-trip strings which contain the '\r' character", tests which
-        /// use the DCS (or the XmlSerializer) can set this to true to
-        /// prevent strings with that char.
+        /// Gets or sets the instance of an <see cref="InstanceCreatorSurrogate"/> which can intercept
+        /// requests to create instances on the <see cref="InstanceCreator"/>.
         /// </summary>
-        public static bool DontCreateStringWithCR { get; set; }
-
         public static InstanceCreatorSurrogate CreatorSurrogate { get; set; }
     }
 
+    /// <summary>
+    /// Utility class used to create test instances of primitive types.
+    /// </summary>
     public static class PrimitiveCreator
     {
         static readonly Regex RelativeIPv6UriRegex = new Regex(@"^\/\/(.+\@)?\[\:\:\d\]");
@@ -86,11 +114,21 @@
             creators.Add(typeof(Uri), primitiveCreatorType.GetMethod("CreateInstanceOfUri", BindingFlags.Public | BindingFlags.Static));
         }
 
+        /// <summary>
+        /// Creates an instance of the <see cref="Boolean"/> type.
+        /// </summary>
+        /// <param name="rndGen">A <see cref="Random"/> used to create the instance.</param>
+        /// <returns>An instance of the <see cref="Boolean"/> type.</returns>
         public static bool CreateInstanceOfBoolean(Random rndGen)
         {
             return rndGen.Next(2) == 0;
         }
 
+        /// <summary>
+        /// Creates an instance of the <see cref="Byte"/> type.
+        /// </summary>
+        /// <param name="rndGen">A <see cref="Random"/> used to create the instance.</param>
+        /// <returns>An instance of the <see cref="Byte"/> type.</returns>
         public static byte CreateInstanceOfByte(Random rndGen)
         {
             byte[] rndValue = new byte[1];
@@ -98,6 +136,11 @@
             return rndValue[0];
         }
 
+        /// <summary>
+        /// Creates an instance of the <see cref="Char"/> type.
+        /// </summary>
+        /// <param name="rndGen">A <see cref="Random"/> used to create the instance.</param>
+        /// <returns>An instance of the <see cref="Char"/> type.</returns>
         public static char CreateInstanceOfChar(Random rndGen)
         {
             if (CreatorSettings.CreateOnlyAsciiChars)
@@ -120,6 +163,11 @@
             }
         }
 
+        /// <summary>
+        /// Creates an instance of the <see cref="DateTime"/> type.
+        /// </summary>
+        /// <param name="rndGen">A <see cref="Random"/> used to create the instance.</param>
+        /// <returns>An instance of the <see cref="DateTime"/> type.</returns>
         public static System.DateTime CreateInstanceOfDateTime(Random rndGen)
         {
             long temp = CreateInstanceOfInt64(rndGen);
@@ -164,6 +212,11 @@
             return result;
         }
 
+        /// <summary>
+        /// Creates an instance of the <see cref="DateTimeOffset"/> type.
+        /// </summary>
+        /// <param name="rndGen">A <see cref="Random"/> used to create the instance.</param>
+        /// <returns>An instance of the <see cref="DateTimeOffset"/> type.</returns>
         public static System.DateTimeOffset CreateInstanceOfDateTimeOffset(Random rndGen)
         {
             DateTime temp = CreateInstanceOfDateTime(rndGen);
@@ -173,6 +226,11 @@
             return result;
         }
 
+        /// <summary>
+        /// Creates an instance of the <see cref="Decimal"/> type.
+        /// </summary>
+        /// <param name="rndGen">A <see cref="Random"/> used to create the instance.</param>
+        /// <returns>An instance of the <see cref="Decimal"/> type.</returns>
         public static decimal CreateInstanceOfDecimal(Random rndGen)
         {
             int low = CreateInstanceOfInt32(rndGen);
@@ -184,6 +242,11 @@
             return new decimal(low, mid, high, isNegative, scale);
         }
 
+        /// <summary>
+        /// Creates an instance of the <see cref="Double"/> type.
+        /// </summary>
+        /// <param name="rndGen">A <see cref="Random"/> used to create the instance.</param>
+        /// <returns>An instance of the <see cref="Double"/> type.</returns>
         public static double CreateInstanceOfDouble(Random rndGen)
         {
             bool negative = rndGen.Next(2) == 0;
@@ -208,6 +271,11 @@
             }
         }
 
+        /// <summary>
+        /// Creates an instance of the <see cref="Guid"/> type.
+        /// </summary>
+        /// <param name="rndGen">A <see cref="Random"/> used to create the instance.</param>
+        /// <returns>An instance of the <see cref="Guid"/> type.</returns>
         public static System.Guid CreateInstanceOfGuid(Random rndGen)
         {
             byte[] temp = new byte[16];
@@ -215,6 +283,11 @@
             return new Guid(temp);
         }
 
+        /// <summary>
+        /// Creates an instance of the <see cref="Int16"/> type.
+        /// </summary>
+        /// <param name="rndGen">A <see cref="Random"/> used to create the instance.</param>
+        /// <returns>An instance of the <see cref="Int16"/> type.</returns>
         public static short CreateInstanceOfInt16(Random rndGen)
         {
             byte[] rndValue = new byte[2];
@@ -229,6 +302,11 @@
             return result;
         }
 
+        /// <summary>
+        /// Creates an instance of the <see cref="Int32"/> type.
+        /// </summary>
+        /// <param name="rndGen">A <see cref="Random"/> used to create the instance.</param>
+        /// <returns>An instance of the <see cref="Int32"/> type.</returns>
         public static int CreateInstanceOfInt32(Random rndGen)
         {
             byte[] rndValue = new byte[4];
@@ -243,6 +321,11 @@
             return result;
         }
 
+        /// <summary>
+        /// Creates an instance of the <see cref="Int64"/> type.
+        /// </summary>
+        /// <param name="rndGen">A <see cref="Random"/> used to create the instance.</param>
+        /// <returns>An instance of the <see cref="Int64"/> type.</returns>
         public static long CreateInstanceOfInt64(Random rndGen)
         {
             byte[] rndValue = new byte[8];
@@ -257,11 +340,21 @@
             return result;
         }
 
+        /// <summary>
+        /// Creates an instance of the <see cref="Object"/> type.
+        /// </summary>
+        /// <param name="rndGen">A <see cref="Random"/> used to create the instance.</param>
+        /// <returns>An instance of the <see cref="Object"/> type.</returns>
         public static object CreateInstanceOfObject(Random rndGen)
         {
             return (rndGen.Next(5) == 0) ? null : new object();
         }
 
+        /// <summary>
+        /// Creates an instance of the <see cref="SByte"/> type.
+        /// </summary>
+        /// <param name="rndGen">A <see cref="Random"/> used to create the instance.</param>
+        /// <returns>An instance of the <see cref="SByte"/> type.</returns>
         [CLSCompliant(false)]
         public static sbyte CreateInstanceOfSByte(Random rndGen)
         {
@@ -271,6 +364,11 @@
             return result;
         }
 
+        /// <summary>
+        /// Creates an instance of the <see cref="Single"/> type.
+        /// </summary>
+        /// <param name="rndGen">A <see cref="Random"/> used to create the instance.</param>
+        /// <returns>An instance of the <see cref="Single"/> type.</returns>
         public static float CreateInstanceOfSingle(Random rndGen)
         {
             bool negative = rndGen.Next(2) == 0;
@@ -295,16 +393,19 @@
             }
         }
 
+        /// <summary>
+        /// Creates an instance of the <see cref="String"/> type.
+        /// </summary>
+        /// <param name="rndGen">A <see cref="Random"/> used to create the instance.</param>
+        /// <param name="size">The size of the string to be creted.</param>
+        /// <param name="charsToUse">The characters to use when creating the string.</param>
+        /// <returns>An instance of the <see cref="String"/> type.</returns>
         public static string CreateRandomString(Random rndGen, int size, string charsToUse)
         {
             int maxSize = CreatorSettings.MaxStringLength;
             
             // invalid per the XML spec (http://www.w3.org/TR/REC-xml/#charsets), cannot be sent as XML
             string invalidXmlChars = "\u0000\u0001\u0002\u0003\u0004\u0005\u0006\u0007\u0008\u000B\u000C\u000E\u000F\u0010\u0011\u0012\u0013\u0014\u0015\u0016\u0017\u0018\u0019\u001A\u001B\u001C\u001D\u001E\u001F\uFFFE\uFFFF";
-            if (CreatorSettings.DontCreateStringWithCR)
-            {
-                invalidXmlChars = invalidXmlChars + "\r";
-            }
 
             const int LowSurrogateMin = 0xDC00;
             const int LowSurrogateMax = 0xDFFF;
@@ -361,11 +462,22 @@
             return sb.ToString();
         }
 
+        /// <summary>
+        /// Creates an instance of the <see cref="String"/> type.
+        /// </summary>
+        /// <param name="rndGen">A <see cref="Random"/> used to create the instance.</param>
+        /// <returns>An instance of the <see cref="String"/> type.</returns>
         public static string CreateInstanceOfString(Random rndGen)
         {
             return CreateInstanceOfString(rndGen, true);
         }
 
+        /// <summary>
+        /// Creates an instance of the <see cref="String"/> type.
+        /// </summary>
+        /// <param name="rndGen">A <see cref="Random"/> used to create the instance.</param>
+        /// <param name="allowNull">A flag indicating whether null values can be returned.</param>
+        /// <returns>An instance of the <see cref="String"/> type.</returns>
         public static string CreateInstanceOfString(Random rndGen, bool allowNull)
         {
             string result;
@@ -378,11 +490,23 @@
             return result;
         }
 
+        /// <summary>
+        /// Creates an instance of the <see cref="String"/> type.
+        /// </summary>
+        /// <param name="rndGen">A <see cref="Random"/> used to create the instance.</param>
+        /// <param name="size">The size of the string to be creted.</param>
+        /// <param name="charsToUse">The characters to use when creating the string.</param>
+        /// <returns>An instance of the <see cref="String"/> type.</returns>
         public static string CreateInstanceOfString(Random rndGen, int size, string charsToUse)
         {
             return CreateRandomString(rndGen, size, charsToUse);
         }
 
+        /// <summary>
+        /// Creates an instance of the <see cref="UInt16"/> type.
+        /// </summary>
+        /// <param name="rndGen">A <see cref="Random"/> used to create the instance.</param>
+        /// <returns>An instance of the <see cref="UInt16"/> type.</returns>
         [CLSCompliant(false)]
         public static ushort CreateInstanceOfUInt16(Random rndGen)
         {
@@ -398,6 +522,11 @@
             return result;
         }
 
+        /// <summary>
+        /// Creates an instance of the <see cref="UInt32"/> type.
+        /// </summary>
+        /// <param name="rndGen">A <see cref="Random"/> used to create the instance.</param>
+        /// <returns>An instance of the <see cref="UInt32"/> type.</returns>
         [CLSCompliant(false)]
         public static uint CreateInstanceOfUInt32(Random rndGen)
         {
@@ -413,6 +542,11 @@
             return result;
         }
 
+        /// <summary>
+        /// Creates an instance of the <see cref="UInt64"/> type.
+        /// </summary>
+        /// <param name="rndGen">A <see cref="Random"/> used to create the instance.</param>
+        /// <returns>An instance of the <see cref="UInt64"/> type.</returns>
         [CLSCompliant(false)]
         public static ulong CreateInstanceOfUInt64(Random rndGen)
         {
@@ -428,6 +562,11 @@
             return result;
         }
 
+        /// <summary>
+        /// Creates an instance of the <see cref="Uri"/> type.
+        /// </summary>
+        /// <param name="rndGen">A <see cref="Random"/> used to create the instance.</param>
+        /// <returns>An instance of the <see cref="Uri"/> type.</returns>
         public static System.Uri CreateInstanceOfUri(Random rndGen)
         {
             Uri result;
@@ -450,17 +589,33 @@
             return result;
         }
 
+        /// <summary>
+        /// Creates an instance of the a string which represents an <see cref="Uri"/>.
+        /// </summary>
+        /// <param name="rndGen">A <see cref="Random"/> used to create the instance.</param>
+        /// <returns>An instance of the a string which represents an <see cref="Uri"/>.</returns>
         public static string CreateInstanceOfUriString(Random rndGen)
         {
             UriKind kind;
             return UriCreator.CreateUri(rndGen, out kind);
         }
 
+        /// <summary>
+        /// Checks whether this creator can create an instance of the given type.
+        /// </summary>
+        /// <param name="type">The type to be created.</param>
+        /// <returns><code>true</code> if this creator can create an instance of the given type; <code>false</code> otherwise.</returns>
         public static bool CanCreateInstanceOf(Type type)
         {
             return creators.ContainsKey(type);
         }
 
+        /// <summary>
+        /// Creates an instance of the given primitive type.
+        /// </summary>
+        /// <param name="type">The type to create an instance.</param>
+        /// <param name="rndGen">A <see cref="Random"/> used to create the instance.</param>
+        /// <returns>An instance of the given type.</returns>
         public static object CreatePrimitiveInstance(Type type, Random rndGen)
         {
             if (creators.ContainsKey(type))
@@ -742,10 +897,19 @@
         }
     }
 
+    /// <summary>
+    /// Utility class used to create test instances of arbitrary types.
+    /// </summary>
     public static class InstanceCreator
     {
         private static Stack<Type> typesInCreationStack = new Stack<Type>();
 
+        /// <summary>
+        /// Creates an instance of an array type.
+        /// </summary>
+        /// <param name="arrayType">The array type.</param>
+        /// <param name="rndGen">A <see cref="Random"/> used to create the instance.</param>
+        /// <returns>An instance of the given array type.</returns>
         public static object CreateInstanceOfArray(Type arrayType, Random rndGen)
         {
             Type type = arrayType.GetElementType();
@@ -766,6 +930,12 @@
             return result;
         }
 
+        /// <summary>
+        /// Creates an instance of a <see cref="List{T}"/>.
+        /// </summary>
+        /// <param name="listType">The List&lt;T&gt; type.</param>
+        /// <param name="rndGen">A <see cref="Random"/> used to create the instance.</param>
+        /// <returns>An instance of the given list type.</returns>
         public static object CreateInstanceOfListOfT(Type listType, Random rndGen)
         {
             Type type = listType.GetGenericArguments()[0];
@@ -787,6 +957,12 @@
             return result;
         }
 
+        /// <summary>
+        /// Creates an instance of a <see cref="LinkedList{T}"/>.
+        /// </summary>
+        /// <param name="listType">The LinkedList&lt;T&gt; type.</param>
+        /// <param name="rndGen">A <see cref="Random"/> used to create the instance.</param>
+        /// <returns>An instance of the given list type.</returns>
         public static object CreateInstanceOfLinkedListOfT(Type listType, Random rndGen)
         {
             Type type = listType.GetGenericArguments()[0];
@@ -808,6 +984,13 @@
             return result;
         }
 
+        /// <summary>
+        /// Creates an instance of a <see cref="IEnumerable{T}"/>.
+        /// </summary>
+        /// <param name="enumerableOfTType">The IEnumerable&lt;T&gt; type.</param>
+        /// <param name="enumeredType">The type to be enumerated.</param>
+        /// <param name="rndGen">A <see cref="Random"/> used to create the instance.</param>
+        /// <returns>An instance of the given enumerable type.</returns>
         public static object CreateInstanceOfIEnumerableOfT(Type enumerableOfTType, Type enumeredType, Random rndGen)
         {
             double rndNumber = rndGen.NextDouble();
@@ -833,6 +1016,12 @@
             return result;
         }
 
+        /// <summary>
+        /// Creates an instance of a <see cref="Nullable{T}"/>.
+        /// </summary>
+        /// <param name="nullableOfTType">The Nullable&lt;T&gt; type.</param>
+        /// <param name="rndGen">A <see cref="Random"/> used to create the instance.</param>
+        /// <returns>An instance of the given nullable type.</returns>
         public static object CreateInstanceOfNullableOfT(Type nullableOfTType, Random rndGen)
         {
             if (rndGen.Next(5) == 0)
@@ -844,6 +1033,12 @@
             return CreateInstanceOf(type, rndGen);
         }
 
+        /// <summary>
+        /// Creates an instance of an enum type..
+        /// </summary>
+        /// <param name="enumType">The enum type.</param>
+        /// <param name="rndGen">A <see cref="Random"/> used to create the instance.</param>
+        /// <returns>An instance of the given enum type.</returns>
         public static object CreateInstanceOfEnum(Type enumType, Random rndGen)
         {
             bool hasFlags = enumType.GetCustomAttributes(typeof(FlagsAttribute), true).Length > 0;
@@ -900,6 +1095,12 @@
             }
         }
 
+        /// <summary>
+        /// Creates an instance of a <see cref="Dictionary{K,V}"/>.
+        /// </summary>
+        /// <param name="dictionaryType">The Dictionary&lt;K,V&gt; type.</param>
+        /// <param name="rndGen">A <see cref="Random"/> used to create the instance.</param>
+        /// <returns>An instance of the given dictionary type.</returns>
         public static object CreateInstanceOfDictionaryOfKAndV(Type dictionaryType, Random rndGen)
         {
             Type[] genericArgs = dictionaryType.GetGenericArguments();
@@ -936,11 +1137,24 @@
             return result;
         }
 
+        /// <summary>
+        /// Creates an instance of the given type.
+        /// </summary>
+        /// <typeparam name="T">The type to create an instance from.</typeparam>
+        /// <param name="rndGen">A random generator used to populate the instance.</param>
+        /// <returns>An instance of the given type.</returns>
         public static T CreateInstanceOf<T>(Random rndGen)
         {
             return (T)InstanceCreator.CreateInstanceOf(typeof(T), rndGen);
         }
 
+        /// <summary>
+        /// Creates an instance of the given type.
+        /// </summary>
+        /// <param name="type">The type to create an instance from.</param>
+        /// <param name="rndGen">A random generator used to populate the instance.</param>
+        /// <param name="allowNulls">A flag indicating whether null values can be returned by this method.</param>
+        /// <returns>An instance of the given type.</returns>
         public static object CreateInstanceOf(Type type, Random rndGen, bool allowNulls)
         {
             double currentNullProbability = CreatorSettings.NullValueProbability;
@@ -958,6 +1172,12 @@
             return result;
         }
 
+        /// <summary>
+        /// Creates an instance of the given type.
+        /// </summary>
+        /// <param name="type">The type to create an instance from.</param>
+        /// <param name="rndGen">A random generator used to populate the instance.</param>
+        /// <returns>An instance of the given type.</returns>
         public static object CreateInstanceOf(Type type, Random rndGen)
         {
             if (CreatorSettings.CreatorSurrogate != null)
@@ -1085,6 +1305,9 @@
         }
     }
 
+    /// <summary>
+    /// Helper class used to create test instances.
+    /// </summary>
     public class ClassInstanceCreator
     {
         static ClassInstanceCreator dataContractCreatorWithNonPublicMembers;
@@ -1111,6 +1334,10 @@
 
         delegate bool ShouldBeIncludedDelegate(MemberInfo member);
 
+        /// <summary>
+        /// Gets an instance of a creator which knows how to create instance of types
+        /// decorated with the <see cref="DataContractAttribute"/>.
+        /// </summary>
         public static ClassInstanceCreator DataContractCreator
         {
             get
@@ -1124,6 +1351,10 @@
             }
         }
 
+        /// <summary>
+        /// Gets an instance of a creator which knows how to create instance of types
+        /// which only sets members decorated with the <see cref="DataMemberAttribute"/>.
+        /// </summary>
         public static ClassInstanceCreator DataContractCreatorWithNonPublicMembers
         {
             get
@@ -1137,6 +1368,11 @@
             }
         }
 
+        /// <summary>
+        /// Gets an instance of a creator which knows how to create instances of POCO
+        /// types (public types, not decorated with the <see cref="DataContractAttribute"/> and
+        /// which have a parameterless public constructor).
+        /// </summary>
         public static ClassInstanceCreator POCOCreator
         {
             get
@@ -1152,6 +1388,12 @@
             }
         }
 
+        /// <summary>
+        /// Creates an instance of the given type.
+        /// </summary>
+        /// <param name="type">The type to create an instance from.</param>
+        /// <param name="rndGen">A random generator used to populate the instance.</param>
+        /// <returns>An instance of the given type.</returns>
         public object CreateInstanceOf(Type type, Random rndGen)
         {
             object result = null;
