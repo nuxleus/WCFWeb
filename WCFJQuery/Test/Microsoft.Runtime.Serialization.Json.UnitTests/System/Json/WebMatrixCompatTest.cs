@@ -16,7 +16,7 @@
 
         public static dynamic Decode<T>(string json)
         {
-            return JsonValue.Parse(json).ReadAsComplex<Person>();
+            return JsonValue.Parse(json).ReadAsComplex<T>();
         }
 
         public static dynamic Decode(string json)
@@ -94,7 +94,6 @@
             Assert.AreEqual("B", obj.Grades[1]);
             Assert.AreEqual("C", obj.Grades[2]);
             */
-
         }
 
         [TestMethod]
@@ -108,13 +107,8 @@
             Dictionary<string, object> values = Json.Decode("{\"Name\":\"Hello\",\"Age\":1}");
 
             // Assert
-            Assert.AreEqual("Hello", (string)values["Name"]);
-            Assert.AreEqual(1, (int)values["Age"]);
-
-            /*
             Assert.AreEqual("Hello", values["Name"]);
             Assert.AreEqual(1, values["Age"]);
-            */
         }
 
         [TestMethod]
@@ -320,7 +314,7 @@
             */
         }
 
-        //[TestMethod] - Dynamic cast does not kick off here ... BUG BUG??
+        //[TestMethod] - Dynamic cast does not kick off here ... 195214
         public void DecodeArrayPassToMethodThatTakesArray()
         {
             // Arrange
@@ -388,7 +382,7 @@
             Assert.IsTrue(obj.A.B == 20);
         }
 
-        //BUG#195159 - Cannot serialize unonymous types.
+        //BUG#195159 - Cannot serialize anonymous types.
         //[TestMethod]
         public void DecodeObjectSettingObjectProperties()
         {
@@ -462,9 +456,10 @@
             },"Unable to convert to \"System.Web.Helpers.Test.JsonTest+Person\". Use Json.Decode<T> instead.");
             */
 
-            // Note: As long as the type is POCO, JsonValue can decode the json string into a corresponding type.
-            Person person = JsonValue.Parse("{\"Name\":\"David\", \"Age\":2, \"Address\":{\"Street\":\"Bellevue\"}}").ReadAsComplex<Person>();
-            Assert.IsNotNull(person);
+            ExceptionTestHelper.ExpectException<InvalidCastException>(() =>
+            {
+                Person person = Json.Decode("{\"Name\":\"David\", \"Age\":2, \"Address\":{\"Street\":\"Bellevue\"}}");
+            });
         }
 
         private class DummyDynamicObject : DynamicObject
