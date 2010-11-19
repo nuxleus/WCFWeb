@@ -228,7 +228,7 @@ namespace System.Runtime.Serialization.Json
         /// <summary>
         /// Extension method for converting a <see cref="JsonValue"/> collection into an array of objects.
         /// </summary>
-        /// <param name="jsonValue">the <see cref="JsonValue"/> instance to be converted to an object array.</param>
+        /// <param name="jsonValue">The <see cref="JsonValue"/> instance to be converted to an object array.</param>
         /// <returns>An array of objects represented by the specified <see cref="JsonValue"/> instance.</returns>
         /// <remarks>The <see cref="JsonType"/> value of the specified <see cref="JsonValue"/> instance must be <see cref="JsonType.Array"/>.</remarks>
         public static object[] ToObjectArray(this JsonValue jsonValue)
@@ -249,7 +249,7 @@ namespace System.Runtime.Serialization.Json
         /// <summary>
         /// Extension method for converting a <see cref="JsonValue"/> collection into a dictionary of <see cref="string"/>/<see cref="object"/> key/value pairs.
         /// </summary>
-        /// <param name="jsonValue">the <see cref="JsonValue"/> instance to be converted to an dictionary of <see cref="string"/>/<see cref="object"/> key/value pairs.</param>
+        /// <param name="jsonValue">The <see cref="JsonValue"/> instance to be converted to a dictionary of <see cref="string"/>/<see cref="object"/> key/value pairs.</param>
         /// <returns>An <see cref="IDictionary{T1,T2}"/> of <see cref="string"/>/<see cref="object"/> key/value pairs represented by the specified <see cref="JsonValue"/> instance.</returns>
         /// <remarks>The <see cref="JsonType"/> value of the specified <see cref="JsonValue"/> instance must be <see cref="JsonType.Object"/>.</remarks>
         public static IDictionary<string, object> ToDictionary(this JsonValue jsonValue)
@@ -268,7 +268,7 @@ namespace System.Runtime.Serialization.Json
         }
 
         /// <summary>
-        /// Determines whehter the specified <see cref="JsonValue"/> instance can be converted to the specified collection <see cref="Type"/>.
+        /// Determines whether the specified <see cref="JsonValue"/> instance can be converted to the specified collection <see cref="Type"/>.
         /// </summary>
         /// <param name="jsonValue">The instance to be converted.</param>
         /// <param name="collectionType">The collection type to convert the instance to.</param>
