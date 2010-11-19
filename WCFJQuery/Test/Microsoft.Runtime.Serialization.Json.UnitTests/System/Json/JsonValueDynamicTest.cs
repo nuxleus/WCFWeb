@@ -130,7 +130,7 @@
 
             dynamic target = jo;
             Assert.AreEqual<int>(person.Age, target.Age.ReadAs<int>()); // JsonPrimitive
-            Assert.AreEqual<string>(person.Address.ToString(), ((JsonObject)target.Address).ReadAsComplex<Address>().ToString()); // JsonObject
+            Assert.AreEqual<string>(person.Address.ToString(), ((JsonObject)target.Address).ReadAsType<Address>().ToString()); // JsonObject
 
             target = jo.Address.City;  // JsonPrimitive
             Assert.IsNotNull(target);
@@ -139,7 +139,7 @@
             target = jo.Friends;  // JsonArray
             Assert.IsNotNull(target);
             jsonValue = target as JsonValue;
-            Assert.AreEqual<int>(person.Friends.Count, jsonValue.ReadAsComplex<List<Person>>().Count);
+            Assert.AreEqual<int>(person.Friends.Count, jsonValue.ReadAsType<List<Person>>().Count);
 
             target = jo.Friends[1].Address.City;
             Assert.IsNotNull(target);
@@ -307,42 +307,6 @@
 
             EvaluateNoExceptions<IDictionary<string, JsonValue>>(AnyInstance.AnyJsonObject, false);
             EvaluateNoExceptions<IList<JsonValue>>(AnyInstance.AnyJsonArray, false);
-        }
-
-        [TestMethod]
-        public void InvalidCollectionCastTests()
-        {
-            dynamic jo = AnyInstance.AnyJsonObject;
-            dynamic ja = AnyInstance.AnyJsonArray;
-            dynamic jp = AnyInstance.AnyJsonPrimitive;
-            dynamic jd = AnyInstance.DefaultJsonValue;
-
-            object[] objArr = jd;
-            Assert.IsNull(objArr);
-
-            Array arr = jd;
-            Assert.IsNull(arr);
-
-            List<object> list = jd;
-            Assert.IsNull(list);
-
-            Dictionary<string, object> dic = jd;
-            Assert.IsNull(dic);
-
-            ExceptionTestHelper.ExpectException<InvalidCastException>(delegate { object[] ret = jo; });
-            ExceptionTestHelper.ExpectException<InvalidCastException>(delegate { object[] ret = jp; });
-
-            ExceptionTestHelper.ExpectException<InvalidCastException>(delegate { Array ret = jo; });
-            ExceptionTestHelper.ExpectException<InvalidCastException>(delegate { Array ret = jp; });
-
-            ExceptionTestHelper.ExpectException<InvalidCastException>(delegate { List<object> ret = jo; });
-            ExceptionTestHelper.ExpectException<InvalidCastException>(delegate { List<object> ret = jp; });
-
-            ExceptionTestHelper.ExpectException<InvalidCastException>(delegate { Dictionary<string, object> ret = ja; });
-            ExceptionTestHelper.ExpectException<InvalidCastException>(delegate { Dictionary<string, object> ret = jp; });
-
-            ExceptionTestHelper.ExpectException<InvalidCastException>(delegate { List<string> ret = ja; });
-            ExceptionTestHelper.ExpectException<InvalidCastException>(delegate { Dictionary<string, string> ret = jo; });
         }
 
         static void EvaluateNoExceptions<T>(JsonValue value, bool cast)

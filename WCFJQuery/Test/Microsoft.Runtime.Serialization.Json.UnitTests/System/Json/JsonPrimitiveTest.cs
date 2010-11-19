@@ -38,6 +38,72 @@
         }
 
         [TestMethod]
+        public void ValueTest()
+        {
+            object[] values = 
+            {
+                AnyInstance.AnyInt, AnyInstance.AnyString, AnyInstance.AnyGuid, AnyInstance.AnyDecimal, AnyInstance.AnyBool, AnyInstance.AnyDateTime
+            };
+
+            foreach (object value in values)
+            {
+                JsonPrimitive jp;
+                bool success = JsonPrimitive.TryCreate(value, out jp);
+                Assert.IsTrue(success);
+                Assert.AreEqual(value, jp.Value);
+            }
+        }
+
+        [TestMethod]
+        public void TryCreateTest()
+        {
+            object[] numberValues =
+            {
+                AnyInstance.AnyByte, AnyInstance.AnySByte, AnyInstance.AnyShort, AnyInstance.AnyDecimal, 
+                AnyInstance.AnyDouble, AnyInstance.AnyShort, AnyInstance.AnyInt, AnyInstance.AnyLong, 
+                AnyInstance.AnyUShort, AnyInstance.AnyUInt, AnyInstance.AnyULong, AnyInstance.AnyFloat
+            };
+
+            object[] booleanValues =
+            {
+                true, false
+            };
+
+
+            object[] stringValues =
+            {
+                AnyInstance.AnyString, AnyInstance.AnyChar, 
+                AnyInstance.AnyDateTime, AnyInstance.AnyDateTimeOffset,
+                AnyInstance.AnyGuid, AnyInstance.AnyUri
+            };
+
+            CheckValues(numberValues, JsonType.Number);
+            CheckValues(booleanValues, JsonType.Boolean);
+            CheckValues(stringValues, JsonType.String);
+        }
+
+        [TestMethod]
+        public void TryCreateInvalidTest()
+        {
+            bool success;
+            JsonPrimitive target;
+
+            object[] values =
+            {
+                AnyInstance.AnyJsonArray, AnyInstance.AnyJsonObject, AnyInstance.AnyJsonPrimitive, 
+                null, AnyInstance.DefaultJsonValue, AnyInstance.AnyDynamic, AnyInstance.AnyAddress,
+                AnyInstance.AnyPerson
+            };
+
+            foreach (object value in values)
+            {
+                success = JsonPrimitive.TryCreate(value, out target);
+                Assert.IsFalse(success);
+                Assert.IsNull(target);
+            }
+        }
+
+        [TestMethod]
         public void NumberToNumberConversionTest()
         {
             long longValue;
@@ -318,6 +384,20 @@
             Assert.IsTrue(target.Count == 0);
             Assert.IsFalse(target.ContainsKey(string.Empty));
             Assert.IsFalse(target.ContainsKey(AnyInstance.AnyString));
+        }
+
+        private void CheckValues(object[] values, JsonType expectedType)
+        {
+            JsonPrimitive target;
+            bool success;
+
+            foreach (object value in values)
+            {
+                success = JsonPrimitive.TryCreate(value, out target);
+                Assert.IsTrue(success);
+                Assert.IsNotNull(target);
+                Assert.AreEqual(expectedType, target.JsonType);
+            }
         }
     }
 }

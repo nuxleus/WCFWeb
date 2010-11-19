@@ -128,6 +128,11 @@ namespace System.Json
             get { return this.changedListenersCount; }
         }
 
+        /// <summary>
+        /// Gets the default JsonValue instance.  
+        /// This instance enables safe-chaining of JsonValue operations and resolves to 'null'
+        /// when this instance is used as dynamic, mapping to the JavaScript 'null' value.
+        /// </summary>
         private static JsonValue DefaultInstance
         {
             get
@@ -238,47 +243,6 @@ namespace System.Json
         public static JsonValue Load(Stream stream)
         {
             return JXmlToJsonValueConverter.JXMLToJsonValue(stream);
-        }
-
-        /// <summary>
-        /// Enables explicit casts from an instance of type <see cref="System.Json.JsonValue"/> to a <see cref="List{T}"/> list of <see cref="object"/> types.
-        /// </summary>
-        /// <param name="value">The instance of <see cref="System.Json.JsonValue"/> used to initialize the <see cref="List{T}"/> object.</param>
-        /// <returns>The <see cref="List{T}"/> initialized with the <see cref="System.Json.JsonValue"/> value specified or null if value is null or the conversion cannot be performed.</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists", Justification = "The generic list is a copy of the underlying collection.")]
-        public static explicit operator List<object>(JsonValue value)
-        {
-            return CastValue<List<object>>(value);
-        }
-
-        /// <summary>
-        /// Enables explicit casts from an instance of type <see cref="System.Json.JsonValue"/> to an <see cref="Array"/> object.
-        /// </summary>
-        /// <param name="value">The instance of <see cref="System.Json.JsonValue"/> used to initialize the <see cref="Array"/> object.</param>
-        /// <returns>The <see cref="Array"/> initialized with the <see cref="System.Json.JsonValue"/> value specified or null if value is null or the conversion cannot be performed.</returns>
-        public static explicit operator Array(JsonValue value)
-        {
-            return CastValue<Array>(value);
-        }
-
-        /// <summary>
-        /// Enables explicit casts from an instance of type <see cref="System.Json.JsonValue"/> to an array of <see cref="object"/> types.
-        /// </summary>
-        /// <param name="value">The instance of <see cref="System.Json.JsonValue"/> used to initialize the <see cref="object"/> array.</param>
-        /// <returns>The <see cref="object"/> array initialized with the <see cref="System.Json.JsonValue"/> value specified or null if value is null or the conversion cannot be performed.</returns>
-        public static explicit operator object[](JsonValue value)
-        {
-            return CastValue<object[]>(value);
-        }
-
-        /// <summary>
-        /// Enables explicit casts from an instance of type <see cref="System.Json.JsonValue"/> to a <see cref="Dictionary{T1, T2}"/> of <see cref="string"/> and <see cref="object"/> key/value types.
-        /// </summary>
-        /// <param name="value">The instance of <see cref="System.Json.JsonValue"/> used to initialize the <see cref="Dictionary{T1, T2}"/> object.</param>
-        /// <returns>The <see cref="Dictionary{T1, T2}"/> initialized with the <see cref="System.Json.JsonValue"/> value specified or null if value is null or the conversion cannot be performed.</returns>
-        public static explicit operator Dictionary<string, object>(JsonValue value)
-        {
-            return CastValue<Dictionary<string, object>>(value);
         }
 
         /// <summary>
@@ -826,18 +790,6 @@ namespace System.Json
                 return true;
             }
 
-            if (this.JsonType == JsonType.Array && (type == typeof(List<object>) || type == typeof(Array) || type == typeof(object[])))
-            {
-                value = this.ToClrCollection(type);
-                return true;
-            }
-
-            if (type == typeof(Dictionary<string, object>) && this.JsonType == JsonType.Object)
-            {
-                value = this.ToClrCollection(type);
-                return true;
-            }
-
             value = null;
             return false;
         }
@@ -1148,8 +1100,9 @@ namespace System.Json
                         nextValue.WriteAttributeString(jsonWriter);
 
                         objectStack.Push(currentValue);
-                        currentValue = nextValue;
                         indexStack.Push(currentIndex);
+
+                        currentValue = nextValue;
                         currentIndex = 0;
                     }
                     else
@@ -1172,9 +1125,10 @@ namespace System.Json
                     if (objectStack.Count > 0)
                     {
                         currentValue.OnSaveEnded();
+                        jsonWriter.WriteEndElement();
+
                         currentValue = objectStack.Pop();
                         currentIndex = indexStack.Pop() + 1;
-                        jsonWriter.WriteEndElement();
                     }
                 }
             }
@@ -1256,126 +1210,6 @@ namespace System.Json
             return value != null && (value.JsonType == JsonType.Array || value.JsonType == JsonType.Object);
         }
 
-        private static void InsertClrItem(object collection, ref int index, string key, object value)
-        {
-            List<object> list = collection as List<object>;
-
-            if (list != null)
-            {
-                list.Add(value);
-                return;
-            }
-
-            Dictionary<string, object> dictionary = collection as Dictionary<string, object>;
-            if (dictionary != null)
-            {
-                dictionary.Add(key, value);
-                return;
-            }
-
-            Array array = collection as Array;
-            array.SetValue(value, index);
-            index++;
-        }
-
-        private object CreateClrCollection(Type collectionType)
-        {
-            if (collectionType == typeof(Dictionary<string, object>))
-            {
-                return new Dictionary<string, object>(this.Count);
-            }
-
-            if (collectionType == typeof(List<object>))
-            {
-                return new List<object>(this.Count);
-            }
-
-            return new object[this.Count];
-        }
-
-        /// <summary>
-        /// Converts this instance to a collection containing <see cref="object"/> type instances corresponding to the underlying
-        /// elements of this instance.
-        /// </summary>
-        /// <param name="collectionType">The type of the resulting collection.</param>
-        /// <returns>An object representing a CLR collection depending on the <see cref="JsonType"/> value of this instance and the specified type value.</returns>
-        private object ToClrCollection(Type collectionType)
-        {
-            object collection = null;
-
-            if (IsJsonCollection(this))
-            {
-                Type typeofDictionary = typeof(Dictionary<string, object>);
-                Type arrayType = collectionType == typeofDictionary ? typeof(List<object>) : collectionType;
-                Type childCollectionType = null;
-                
-                JsonValue parentValue = this;
-                Queue<KeyValuePair<string, JsonValue>> childValues = null;
-                Stack<ToClrCollectionStackInfo> stackInfo = new Stack<ToClrCollectionStackInfo>();
-                int currentIndex = 0;
-
-                collection = this.CreateClrCollection(collectionType);
-
-                do
-                {
-                    if (childValues == null)
-                    {
-                        childValues = new Queue<KeyValuePair<string, JsonValue>>(parentValue);
-                    }
-
-                    while (childValues != null && childValues.Count > 0)
-                    {
-                        KeyValuePair<string, JsonValue> item = childValues.Dequeue();
-
-                        switch (item.Value.JsonType)
-                        {
-                            case JsonType.Array:
-                                childCollectionType = arrayType;
-                                goto default;
-
-                            case JsonType.Object:
-                                childCollectionType = typeofDictionary;
-                                goto default;
-
-                            case JsonType.Default:
-                            case JsonType.Boolean:
-                            case JsonType.Number:
-                            case JsonType.String:
-                                InsertClrItem(collection, ref currentIndex, item.Key, item.Value.Read());
-                                break;
-
-                            default:
-                                // Processs collection
-                                object childCollection = this.CreateClrCollection(childCollectionType);
-
-                                InsertClrItem(collection, ref currentIndex, item.Key, childCollection);
-
-                                stackInfo.Push(new ToClrCollectionStackInfo(parentValue, collection, currentIndex, childValues));
-
-                                parentValue = item.Value;
-                                childValues = null;
-                                collection = childCollection;
-                                currentIndex = 0;
-
-                                break;
-                        }
-                    }
-
-                    if (childValues != null && stackInfo.Count > 0)
-                    {
-                        ToClrCollectionStackInfo info = stackInfo.Pop();
-                        collection = info.Collection;
-                        childValues = info.JsonValueChildren;
-                        parentValue = info.ParentJsonValue;
-                        currentIndex = info.CurrentIndex;
-                    }
-                }
-                while (stackInfo.Count > 0 || childValues == null || childValues.Count > 0);
-            }
-
-            return collection;
-        }
-
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Event methods are called on this instance")]
         [OnSerializing]
         private void OnSerializing(StreamingContext context)
@@ -1388,25 +1222,6 @@ namespace System.Json
         private void OnDeserializing(StreamingContext context)
         {
             throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new NotSupportedException());
-        }
-
-        private class ToClrCollectionStackInfo
-        {
-            public ToClrCollectionStackInfo(JsonValue jsonValue, object collection, int currentIndex, Queue<KeyValuePair<string, JsonValue>> iterator)
-            {
-                this.ParentJsonValue = jsonValue;
-                this.CurrentIndex = currentIndex;
-                this.Collection = collection;
-                this.JsonValueChildren = iterator;
-            }
-
-            public JsonValue ParentJsonValue { get; set; }
-
-            public object Collection { get; set; }
-
-            public int CurrentIndex { get; set; }
-
-            public Queue<KeyValuePair<string, JsonValue>> JsonValueChildren { get; set; }
         }
     }
 }

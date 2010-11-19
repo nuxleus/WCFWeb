@@ -16,12 +16,12 @@
 
         public static dynamic Decode<T>(string json)
         {
-            return JsonValue.Parse(json).ReadAsComplex<T>();
+            return JsonValue.Parse(json).ReadAsType<T>();
         }
 
         public static dynamic Decode(string json)
         {
-            return JsonValue.Parse(json).AsDynamic();
+            return JsonValue.Parse(json);
         }
     }
     
@@ -84,7 +84,7 @@
             Assert.IsTrue(obj.Grades[1] == "B");
             Assert.IsTrue(obj.Grades[2] == "C");
 
-            // Note: Assert.AreEqual checks object types, not only values.
+            // Note: Assert.AreEqual checks object types, not only values and the generic version is not supported by the DLR (cast not honored).
             // Assert
             /*
             Assert.AreEqual("Hello", obj.Name);
@@ -100,11 +100,10 @@
         public void DecodeDynamicObjectImplicitConversionToDictionary()
         {
             // Act
-            // Note: dynamic JsonValue cannot be casted to IDictionary type but it works for Dictionary.
             /*
             IDictionary<string, object> values = Json.Decode("{\"Name\":\"Hello\",\"Age\":1}");
             */
-            Dictionary<string, object> values = Json.Decode("{\"Name\":\"Hello\",\"Age\":1}");
+            IDictionary<string, object> values = Json.Decode("{\"Name\":\"Hello\",\"Age\":1}").ToDictionary();
 
             // Assert
             Assert.AreEqual("Hello", values["Name"]);
@@ -115,15 +114,18 @@
         public void DecodeArrayImplicitConversionToArrayAndObjectArray()
         {
             // Act
+            /*
             Array array = Json.Decode("[1,2,3]");
-
             object[] objArray = Json.Decode("[1,2,3]");
+            */
+            Array array = Json.Decode("[1,2,3]").ToObjectArray();
+            object[] objArray = Json.Decode("[1,2,3]").ToObjectArray();
 
             // Note: this string notation is not valid JSON so JsonValue does not support it.
             /*
             IEnumerable<dynamic> dynamicEnumerable = Json.Decode("[{a:1}]");
             */
-            IEnumerable<dynamic> dynamicEnumerable = Json.Decode("[{\"a\":1}]");
+            IEnumerable<dynamic> dynamicEnumerable = Json.Decode("[{\"a\":1}]") as dynamic;
 
             // Assert
             Assert.IsNotNull(array);
@@ -164,11 +166,11 @@
             Assert.IsTrue(obj["Grades"][1] == "B");
             Assert.IsTrue(obj["Grades"][2] == "C");
 
-            obj = (Dictionary<string, object>)obj;
+            obj = obj.ToDictionary();
 
             Assert.AreEqual("Hello", obj["Name"]);
             Assert.AreEqual(1, obj["Age"]);
-            Assert.AreEqual(3, obj["Grades"].Count);
+            Assert.AreEqual(3, obj["Grades"].Length);
             Assert.AreEqual("A", obj["Grades"][0]);
             Assert.AreEqual("B", obj["Grades"][1]);
             Assert.AreEqual("C", obj["Grades"][2]);
@@ -191,7 +193,10 @@
         public void DecodeDateTime()
         {
             // Act
+            /*
             DateTime dateTime = Json.Decode("\"\\/Date(940402800000)\\/\"");
+            */
+            DateTime dateTime = (DateTime)Json.Decode("\"\\/Date(940402800000)\\/\"");
 
             // Assert
             Assert.AreEqual(1999, dateTime.Year);
@@ -224,7 +229,7 @@
         {
             // Act
             var values = Json.Decode("[11,12,13,14,15]");
-
+      
             Assert.AreEqual(5, values.Count);
             Assert.IsTrue(values[0] == 11);
             Assert.IsTrue(values[1] == 12);
@@ -232,7 +237,7 @@
             Assert.IsTrue(values[3] == 14);
             Assert.IsTrue(values[4] == 15);
 
-            values = (Array)values;
+            values = values.ToObjectArray();
 
             // Assert            
             Assert.AreEqual(5, values.Length);
@@ -249,7 +254,10 @@
             // Act
             var obj = Json.Decode("{\"A\":1,\"B\":[1,3,4]}");
 
+            /*
             object[] bValues = obj.B;
+            */
+            object[] bValues = obj.B.ToObjectArray();
 
             // Assert
             /*
@@ -314,12 +322,15 @@
             */
         }
 
-        //[TestMethod] - Dynamic cast does not kick off here ... 195214
+        [TestMethod]
         public void DecodeArrayPassToMethodThatTakesArray()
         {
             // Arrange
+            /*
             var values = Json.Decode("[3,2,1]");
-            
+            */
+            var values = Json.Decode("[3,2,1]").ToObjectArray();
+
             // Act
             int index = Array.IndexOf(values, 2);
 
@@ -373,6 +384,7 @@
         {
             // Act
             var obj = Json.Decode("{\"A\":{\"B\":100}}");
+
             obj.A.B = 20;
 
             // Assert
@@ -388,6 +400,7 @@
         {
             // Act
             var obj = Json.Decode("{\"A\":1}");
+
             obj.A = new { B = 1, D = 2 };
 
             // Assert
@@ -401,8 +414,7 @@
             // Arrange
             var obj = Json.Decode("{\"A\":[3,2,1]}");
 
-            // Note: in order to sort the array needs to be converted from JsonPrimitive types to object types.
-            object[] arr = obj.A;
+            object[] arr = obj.A.ToObjectArray();
 
             // Act
             /*
@@ -426,7 +438,7 @@
         {
             // Act
             var obj = Json.Decode("{\"A\":1}");
-            
+
             // Assert
             /*
             Assert.IsNull(obj.PropertyThatDoesntExist);
@@ -439,7 +451,7 @@
         {
             // Act
             var person = Json.Decode<Person>("{\"Name\":\"David\", \"Age\":2}");
-            
+
             // Assert
             Assert.AreEqual("David", person.Name);
             Assert.AreEqual(2, person.Age);

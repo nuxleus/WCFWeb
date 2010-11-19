@@ -262,7 +262,7 @@
                 { "Address", new JsonObject { { "Street", Address.AnyStreet }, { "City", Address.AnyCity }, { "State", Address.AnyState } } },
             };
 
-            Person person = target.ReadAsComplex<Person>();
+            Person person = target.ReadAsType<Person>();
             Assert.AreEqual(AnyInstance.AnyString, person.Name);
             Assert.AreEqual(AnyInstance.AnyInt, person.Age);
             Assert.IsNotNull(person.Address);
@@ -464,7 +464,7 @@
             JsonObject jo = JsonValueExtensions.CreateFrom(person) as JsonObject;
 
             Assert.AreEqual<int>(person.Age, jo.ValueOrDefault("Age").ReadAs<int>()); // JsonPrimitive
-            Assert.AreEqual<string>(person.Address.ToString(), jo.ValueOrDefault("Address").ReadAsComplex<Address>().ToString()); // JsonObject
+            Assert.AreEqual<string>(person.Address.ToString(), jo.ValueOrDefault("Address").ReadAsType<Address>().ToString()); // JsonObject
             Assert.AreEqual<int>(person.Friends.Count, jo.ValueOrDefault("Friends").Count); // JsonArray
 
             target = jo.ValueOrDefault("Address").ValueOrDefault("City"); // JsonPrimitive

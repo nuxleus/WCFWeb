@@ -98,7 +98,7 @@ namespace System.Runtime.Serialization.Json
         /// <param name="valueOfT">An instance of T initialized with this instance, or the default
         /// value of T, if the conversion cannot be performed.</param>
         /// <returns>true if this <see cref="System.Json.JsonValue"/> instance can be read as type T; otherwise, false.</returns>
-        public static bool TryReadAsComplex<T>(this JsonValue jsonValue, out T valueOfT)
+        public static bool TryReadAsType<T>(this JsonValue jsonValue, out T valueOfT)
         {
             if (jsonValue == null)
             {
@@ -106,7 +106,7 @@ namespace System.Runtime.Serialization.Json
             }
 
             object value;
-            if (jsonValue.TryReadAsComplex(typeof(T), out value))
+            if (JsonValueExtensions.TryReadAsType(jsonValue, typeof(T), out value))
             {
                 valueOfT = (T)value;
                 return true;
@@ -125,14 +125,14 @@ namespace System.Runtime.Serialization.Json
         /// specified if the conversion.</returns>
         /// <exception cref="System.NotSupportedException">If this <see cref="System.Json.JsonValue"/> value cannot be
         /// converted into the type T.</exception>
-        public static T ReadAsComplex<T>(this JsonValue jsonValue)
+        public static T ReadAsType<T>(this JsonValue jsonValue)
         {
             if (jsonValue == null)
             {
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new ArgumentNullException("jsonValue"));
             }
 
-            return (T)jsonValue.ReadAsComplex(typeof(T));
+            return (T)JsonValueExtensions.ReadAsType(jsonValue, typeof(T));
         }
 
         /// <summary>
@@ -144,7 +144,7 @@ namespace System.Runtime.Serialization.Json
         /// specified if the conversion.</returns>
         /// <exception cref="System.NotSupportedException">If this <see cref="System.Json.JsonValue"/> value cannot be
         /// converted into the type T.</exception>
-        public static object ReadAsComplex(this JsonValue jsonValue, Type type)
+        public static object ReadAsType(this JsonValue jsonValue, Type type)
         {
             if (jsonValue == null)
             {
@@ -152,7 +152,7 @@ namespace System.Runtime.Serialization.Json
             }
 
             object result;
-            if (JsonValueExtensions.TryReadAsComplex(jsonValue, type, out result))
+            if (JsonValueExtensions.TryReadAsType(jsonValue, type, out result))
             {
                 return result;
             }
@@ -169,7 +169,7 @@ namespace System.Runtime.Serialization.Json
         /// <returns>true if this <see cref="System.Json.JsonValue"/> instance can be read as the specified type; otherwise, false.</returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1007:UseGenericsWhereAppropriate",
                     Justification = "This is the non-generic version of the method.")]
-        public static bool TryReadAsComplex(this JsonValue jsonValue, Type type, out object value)
+        public static bool TryReadAsType(this JsonValue jsonValue, Type type, out object value)
         {
             if (jsonValue == null)
             {
@@ -179,6 +179,25 @@ namespace System.Runtime.Serialization.Json
             if (type == typeof(JsonValue) || type == typeof(object))
             {
                 value = jsonValue;
+                return true;
+            }
+
+            if (type == typeof(object[]) || type == typeof(Dictionary<string, object>))
+            {
+                if (JsonValueExtensions.CanConvertToClrCollection(jsonValue, type))
+                {
+                    value = JsonValueExtensions.ToClrCollection(jsonValue, type);
+                    return true;
+                }
+                else
+                {
+                    value = null;
+                    return false;
+                }
+            }
+
+            if (jsonValue.TryReadAs(type, out value))
+            {
                 return true;
             }
 
@@ -206,76 +225,179 @@ namespace System.Runtime.Serialization.Json
             }
         }
 
+        /// <summary>
+        /// Extension method for converting a <see cref="JsonValue"/> collection into an array of objects.
+        /// </summary>
+        /// <param name="jsonValue">the <see cref="JsonValue"/> instance to be converted to an object array.</param>
+        /// <returns>An array of objects represented by the specified <see cref="JsonValue"/> instance.</returns>
+        /// <remarks>The <see cref="JsonType"/> value of the specified <see cref="JsonValue"/> instance must be <see cref="JsonType.Array"/>.</remarks>
+        public static object[] ToObjectArray(this JsonValue jsonValue)
+        {
+            if (jsonValue == null)
+            {
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("jsonValue");
+            }
+
+            if (jsonValue.JsonType != JsonType.Array)
+            {
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException());
+            }
+
+            return ToClrCollection<object[]>(jsonValue);
+        }
+
+        /// <summary>
+        /// Extension method for converting a <see cref="JsonValue"/> collection into a dictionary of <see cref="string"/>/<see cref="object"/> key/value pairs.
+        /// </summary>
+        /// <param name="jsonValue">the <see cref="JsonValue"/> instance to be converted to an dictionary of <see cref="string"/>/<see cref="object"/> key/value pairs.</param>
+        /// <returns>An <see cref="IDictionary{T1,T2}"/> of <see cref="string"/>/<see cref="object"/> key/value pairs represented by the specified <see cref="JsonValue"/> instance.</returns>
+        /// <remarks>The <see cref="JsonType"/> value of the specified <see cref="JsonValue"/> instance must be <see cref="JsonType.Object"/>.</remarks>
+        public static IDictionary<string, object> ToDictionary(this JsonValue jsonValue)
+        {
+            if (jsonValue == null)
+            {
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("jsonValue");
+            }
+
+            if (jsonValue.JsonType != JsonType.Object)
+            {
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException());
+            }
+
+            return ToClrCollection<Dictionary<string, object>>(jsonValue);
+        }
+
+        /// <summary>
+        /// Determines whehter the specified <see cref="JsonValue"/> instance can be converted to the specified collection <see cref="Type"/>.
+        /// </summary>
+        /// <param name="jsonValue">The instance to be converted.</param>
+        /// <param name="collectionType">The collection type to convert the instance to.</param>
+        /// <returns>true if the instance can be converted, false otherwise</returns>
+        private static bool CanConvertToClrCollection(JsonValue jsonValue, Type collectionType)
+        {
+            if (jsonValue != null)
+            {
+                return (jsonValue.JsonType == JsonType.Object && collectionType == typeof(Dictionary<string, object>)) ||
+                       (jsonValue.JsonType == JsonType.Array && collectionType == typeof(object[]));
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Converts this instance to a collection containing <see cref="object"/> type instances corresponding to the underlying
+        /// elements of this instance.
+        /// </summary>
+        /// <param name="jsonValue">The <see cref="JsonValue"/> instance to convert to the object collection.</param>
+        /// <typeparam name="T">The type of the collection to convert this instance to.</typeparam>
+        /// <returns>An object representing a CLR collection depending on the <see cref="JsonType"/> value of this instance and the specified type value.</returns>
+        private static T ToClrCollection<T>(JsonValue jsonValue)
+        {
+            return (T)ToClrCollection(jsonValue, typeof(T));
+        }
+
+        /// <summary>
+        /// Converts this instance to a collection containing <see cref="object"/> type instances corresponding to the underlying
+        /// elements of this instance.
+        /// </summary>
+        /// <param name="jsonValue">The <see cref="JsonValue"/> instance to convert to the object collection.</param>
+        /// <param name="type">The <see cref="Type"/> of the collection to convert this instance to.</param>
+        /// <returns>An object representing a CLR collection depending on the <see cref="JsonType"/> value of this instance and the specified type value.</returns>
+        private static object ToClrCollection(JsonValue jsonValue, Type type)
+        {
+            object collection = null;
+
+            if (CanConvertToClrCollection(jsonValue, type))
+            {
+                JsonValue parentValue = jsonValue;
+                Queue<KeyValuePair<string, JsonValue>> childValues = null;
+                Stack<ToClrCollectionStackInfo> stackInfo = new Stack<ToClrCollectionStackInfo>();
+                int currentIndex = 0;
+
+                collection = JsonValueExtensions.CreateClrCollection(parentValue);
+
+                do
+                {
+                    if (childValues == null)
+                    {
+                        childValues = new Queue<KeyValuePair<string, JsonValue>>(parentValue);
+                    }
+
+                    while (childValues != null && childValues.Count > 0)
+                    {
+                        KeyValuePair<string, JsonValue> item = childValues.Dequeue();
+                        JsonValue childValue = item.Value;
+
+                        switch (childValue.JsonType)
+                        {
+                            case JsonType.Array:
+                            case JsonType.Object:
+                                object childCollection = JsonValueExtensions.CreateClrCollection(childValue);
+
+                                InsertClrItem(collection, ref currentIndex, item.Key, childCollection);
+
+                                stackInfo.Push(new ToClrCollectionStackInfo(parentValue, collection, currentIndex, childValues));
+                                parentValue = item.Value;
+                                childValues = null;
+                                collection = childCollection;
+                                currentIndex = 0;
+                                break;
+
+                            default:
+                                InsertClrItem(collection, ref currentIndex, item.Key, item.Value.Read());
+                                break;
+                        }
+                    }
+
+                    if (childValues != null && stackInfo.Count > 0)
+                    {
+                        ToClrCollectionStackInfo info = stackInfo.Pop();
+                        collection = info.Collection;
+                        childValues = info.JsonValueChildren;
+                        parentValue = info.ParentJsonValue;
+                        currentIndex = info.CurrentIndex;
+                    }
+                }
+                while (stackInfo.Count > 0 || childValues == null || childValues.Count > 0);
+            }
+
+            return collection;
+        }
+
+        private static object CreateClrCollection(JsonValue jsonValue)
+        {
+            if (jsonValue.JsonType == JsonType.Object)
+            {
+                return new Dictionary<string, object>(jsonValue.Count);
+            }
+
+            return new object[jsonValue.Count];
+        }
+
+        private static void InsertClrItem(object collection, ref int index, string key, object value)
+        {
+            Dictionary<string, object> dictionary = collection as Dictionary<string, object>;
+            if (dictionary != null)
+            {
+                dictionary.Add(key, value);
+                return;
+            }
+
+            object[] array = collection as object[];
+            array[index] = value;
+            index++;
+        }
+
         private static JsonValue CreatePrimitive(object value)
         {
-            Type type = value.GetType();
-            TypeCode typeCode = Type.GetTypeCode(type);
+            JsonPrimitive jsonPrimitive;
 
-            switch (typeCode)
+            if (JsonPrimitive.TryCreate(value, out jsonPrimitive))
             {
-                case TypeCode.Boolean:
-                    return new JsonPrimitive((bool)value);
-
-                case TypeCode.Byte:
-                    return new JsonPrimitive((byte)value);
-
-                case TypeCode.Char:
-                    return new JsonPrimitive((char)value);
-
-                case TypeCode.DateTime:
-                    return new JsonPrimitive((DateTime)value);
-
-                case TypeCode.Decimal:
-                    return new JsonPrimitive((decimal)value);
-
-                case TypeCode.Double:
-                    return new JsonPrimitive((double)value);
-
-                case TypeCode.Int16:
-                    return new JsonPrimitive((short)value);
-
-                case TypeCode.Int32:
-                    return new JsonPrimitive((int)value);
-
-                case TypeCode.Int64:
-                    return new JsonPrimitive((long)value);
-
-                case TypeCode.SByte:
-                    return new JsonPrimitive((sbyte)value);
-
-                case TypeCode.Single:
-                    return new JsonPrimitive((float)value);
-
-                case TypeCode.String:
-                    return new JsonPrimitive((string)value);
-
-                case TypeCode.UInt16:
-                    return new JsonPrimitive((ushort)value);
-
-                case TypeCode.UInt32:
-                    return new JsonPrimitive((uint)value);
-
-                case TypeCode.UInt64:
-                    return new JsonPrimitive((ulong)value);
-
-                default:
-                    if (type == typeof(DateTimeOffset))
-                    {
-                        return new JsonPrimitive((DateTimeOffset)value);
-                    }
-
-                    if (type == typeof(Guid))
-                    {
-                        return new JsonPrimitive((Guid)value);
-                    }
-
-                    if (type == typeof(Uri))
-                    {
-                        return new JsonPrimitive((Uri)value);
-                    }
-
-                    return null;
+                return jsonPrimitive;
             }
+            
+            return null;
         }
 
         private static JsonValue CreateFromComplex(object value)
@@ -298,7 +420,7 @@ namespace System.Runtime.Serialization.Json
             if (dynObj != null)
             {
                 parent = new JsonObject(); 
-                Stack<CreateFromStackInfo> infoStack = new Stack<CreateFromStackInfo>();
+                Stack<CreateFromTypeStackInfo> infoStack = new Stack<CreateFromTypeStackInfo>();
                 IEnumerator<string> keys = null;
 
                 do
@@ -310,7 +432,7 @@ namespace System.Runtime.Serialization.Json
 
                     while (keys.MoveNext())
                     {
-                        JsonValue child;
+                        JsonValue child = null;
                         string key = keys.Current;
                         SimpleGetMemberBinder binder = new SimpleGetMemberBinder(key);
 
@@ -323,7 +445,7 @@ namespace System.Runtime.Serialization.Json
                                 child = new JsonObject();
                                 parent.Add(key, child);
 
-                                infoStack.Push(new CreateFromStackInfo(parent, dynObj, keys));
+                                infoStack.Push(new CreateFromTypeStackInfo(parent, dynObj, keys));
 
                                 parent = child as JsonObject;
                                 dynObj = childDynObj;
@@ -333,11 +455,19 @@ namespace System.Runtime.Serialization.Json
                             }
                             else
                             {
-                                child = JsonValueExtensions.CreatePrimitive(value);
-
-                                if (child == null)
+                                if (value != null)
                                 {
-                                    child = JsonValueExtensions.CreateFromComplex(value);
+                                    child = value as JsonValue;
+
+                                    if (child == null)
+                                    {
+                                        child = JsonValueExtensions.CreatePrimitive(value);
+
+                                        if (child == null)
+                                        {
+                                            child = JsonValueExtensions.CreateFromComplex(value);
+                                        }
+                                    }
                                 }
 
                                 parent.Add(key, child);
@@ -347,7 +477,7 @@ namespace System.Runtime.Serialization.Json
 
                     if (infoStack.Count > 0 && keys != null)
                     {
-                        CreateFromStackInfo info = infoStack.Pop();
+                        CreateFromTypeStackInfo info = infoStack.Pop();
 
                         parent = info.JsonObject;
                         dynObj = info.DynamicObject;
@@ -360,9 +490,9 @@ namespace System.Runtime.Serialization.Json
             return parent;
         }
 
-        private class CreateFromStackInfo
+        private class CreateFromTypeStackInfo
         {
-            public CreateFromStackInfo(JsonObject jsonObject, DynamicObject dynamicObject, IEnumerator<string> keyEnumerator)
+            public CreateFromTypeStackInfo(JsonObject jsonObject, DynamicObject dynamicObject, IEnumerator<string> keyEnumerator)
             {
                 this.JsonObject = jsonObject;
                 this.DynamicObject = dynamicObject;
@@ -374,6 +504,25 @@ namespace System.Runtime.Serialization.Json
             public DynamicObject DynamicObject { get; set; }
 
             public IEnumerator<string> Keys { get; set; }
+        }
+
+        private class ToClrCollectionStackInfo
+        {
+            public ToClrCollectionStackInfo(JsonValue jsonValue, object collection, int currentIndex, Queue<KeyValuePair<string, JsonValue>> iterator)
+            {
+                this.ParentJsonValue = jsonValue;
+                this.CurrentIndex = currentIndex;
+                this.Collection = collection;
+                this.JsonValueChildren = iterator;
+            }
+
+            public JsonValue ParentJsonValue { get; set; }
+
+            public object Collection { get; set; }
+
+            public int CurrentIndex { get; set; }
+
+            public Queue<KeyValuePair<string, JsonValue>> JsonValueChildren { get; set; }
         }
 
         private class SimpleGetMemberBinder : GetMemberBinder

@@ -346,6 +346,86 @@ namespace System.Json
         }
 
         /// <summary>
+        /// Gets the value represented by this instance.
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1721:PropertyNamesShouldNotMatchGetMethods",
+            Justification = "Value in this context clearly refers to the underlying CLR value")]
+        public object Value
+        {
+            get
+            {
+                return this.value;
+            }
+        }
+
+        /// <summary>
+        /// Attemps to create a <see cref="JsonPrimitive"/> instance from the specified <see cref="object"/> value.
+        /// </summary>
+        /// <param name="value">The <see cref="object"/> value to create the <see cref="JsonPrimitive"/> instance.</param>
+        /// <param name="result">The resulting <see cref="JsonPrimitive"/> instance on success, null otherwise.</param>
+        /// <returns>true if the operation is successful, false otherwise.</returns>
+        public static bool TryCreate(object value, out JsonPrimitive result)
+        {
+            bool allowedType = true;
+            JsonType jsonType = default(JsonType);
+
+            if (value != null)
+            {
+                Type type = value.GetType();
+                switch (Type.GetTypeCode(type))
+                {
+                    case TypeCode.Boolean:
+                        jsonType = JsonType.Boolean;
+                        break;
+                    case TypeCode.Byte:
+                    case TypeCode.SByte:
+                    case TypeCode.Decimal:
+                    case TypeCode.Double:
+                    case TypeCode.Int16:
+                    case TypeCode.Int32:
+                    case TypeCode.Int64:
+                    case TypeCode.UInt16:
+                    case TypeCode.UInt32:
+                    case TypeCode.UInt64:
+                    case TypeCode.Single:
+                        jsonType = JsonType.Number;
+                        break;
+                    case TypeCode.String:
+                    case TypeCode.Char:
+                    case TypeCode.DateTime:
+                        jsonType = JsonType.String;
+                        break;
+                    default:
+                        if (type == typeof(Uri) || type == typeof(Guid) || type == typeof(DateTimeOffset))
+                        {
+                            jsonType = JsonType.String;
+                        }
+                        else
+                        {
+                            allowedType = false;
+                        }
+
+                        break;
+                }
+            }
+            else
+            {
+                allowedType = false;
+            }
+
+            if (allowedType)
+            {
+                result = new JsonPrimitive(value, jsonType);
+                return true;
+            }
+            else
+            {
+                result = null;
+                return false;
+            }
+        }
+
+        /// <summary>
         /// Attempts to convert this <see cref="System.Json.JsonPrimitive"/> instance into an instance of the specified type.
         /// </summary>
         /// <param name="type">The type to which the conversion is being performed.</param>
@@ -419,67 +499,6 @@ namespace System.Json
         public override bool TryReadAs(Type type, out object value)
         {
             return this.TryReadAsInternal(type, out value) == ReadAsFailureKind.NoFailure;
-        }
-
-        internal static bool TryCreate(object value, out JsonPrimitive result)
-        {
-            bool allowedType = true;
-            JsonType jsonType = default(JsonType);
-
-            if (value != null)
-            {
-                Type type = value.GetType();
-                switch (Type.GetTypeCode(type))
-                {
-                    case TypeCode.Boolean:
-                        jsonType = JsonType.Boolean;
-                        break;
-                    case TypeCode.Byte:
-                    case TypeCode.SByte:
-                    case TypeCode.Decimal:
-                    case TypeCode.Double:
-                    case TypeCode.Int16:
-                    case TypeCode.Int32:
-                    case TypeCode.Int64:
-                    case TypeCode.UInt16:
-                    case TypeCode.UInt32:
-                    case TypeCode.UInt64:
-                    case TypeCode.Single:
-                        jsonType = JsonType.Number;
-                        break;
-                    case TypeCode.String:
-                    case TypeCode.Char:
-                    case TypeCode.DateTime:
-                        jsonType = JsonType.String;
-                        break;
-                    default:
-                        if (type == typeof(Uri) || type == typeof(Guid) || type == typeof(DateTimeOffset))
-                        {
-                            jsonType = JsonType.String;
-                        }
-                        else
-                        {
-                            allowedType = false;
-                        }
-
-                        break;
-                }
-            }
-            else
-            {
-                allowedType = false;
-            }
-
-            if (allowedType)
-            {
-                result = new JsonPrimitive(value, jsonType);
-                return true;
-            }
-            else
-            {
-                result = null;
-                return false;
-            }
         }
 
         /// <summary>

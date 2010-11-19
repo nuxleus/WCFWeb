@@ -105,7 +105,7 @@
         }
 
         /// <summary>
-        /// Tests for the <see cref="JsonValueExtensions.ReadAsComplex{T}"/> method.
+        /// Tests for the <see cref="JsonValueExtensions.ReadAsType{T}"/> method.
         /// </summary>
         [TestMethod]
         public void ReadAsTests()
@@ -210,7 +210,7 @@
             }
             else
             {
-                T newInstance = jv.ReadAsComplex<T>();
+                T newInstance = jv.ReadAsType<T>();
                 Assert.AreEqual(instance, newInstance);
             }
         }

@@ -10,6 +10,7 @@ namespace System.Json
     using System.Dynamic;
     using System.Linq.Expressions;
     using System.Reflection;
+    using System.Runtime.Serialization.Json;
 
     /// <summary>
     /// This class provides dynamic behavior support for the JsonValue types.
@@ -340,6 +341,94 @@ namespace System.Json
         }
 
         /// <summary>
+        /// Performs the binding of the dynamic invoke member operation.
+        /// Implemented to support extension methods defined in <see cref="JsonValueExtensions"/> type.
+        /// </summary>
+        /// <param name="binder">An instance of the InvokeMemberBinder that represents the details of the dynamic operation.</param>
+        /// <param name="args">An array of DynamicMetaObject instances - arguments to the invoke member operation.</param>
+        /// <returns>The new DynamicMetaObject representing the result of the binding.</returns>
+        public override DynamicMetaObject BindInvokeMember(InvokeMemberBinder binder, DynamicMetaObject[] args)
+        {
+            if (binder == null)
+            {
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new ArgumentNullException("binder"));
+            }
+
+            if (args == null)
+            {
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new ArgumentNullException("args"));
+            }
+
+            List<Type> argTypeList = new List<Type>();
+
+            for (int idx = 0; idx < args.Length; idx++)
+            {
+                argTypeList.Add(args[idx].LimitType);
+            }
+
+            MethodInfo methodInfo = this.Value.GetType().GetMethod(binder.Name, argTypeList.ToArray());
+
+            if (methodInfo == null)
+            {
+                argTypeList.Insert(0, typeof(JsonValue));
+
+                Type[] argTypes = argTypeList.ToArray();
+
+                methodInfo = JsonValueDynamicMetaObject.GetExtensionMethod(typeof(JsonValueExtensions), binder.Name, argTypes);
+
+                if (methodInfo != null)
+                {
+                    Expression thisInstance = Expression.Convert(this.Expression, this.LimitType);
+                    Expression[] argsExpression = new Expression[argTypes.Length];
+
+                    argsExpression[0] = thisInstance;
+                    for (int i = 0; i < args.Length; i++)
+                    {
+                        argsExpression[i + 1] = args[i].Expression;
+                    }
+
+                    Expression callExpression = Expression.Call(methodInfo, argsExpression);
+
+                    if (methodInfo.ReturnType == typeof(void))
+                    {
+                        callExpression = Expression.Block(callExpression, Expression.Default(binder.ReturnType));
+                    }
+                    else
+                    {
+                        callExpression = Expression.Convert(Expression.Call(methodInfo, argsExpression), binder.ReturnType);
+                    }
+
+                    return new DynamicMetaObject(callExpression, this.DefaultRestrictions);
+                }
+            }
+
+            return base.BindInvokeMember(binder, args);
+        }
+
+        /// <summary>
+        /// Returns the enumeration of all dynamic member names.
+        /// </summary>
+        /// <returns>An <see cref="IEnumerable{T}"/> of string reprenseting the dynamic member names.</returns>
+        public override IEnumerable<string> GetDynamicMemberNames()
+        {
+            JsonValue jsonValue = this.Value as JsonValue;
+
+            if (jsonValue != null)
+            {
+                List<string> names = new List<string>();
+                
+                foreach (KeyValuePair<string, JsonValue> pair in jsonValue)
+                {
+                    names.Add(pair.Key);
+                }
+
+                return names;
+            }
+
+            return base.GetDynamicMemberNames();
+        }
+
+        /// <summary>
         /// Checks whether the specified value is a JSON primitive.
         /// </summary>
         /// <param name="value">The <see cref="JsonValue"/> value to check.</param>
@@ -552,6 +641,52 @@ namespace System.Json
             }
 
             return Expression.Throw(Expression.Constant(new InvalidOperationException(exceptionMessage)), typeof(object));
+        }
+
+        /// <summary>
+        /// Gets a <see cref="MethodInfo"/> instance for the specified method name in the specified type.
+        /// </summary>
+        /// <param name="extensionProviderType">The extension provider type.</param>
+        /// <param name="methodName">The name of the method to get the info for.</param>
+        /// <param name="argTypes">The types of the method arguments.</param>
+        /// <returns>A <see cref="MethodInfo"/>instance or null if the method cannot be resolved.</returns>
+        private static MethodInfo GetExtensionMethod(Type extensionProviderType, string methodName, Type[] argTypes)
+        {
+            MethodInfo methodInfo = null;
+            MethodInfo[] methods = extensionProviderType.GetMethods();
+
+            foreach (MethodInfo info in methods)
+            {
+                if (info.Name == methodName)
+                {
+                    methodInfo = info;
+
+                    if (!info.IsGenericMethodDefinition)
+                    {
+                        bool paramsMatch = true;
+                        ParameterInfo[] args = methodInfo.GetParameters();
+
+                        if (args.Length == argTypes.Length)
+                        {
+                            for (int idx = 0; idx < args.Length; idx++)
+                            {
+                                if (!args[idx].ParameterType.IsAssignableFrom(argTypes[idx]))
+                                {
+                                    paramsMatch = false;
+                                    break;
+                                }
+                            }
+
+                            if (paramsMatch)
+                            {
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return methodInfo;
         }
 
         /// <summary>
