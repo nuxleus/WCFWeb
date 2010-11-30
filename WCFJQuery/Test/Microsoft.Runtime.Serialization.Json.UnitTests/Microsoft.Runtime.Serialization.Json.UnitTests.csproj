@@ -13,7 +13,7 @@
     <ProjectGuid>{362488E2-5783-4DC5-9175-7C084C899640}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Microsoft.Runtime.Serialization.Json.UnitTests</RootNamespace>
+    <RootNamespace>Microsoft.ServiceModel.Web.UnitTests</RootNamespace>
     <AssemblyName>Microsoft.Runtime.Serialization.Json.UnitTests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -51,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\AnyInstance.cs" />
+    <Compile Include="System\Json\JsonValueDynamicMetaObjectTest.cs" />
     <Compile Include="System\Json\JsonDefaultTest.cs" />
     <Compile Include="System\Json\DynamicOperatorsTests.cs" />
     <Compile Include="System\Json\JsonValueDynamicTest.cs" />

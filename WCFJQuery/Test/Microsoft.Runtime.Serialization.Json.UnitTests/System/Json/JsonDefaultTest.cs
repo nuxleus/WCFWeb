@@ -46,14 +46,17 @@
         public void ReadAsTests()
         {
             JsonValue target = AnyInstance.DefaultJsonValue;
+            string typeName = target.GetType().FullName;
 
-            ExceptionTestHelper.ExpectException<NotSupportedException>(delegate { target.ReadAs(typeof(bool)); });
-            ExceptionTestHelper.ExpectException<NotSupportedException>(delegate { target.ReadAs(typeof(string)); });
-            ExceptionTestHelper.ExpectException<NotSupportedException>(delegate { target.ReadAs(typeof(JsonObject)); });
+            string errorMsgFormat = "Cannot read '{0}' as '{1}' type.";
 
-            ExceptionTestHelper.ExpectException<NotSupportedException>(delegate { target.ReadAs<bool>(); });
-            ExceptionTestHelper.ExpectException<NotSupportedException>(delegate { target.ReadAs<string>(); });
-            ExceptionTestHelper.ExpectException<NotSupportedException>(delegate { target.ReadAs<JsonObject>(); });
+            ExceptionTestHelper.ExpectException<NotSupportedException>(delegate { target.ReadAs(typeof(bool)); }, string.Format(errorMsgFormat, typeName, typeof(bool)));
+            ExceptionTestHelper.ExpectException<NotSupportedException>(delegate { target.ReadAs(typeof(string)); }, string.Format(errorMsgFormat, typeName, typeof(string)));
+            ExceptionTestHelper.ExpectException<NotSupportedException>(delegate { target.ReadAs(typeof(JsonObject)); }, string.Format(errorMsgFormat, typeName, typeof(JsonObject)));
+
+            ExceptionTestHelper.ExpectException<NotSupportedException>(delegate { target.ReadAs<bool>(); }, string.Format(errorMsgFormat, typeName, typeof(bool)));
+            ExceptionTestHelper.ExpectException<NotSupportedException>(delegate { target.ReadAs<string>(); }, string.Format(errorMsgFormat, typeName, typeof(string)));
+            ExceptionTestHelper.ExpectException<NotSupportedException>(delegate { target.ReadAs<JsonObject>(); }, string.Format(errorMsgFormat, typeName, typeof(JsonObject)));
 
             bool boolValue;
             string stringValue;

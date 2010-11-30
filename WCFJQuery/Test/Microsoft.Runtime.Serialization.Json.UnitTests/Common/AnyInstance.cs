@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Dynamic;
     using System.Json;
+    using System.Linq.Expressions;
     using System.Reflection;
 
     public static class AnyInstance
@@ -42,6 +43,14 @@
         public static readonly Address AnyAddress = Address.CreateSample();
 
         public static readonly dynamic AnyDynamic = TestDynamicObject.CreatePersonAsDynamic(AnyPerson);
+
+        public static readonly JsonValue[] AnyJsonValueArray = 
+        {
+                AnyInstance.AnyJsonArray,
+                AnyInstance.AnyJsonObject,
+                AnyInstance.AnyJsonPrimitive,
+                AnyInstance.DefaultJsonValue
+        };
 
         public static JsonValue GetDefaultJsonValue()
         {
@@ -130,6 +139,11 @@
     {
         private IDictionary<string, object> _values = new Dictionary<string, object>();
 
+        public bool UseFallbackMethod { get; set; }
+        public bool UseErrorSuggestion { get; set; }
+
+        public string TestProperty { get; set; }
+
         public override IEnumerable<string> GetDynamicMemberNames()
         {
             return _values.Keys;
@@ -143,6 +157,21 @@
 
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
+            if (this.UseFallbackMethod)
+            {
+                DynamicMetaObject target = new DynamicMetaObject(Expression.Parameter(this.GetType()), BindingRestrictions.Empty);
+                DynamicMetaObject errorSuggestion = null;
+
+                if (this.UseErrorSuggestion)
+                {
+                    errorSuggestion = new DynamicMetaObject(Expression.Throw(Expression.Constant(new TestDynamicObjectException())), BindingRestrictions.Empty);
+                }
+
+                DynamicMetaObject metaObj = binder.FallbackGetMember(target, errorSuggestion);
+                Expression<Action> lambda = Expression.Lambda<Action>(metaObj.Expression, new ParameterExpression[] { });
+                lambda.Compile().Invoke();
+            }
+
             return _values.TryGetValue(binder.Name, out result);
         }
 
@@ -159,6 +188,10 @@
             dynObj.Friends = person.Friends;
 
             return dynObj;
+        }
+
+        public class TestDynamicObjectException : Exception 
+        {
         }
     }
 }

@@ -151,21 +151,20 @@
                 }
             }
 
-            // DISABLED, 195095
-            // foreach (bool value in new bool[] { true, false })
-            // {
-            //     jv = new JsonPrimitive(value.ToString().ToLowerInvariant());
-            //     dyn = jv;
-            //     Log.Info("IsTrue, {0}", jv);
-            //     if (dyn)
-            //     {
-            //         Assert.IsTrue(value, "Boolean evaluation should not enter 'if' clause.");
-            //     }
-            //     else
-            //     {
-            //         Assert.IsFalse(value, "Boolean evaluation should not enter 'else' clause.");
-            //     }
-            // }
+            foreach (bool value in new bool[] { true, false })
+            {
+                jv = new JsonPrimitive(value.ToString().ToLowerInvariant());
+                dyn = jv;
+                Log.Info("IsTrue, {0}", jv);
+                if (dyn)
+                {
+                    Assert.IsTrue(value, "Boolean evaluation should not enter 'if' clause.");
+                }
+                else
+                {
+                    Assert.IsFalse(value, "Boolean evaluation should not enter 'else' clause.");
+                }
+            }
 
             foreach (bool first in new bool[] { false, true })
             {
@@ -191,10 +190,12 @@
         {
             JsonValue jv = new JsonObject { { "one", 1 }, { "one_point_two", 1.2 } };
             dynamic dyn = jv;
+
+            Log.Info("Equality");
             Assert.IsTrue(dyn.one == 1);
             Assert.IsTrue(dyn.one_point_two == 1.2);
-            // DISABLED, 195036, Assert.IsTrue(dyn.one != 1.2);
-            // DISABLED, 195036, Assert.IsTrue(dyn.one_point_two != 1);
+            Assert.IsTrue(dyn.one != 1.2);
+            Assert.IsTrue(dyn.one_point_two != 1);
             Assert.IsTrue(dyn.one != 2);
             Assert.IsTrue(dyn.one_point_two != 1.3);
 

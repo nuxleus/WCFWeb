@@ -70,11 +70,29 @@ namespace System.Json {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cannot cast JsonPrimitive value &apos;{0}&apos; as &apos;{1}&apos;..
+        ///   Looks up a localized string similar to Cannot read &apos;{0}&apos; as &apos;{1}&apos; type..
         /// </summary>
         internal static string CannotReadAsType {
             get {
                 return ResourceManager.GetString("CannotReadAsType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot read JsonPrimitive value &apos;{0}&apos; as &apos;{1}&apos;..
+        /// </summary>
+        internal static string CannotReadPrimitiveAsType {
+            get {
+                return ResourceManager.GetString("CannotReadPrimitiveAsType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &apos;{0}&apos; does not contain a definition for property &apos;{1}&apos;..
+        /// </summary>
+        internal static string DynamicPropertyNotDefined {
+            get {
+                return ResourceManager.GetString("DynamicPropertyNotDefined", resourceCulture);
             }
         }
         
@@ -88,11 +106,11 @@ namespace System.Json {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The type of the index is not supported by this indexer; use &apos;int&apos; or &apos;string&apos; for array and object indexing respectively..
+        ///   Looks up a localized string similar to &apos;{0}&apos; type indexer is not supported on JsonValue of JsonType &apos;{1}&apos;..
         /// </summary>
-        internal static string IndexTypeNotSupported {
+        internal static string IndexerNotSupportedOnJsonType {
             get {
-                return ResourceManager.GetString("IndexTypeNotSupported", resourceCulture);
+                return ResourceManager.GetString("IndexerNotSupportedOnJsonType", resourceCulture);
             }
         }
         
@@ -115,7 +133,7 @@ namespace System.Json {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Indices for ValueOrDefault can only be of type System.Int32 and System.String..
+        ///   Looks up a localized string similar to Invalid &apos;{0}&apos; index type; only &apos;System.String&apos;  and non-negative &apos;System.Int32&apos; types are supported..
         /// </summary>
         internal static string InvalidIndexType {
             get {
@@ -169,11 +187,29 @@ namespace System.Json {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Null index or multidimensional indexing is not supported by this indexer; use &apos;System.Int32&apos; or &apos;System.String&apos; for array and object indexing respectively..
+        /// </summary>
+        internal static string NonSingleNonNullIndexNotSupported {
+            get {
+                return ResourceManager.GetString("NonSingleNonNullIndexNotSupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Default JsonValue cannot perform this operation..
         /// </summary>
         internal static string OperationNotAllowedOnDefault {
             get {
                 return ResourceManager.GetString("OperationNotAllowedOnDefault", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Operation not supported on JsonValue instance of JsonType &apos;{0}&apos;..
+        /// </summary>
+        internal static string OperationNotSupportedOnJsonType {
+            get {
+                return ResourceManager.GetString("OperationNotSupportedOnJsonType", resourceCulture);
             }
         }
         
@@ -214,16 +250,7 @@ namespace System.Json {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This method or property is not supported on a JSON value of type &apos;{0}&apos;. Some operations may only be performed on JSON Arrays and some may only be performed on JSON Objects..
-        /// </summary>
-        internal static string UnsupportedOnThisJsonValue {
-            get {
-                return ResourceManager.GetString("UnsupportedOnThisJsonValue", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Default JsonValue cannot be used in this operation..
+        ///   Looks up a localized string similar to Operation not supported on JsonValue instances of JsonType.Default type..
         /// </summary>
         internal static string UseOfDefaultNotAllowed {
             get {

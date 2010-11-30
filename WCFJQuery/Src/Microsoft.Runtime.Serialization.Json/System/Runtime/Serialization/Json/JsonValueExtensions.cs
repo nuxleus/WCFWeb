@@ -9,6 +9,7 @@ namespace System.Runtime.Serialization.Json
     using System.Dynamic;
     using System.IO;
     using System.Json;
+    using System.Linq.Expressions;
     using System.Xml;
 
     /// <summary>
@@ -136,6 +137,31 @@ namespace System.Runtime.Serialization.Json
         }
 
         /// <summary>
+        /// Attempts to convert this <see cref="System.Json.JsonValue"/> instance into the type T, returning a fallback value
+        /// if the conversion fails.
+        /// </summary>
+        /// <typeparam name="T">The type to which the conversion is being performed.</typeparam>
+        /// <param name="jsonValue">The <see cref="JsonValue"/> instance this method extension is to be applied to.</param>
+        /// <param name="fallback">A fallback value to be retuned in case the conversion cannot be performed.</param>
+        /// <returns>An instance of T initialized with the <see cref="System.Json.JsonValue"/> value
+        /// specified if the conversion succeeds or the specified fallback value if it fails.</returns>
+        public static T ReadAsType<T>(this JsonValue jsonValue, T fallback)
+        {
+            if (jsonValue == null)
+            {
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new ArgumentNullException("jsonValue"));
+            }
+
+            T outVal;
+            if (JsonValueExtensions.TryReadAsType<T>(jsonValue, out outVal))
+            {
+                return outVal;
+            }
+
+            return fallback;
+        }
+
+        /// <summary>
         /// Attempts to convert this <see cref="System.Json.JsonValue"/> instance into an instance of the specified type.
         /// </summary>
         /// <param name="jsonValue">The <see cref="JsonValue"/> instance this method extension is to be applied to.</param>
@@ -151,13 +177,18 @@ namespace System.Runtime.Serialization.Json
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new ArgumentNullException("jsonValue"));
             }
 
+            if (type == null)
+            {
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new ArgumentNullException("type"));
+            }
+
             object result;
             if (JsonValueExtensions.TryReadAsType(jsonValue, type, out result))
             {
                 return result;
             }
 
-            throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new NotSupportedException());
+            throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new NotSupportedException(SG.GetString(SR.CannotReadAsType, jsonValue.GetType().FullName, type.FullName)));
         }
 
         /// <summary>
@@ -174,6 +205,11 @@ namespace System.Runtime.Serialization.Json
             if (jsonValue == null)
             {
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new ArgumentNullException("jsonValue"));
+            }
+
+            if (type == null)
+            {
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new ArgumentNullException("type"));
             }
 
             if (type == typeof(JsonValue) || type == typeof(object))
@@ -240,7 +276,7 @@ namespace System.Runtime.Serialization.Json
 
             if (jsonValue.JsonType != JsonType.Array)
             {
-                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException());
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new NotSupportedException(SG.GetString(SR.OperationNotSupportedOnJsonType, jsonValue.JsonType)));
             }
 
             return ToClrCollection<object[]>(jsonValue);
@@ -261,7 +297,7 @@ namespace System.Runtime.Serialization.Json
 
             if (jsonValue.JsonType != JsonType.Object)
             {
-                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException());
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new NotSupportedException(SG.GetString(SR.OperationNotSupportedOnJsonType, jsonValue.JsonType)));
             }
 
             return ToClrCollection<Dictionary<string, object>>(jsonValue);
@@ -534,6 +570,14 @@ namespace System.Runtime.Serialization.Json
 
             public override DynamicMetaObject FallbackGetMember(DynamicMetaObject target, DynamicMetaObject errorSuggestion)
             {
+                if (target != null && errorSuggestion == null)
+                {
+                    string exceptionMessage = SG.GetString(SR.DynamicPropertyNotDefined, target.LimitType, this.Name);
+                    Expression throwExpression = Expression.Throw(Expression.Constant(new InvalidOperationException(exceptionMessage)), typeof(object));
+
+                    errorSuggestion = new DynamicMetaObject(throwExpression, target.Restrictions);
+                }
+
                 return errorSuggestion;
             }
         }

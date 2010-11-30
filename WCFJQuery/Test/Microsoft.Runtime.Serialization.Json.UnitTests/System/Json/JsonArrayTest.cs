@@ -328,6 +328,11 @@
             Assert.AreEqual(item1, target[0]);
             target[0] = item2;
             Assert.AreEqual(item2, target[0]);
+            Assert.AreEqual(item2, target[(short)0]);
+            Assert.AreEqual(item2, target[(ushort)0]);
+            Assert.AreEqual(item2, target[(byte)0]);
+            Assert.AreEqual(item2, target[(sbyte)0]);
+            Assert.AreEqual(item2, target[(char)0]);
 
             ExceptionTestHelper.ExpectException<ArgumentOutOfRangeException>(delegate { var i = target[-1]; });
             ExceptionTestHelper.ExpectException<ArgumentOutOfRangeException>(delegate { var i = target[target.Count]; });

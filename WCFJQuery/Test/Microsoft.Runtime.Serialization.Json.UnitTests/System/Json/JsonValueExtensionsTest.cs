@@ -4,6 +4,7 @@ namespace Microsoft.ServiceModel.Web.UnitTests
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using System.Dynamic;
     using System.IO;
     using System.Json;
     using System.Runtime.Serialization.Json;
@@ -14,6 +15,8 @@ namespace Microsoft.ServiceModel.Web.UnitTests
     [TestClass]
     public class JsonValueExtesnsionsTest
     {
+        const string DynamicPropertyNotDefined = "'{0}' does not contain a definition for property '{1}'.";	
+
         [TestMethod()]
         public void CreateFromTypeTest()
         {
@@ -103,7 +106,11 @@ namespace Microsoft.ServiceModel.Web.UnitTests
             Person person = AnyInstance.AnyPerson;
             dynamic dyn = TestDynamicObject.CreatePersonAsDynamic(person);
 
+            dyn.TestProperty = AnyInstance.AnyString;
+
             target = JsonValueExtensions.CreateFrom(dyn);
+            Assert.IsNotNull(target);
+            Assert.AreEqual<string>(AnyInstance.AnyString, dyn.TestProperty);
             Person jvPerson = target.ReadAsType<Person>();
             Assert.AreEqual(person.ToString(), jvPerson.ToString());
 
@@ -123,6 +130,22 @@ namespace Microsoft.ServiceModel.Web.UnitTests
         }
 
         [TestMethod]
+        public void CreateFromDynamicBinderFallbackTest()
+        {
+            JsonValue target;
+            Person person = AnyInstance.AnyPerson;
+            dynamic dyn = new TestDynamicObject();
+            dyn.Name = AnyInstance.AnyString;
+  
+            dyn.UseFallbackMethod = true;
+            string expectedMessage = string.Format(DynamicPropertyNotDefined, dyn.GetType().FullName, "Name");
+            ExceptionTestHelper.ExpectException<InvalidOperationException>(() => target = JsonValueExtensions.CreateFrom(dyn), expectedMessage);
+
+            dyn.UseErrorSuggestion = true;
+            ExceptionTestHelper.ExpectException<TestDynamicObject.TestDynamicObjectException>(() => target = JsonValueExtensions.CreateFrom(dyn));
+        }
+
+        [TestMethod]
         public void CreateFromNestedDynamicTest()
         {
             JsonValue target;
@@ -135,6 +158,7 @@ namespace Microsoft.ServiceModel.Web.UnitTests
             dyn.Level1.Level2.Name = "Level2";
 
             target = JsonValueExtensions.CreateFrom(dyn);
+            Assert.IsNotNull(target);
             Assert.AreEqual<string>(expected, target.ToString());
         }
 
@@ -182,6 +206,20 @@ namespace Microsoft.ServiceModel.Web.UnitTests
                 target = JsonValueExtensions.CreateFrom(dyn);
                 Assert.AreSame(dyn, target);
             }
+        }
+
+        [TestMethod]
+        public void ReadAsTypeFallbackTest()
+        {
+            JsonValue jv = AnyInstance.AnyInt;
+            Person personFallback = Person.CreateSample();
+
+            Person personResult = jv.ReadAsType<Person>(personFallback);
+            Assert.AreSame(personFallback, personResult);
+
+            int intFallback = 45;
+            int intValue = jv.ReadAsType<int>(intFallback);
+            Assert.AreEqual<int>(AnyInstance.AnyInt, intValue);
         }
 
         [TestMethod]
@@ -320,21 +358,22 @@ namespace Microsoft.ServiceModel.Web.UnitTests
         }
 
         [TestMethod]
-        public void InvalidToCollectionsTest()
+        public void ToCollectionsInvalidTest()
         {
             JsonValue jo = AnyInstance.AnyJsonObject;
             JsonValue ja = AnyInstance.AnyJsonArray;
             JsonValue jp = AnyInstance.AnyJsonPrimitive;
             JsonValue jd = AnyInstance.DefaultJsonValue;
 
-            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { var ret = jd.ToObjectArray(); });
-            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { var ret = jd.ToDictionary(); });
+            string errorMsgFormat = "Operation not supported on JsonValue instance of JsonType '{0}'.";
+            ExceptionTestHelper.ExpectException<NotSupportedException>(delegate { var ret = jd.ToObjectArray(); }, string.Format(errorMsgFormat, jd.JsonType));
+            ExceptionTestHelper.ExpectException<NotSupportedException>(delegate { var ret = jd.ToDictionary(); }, string.Format(errorMsgFormat, jd.JsonType));
 
-            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { var ret = jp.ToObjectArray(); });
-            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { var ret = jp.ToDictionary(); });
+            ExceptionTestHelper.ExpectException<NotSupportedException>(delegate { var ret = jp.ToObjectArray(); }, string.Format(errorMsgFormat, jp.JsonType));
+            ExceptionTestHelper.ExpectException<NotSupportedException>(delegate { var ret = jp.ToDictionary(); }, string.Format(errorMsgFormat, jp.JsonType));
 
-            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { var ret = jo.ToObjectArray(); });
-            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { var ret = ja.ToDictionary(); });
+            ExceptionTestHelper.ExpectException<NotSupportedException>(delegate { var ret = jo.ToObjectArray(); }, string.Format(errorMsgFormat, jo.JsonType));
+            ExceptionTestHelper.ExpectException<NotSupportedException>(delegate { var ret = ja.ToDictionary(); }, string.Format(errorMsgFormat, ja.JsonType));
         }
 
         [TestMethod]
@@ -372,6 +411,8 @@ namespace Microsoft.ServiceModel.Web.UnitTests
             Assert.AreEqual<string>(AnyInstance.AnyPerson.ToString(), obj.ToString());
         }
 
+        // 195843 JsonValue to support generic extension methods defined in JsonValueExtensions.
+        // 195867 Consider creating extension point for allowing new extension methods to be callable via dynamic interface
         //[TestMethod] This requires knowledge of the C# binder to be able to get the generic call parameters.
         public void ReadAsGenericExtensionsOnDynamicTest()
         {

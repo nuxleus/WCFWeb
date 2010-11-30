@@ -105,7 +105,7 @@
         }
 
         /// <summary>
-        /// Tests for the <see cref="JsonValueExtensions.ReadAsType{T}"/> method.
+        /// Tests for the <see cref="JsonValueExtensions.ReadAsType{T}(JsonValue)"/> method.
         /// </summary>
         [TestMethod]
         public void ReadAsTests()

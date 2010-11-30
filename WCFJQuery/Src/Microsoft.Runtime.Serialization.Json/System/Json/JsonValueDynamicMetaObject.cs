@@ -23,6 +23,7 @@ namespace System.Json
         private static readonly MethodInfo SetValueByKeyMethodInfo = typeof(JsonValue).GetMethod("SetValue", new Type[] { typeof(string), typeof(object) });
         private static readonly MethodInfo CastValueMethodInfo = typeof(JsonValue).GetMethod("CastValue", new Type[] { typeof(JsonValue) });
         private static readonly MethodInfo ReadAsMethodInfo = typeof(JsonValue).GetMethod("ReadAs", new Type[] { typeof(Type) });
+        private static readonly MethodInfo ChangeTypeMethodInfo = typeof(Convert).GetMethod("ChangeType", new Type[] { typeof(object), typeof(Type) });
 
         /// <summary>
         /// Class constructor.
@@ -88,9 +89,9 @@ namespace System.Json
             Expression operExpression = null;
             JsonValue jsonValue = this.Value as JsonValue;
 
-            if (JsonValueDynamicMetaObject.IsPrimitive(jsonValue))
+            if (jsonValue is JsonPrimitive)
             {
-                Type operationType = jsonValue.Read().GetType();
+                Type operationType = binder.ReturnType == typeof(object) ? jsonValue.Read().GetType() : binder.ReturnType;
                 Expression instance = Expression.Convert(this.Expression, this.LimitType);
                 Expression thisExpression = Expression.Convert(Expression.Call(instance, ReadAsMethodInfo, new Expression[] { Expression.Constant(operationType) }), operationType);
 
@@ -99,7 +100,7 @@ namespace System.Json
             
             if (operExpression == null)
             {
-                operExpression = JsonValueDynamicMetaObject.GetErrorExpression(OperationSupport.NotSupportedOnJsonType, binder.Operation, jsonValue, null);
+                operExpression = JsonValueDynamicMetaObject.GetOperationErrorExpression(OperationSupport.NotSupportedOnJsonType, binder.Operation, jsonValue, null);
             }
 
             operExpression = Expression.Convert(operExpression, binder.ReturnType);
@@ -132,44 +133,44 @@ namespace System.Json
             JsonValue otherValue = arg.Value as JsonValue;
             JsonValue thisValue = this.Value as JsonValue;
 
-            OperationSupport supportValue = JsonValueDynamicMetaObject.IsBinaryOperationSupported(thisValue, arg.Value, binder.Operation);
+            OperationSupport supportValue = JsonValueDynamicMetaObject.GetBinaryOperationSupport(binder.Operation, thisValue, arg.Value);
 
             if (supportValue == OperationSupport.Supported)
             {
-                object dummyValue;
-                if (otherValue == null && !thisValue.TryReadAs(arg.LimitType, out dummyValue))
+                if (otherValue != null)
                 {
-                    supportValue = OperationSupport.NotSupportedOnValueType;
-                }
-            }
-
-            if (supportValue == OperationSupport.Supported)
-            {
-                if (JsonValueDynamicMetaObject.IsPrimitive(thisValue))
-                {
-                    bool otherIsNonNullClrType = arg.Value != null && otherValue == null;
-
-                    if (otherIsNonNullClrType || JsonValueDynamicMetaObject.IsPrimitive(otherValue))
+                    if (thisValue is JsonPrimitive && otherValue is JsonPrimitive)
                     {
-                        //// 2nd operand is a non-null non-JsonValue or a JsonPrimitive value.
+                        //// operation on primitive types.
 
-                        Type thisResultType = thisValue.Read().GetType();
-                        Expression instance = Expression.Convert(this.Expression, this.LimitType);
-                        thisExpression = Expression.Convert(Expression.Call(instance, ReadAsMethodInfo, new Expression[] { Expression.Constant(thisResultType) }), thisResultType);
+                        JsonValueDynamicMetaObject.GetBinaryOperandExpressions(binder.Operation, this, arg, ref thisExpression, ref otherExpression);
+                    }
+                    else
+                    {
+                        //// operation on JsonValue types.
 
-                        if (JsonValueDynamicMetaObject.IsPrimitive(otherValue))
-                        {
-                            Type otherResultType = otherValue.Read().GetType();
-                            Expression otherInstance = Expression.Convert(arg.Expression, arg.LimitType);
-                            otherExpression = Expression.Convert(Expression.Call(otherInstance, ReadAsMethodInfo, new Expression[] { Expression.Constant(otherResultType) }), otherResultType);
-                        }
+                        thisExpression = Expression.Convert(thisExpression, typeof(JsonValue));
+                        otherExpression = Expression.Convert(otherExpression, typeof(JsonValue));
                     }
                 }
                 else
                 {
-                    if (thisValue.JsonType == JsonType.Default && otherValue == null)
+                    if (arg.Value != null)
                     {
-                        thisExpression = Expression.Constant(null);
+                        //// operation on JSON primitive and CLR primitive
+
+                        JsonValueDynamicMetaObject.GetBinaryOperandExpressions(binder.Operation, this, arg, ref thisExpression, ref otherExpression);
+                    }
+                    else
+                    { 
+                        //// operation on JsonValue and null.
+
+                        thisExpression = Expression.Convert(thisExpression, typeof(JsonValue));
+
+                        if (thisValue.JsonType == JsonType.Default)
+                        {
+                            thisExpression = Expression.Constant(null);
+                        }
                     }
                 }
 
@@ -178,7 +179,7 @@ namespace System.Json
             
             if (operExpression == null)
             {
-                operExpression = JsonValueDynamicMetaObject.GetErrorExpression(supportValue, binder.Operation, thisValue, arg.Value);
+                operExpression = JsonValueDynamicMetaObject.GetOperationErrorExpression(supportValue, binder.Operation, thisValue, arg.Value);
             }
 
             operExpression = Expression.Convert(operExpression, typeof(object));
@@ -200,27 +201,23 @@ namespace System.Json
 
             Expression expression = this.Expression;
 
-            // instance type to cast from is expected to be JsonValue (safe check).
-            if (typeof(JsonValue).IsAssignableFrom(this.LimitType) && this.Value != null)
-            {
-                bool implicitCastSupported =
-                    binder.Type.IsAssignableFrom(this.LimitType) ||
-                    binder.Type == typeof(IEnumerable<KeyValuePair<string, JsonValue>>) ||
-                    binder.Type == typeof(IDynamicMetaObjectProvider) ||
-                    binder.Type == typeof(object);
+            bool implicitCastSupported =
+                binder.Type.IsAssignableFrom(this.LimitType) ||
+                binder.Type == typeof(IEnumerable<KeyValuePair<string, JsonValue>>) ||
+                binder.Type == typeof(IDynamicMetaObjectProvider) ||
+                binder.Type == typeof(object);
 
-                if (!implicitCastSupported)
+            if (!implicitCastSupported)
+            {
+                if (JsonValue.IsSupportedExplicitCastType(binder.Type))
                 {
-                    if (JsonValue.IsSupportedExplicitCastType(binder.Type))
-                    {
-                        Expression instance = Expression.Convert(this.Expression, this.LimitType);
-                        expression = Expression.Call(CastValueMethodInfo.MakeGenericMethod(binder.Type), new Expression[] { instance });
-                    }
-                    else
-                    {
-                        string exceptionMessage = SG.GetString(SR.CannotCastJsonValue, this.LimitType.FullName, binder.Type.FullName);
-                        expression = Expression.Throw(Expression.Constant(new InvalidCastException(exceptionMessage)), typeof(object));
-                    }
+                    Expression instance = Expression.Convert(this.Expression, this.LimitType);
+                    expression = Expression.Call(CastValueMethodInfo.MakeGenericMethod(binder.Type), new Expression[] { instance });
+                }
+                else
+                {
+                    string exceptionMessage = SG.GetString(SR.CannotCastJsonValue, this.LimitType.FullName, binder.Type.FullName);
+                    expression = Expression.Throw(Expression.Constant(new InvalidCastException(exceptionMessage)), typeof(object));
                 }
             }
 
@@ -247,13 +244,14 @@ namespace System.Json
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new ArgumentNullException("indexes"));
             }
 
-            if ((indexes[0].LimitType != typeof(int) && indexes[0].LimitType != typeof(string)) || indexes.Length != 1)
+            Expression indexExpression;
+            if (!JsonValueDynamicMetaObject.TryGetIndexExpression(indexes, out indexExpression))
             {
-                return new DynamicMetaObject(Expression.Throw(Expression.Constant(new ArgumentException(SG.GetString(SR.IndexTypeNotSupported))), typeof(object)), this.DefaultRestrictions);
+                return new DynamicMetaObject(indexExpression, this.DefaultRestrictions);
             }
 
-            MethodInfo methodInfo = indexes[0].LimitType == typeof(int) ? GetValueByIndexMethodInfo : GetValueByKeyMethodInfo;
-            Expression[] args = new Expression[] { Expression.Convert(indexes[0].Expression, indexes[0].LimitType) };
+            MethodInfo methodInfo = indexExpression.Type == typeof(string) ? GetValueByKeyMethodInfo : GetValueByIndexMethodInfo;
+            Expression[] args = new Expression[] { indexExpression };
 
             return this.GetMethodMetaObject(methodInfo, args);
         }
@@ -282,13 +280,14 @@ namespace System.Json
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new ArgumentNullException("value"));
             }
 
-            if ((indexes[0].LimitType != typeof(int) && indexes[0].LimitType != typeof(string)) || indexes.Length != 1 || !indexes[0].HasValue)
-            {
-                return new DynamicMetaObject(Expression.Throw(Expression.Constant(new ArgumentException(SG.GetString(SR.IndexTypeNotSupported))), typeof(object)), this.DefaultRestrictions);
+            Expression indexExpression;
+            if (!JsonValueDynamicMetaObject.TryGetIndexExpression(indexes, out indexExpression))
+            { 
+                return new DynamicMetaObject(indexExpression, this.DefaultRestrictions);
             }
 
-            MethodInfo methodInfo = indexes[0].LimitType == typeof(int) ? SetValueByIndexMethodInfo : SetValueByKeyMethodInfo;
-            Expression[] args = new Expression[] { Expression.Convert(indexes[0].Expression, indexes[0].LimitType), Expression.Convert(value.Expression, typeof(object)) };
+            MethodInfo methodInfo = indexExpression.Type == typeof(string) ? SetValueByKeyMethodInfo : SetValueByIndexMethodInfo;
+            Expression[] args = new Expression[] { indexExpression, Expression.Convert(value.Expression, typeof(object)) };
 
             return this.GetMethodMetaObject(methodInfo, args);
         }
@@ -429,73 +428,88 @@ namespace System.Json
         }
 
         /// <summary>
-        /// Checks whether the specified value is a JSON primitive.
+        /// Gets the operation support value for the specified operation and operands.
         /// </summary>
-        /// <param name="value">The <see cref="JsonValue"/> value to check.</param>
-        /// <returns>true if the value represents a JSON primitive, false otherwise.</returns>
-        private static bool IsPrimitive(JsonValue value)
+        /// <param name="operation">The operation type.</param>
+        /// <param name="thisValue">The JsonValue instance to check operation for.</param>
+        /// <param name="operand">The second operand instance.</param>
+        /// <returns>An <see cref="OperationSupport"/> value.</returns>
+        private static OperationSupport GetBinaryOperationSupport(ExpressionType operation, JsonValue thisValue, object operand)
         {
-            return value != null && (value.JsonType == JsonType.String || value.JsonType == JsonType.Number || value.JsonType == JsonType.Boolean);
-        }
+            //// Supported binary operators: +, -, *, /, %, &, |, ^, <<, >>, ==, !=, >, <, >=, <=
 
-        /// <summary>
-        /// Determines whether the binary or unary primitive operation type is supported on the specified 
-        /// JsonValue instance (state) and the other operand.
-        /// </summary>
-        /// <param name="value">the JsonValue instance</param>
-        /// <param name="operand">the second operand instance.</param>
-        /// <param name="operation">the operation type.</param>
-        /// <returns>an <see cref="OperationSupport"/> value.</returns>
-        private static OperationSupport IsBinaryOperationSupported(JsonValue value, object operand, ExpressionType operation)
-        {
             bool isCompareOperation = false;
 
-            //// Unsupported operations:
+            JsonValue otherValue = operand as JsonValue;
+
             switch (operation)
             {
-                //// binary operations
-                case ExpressionType.AddAssign:
-                case ExpressionType.SubtractAssign:
-                case ExpressionType.AndAssign:
-                case ExpressionType.OrAssign:
-                case ExpressionType.ExclusiveOrAssign:
-                case ExpressionType.MultiplyAssign:
-                case ExpressionType.DivideAssign:
-                case ExpressionType.ModuloAssign:
-                case ExpressionType.LeftShiftAssign:
-                case ExpressionType.RightShiftAssign:
-                    return OperationSupport.NotSupported;
+                //// supported binary operations
+
+                case ExpressionType.Add:
+                case ExpressionType.Subtract:
+                case ExpressionType.Multiply:
+                case ExpressionType.Divide:
+                case ExpressionType.Modulo:
+                case ExpressionType.And:
+                case ExpressionType.Or:
+                case ExpressionType.ExclusiveOr:
+                case ExpressionType.LeftShift:
+                case ExpressionType.RightShift:
+                case ExpressionType.GreaterThan:
+                case ExpressionType.GreaterThanOrEqual:
+                case ExpressionType.LessThan:
+                case ExpressionType.LessThanOrEqual:
+                    break;
 
                 //// compare operations:
                 case ExpressionType.Equal:
                 case ExpressionType.NotEqual:
                     isCompareOperation = true;
                     break;
+
+                default:
+                    return OperationSupport.NotSupported;
             }
 
-            JsonValue otherValue = operand as JsonValue;
-
-            //// JSON Primitive supports most other operands
-
-            if (JsonValueDynamicMetaObject.IsPrimitive(value))
+            if (operand != null)
             {
-                //// not supported on operand of type JsonValue if it isn't a primitive and not comparing JsonValue types.
+                bool thisIsPrimitive = thisValue is JsonPrimitive;
 
-                if (otherValue != null && !JsonValueDynamicMetaObject.IsPrimitive(otherValue) && !isCompareOperation)
+                if (otherValue != null)
                 {
-                    return OperationSupport.NotSupportedOnJsonType;
+                    if (!(otherValue is JsonPrimitive) || !thisIsPrimitive)
+                    {
+                        //// When either value is non-primitive it must be a compare operation.
+                        
+                        if (!isCompareOperation)
+                        {
+                            return OperationSupport.NotSupportedOnJsonType;
+                        }
+                    }
+                }
+                else
+                {
+                    //// if operand is not a JsonValue it must be a primitive CLR type and first operand must be a JsonPrimitive.
+
+                    if (!thisIsPrimitive)
+                    {
+                        return OperationSupport.NotSupportedOnJsonType;
+                    }
+
+                    JsonPrimitive primitiveValue = null;
+
+                    if (!JsonPrimitive.TryCreate(operand, out primitiveValue))
+                    {
+                        return OperationSupport.NotSupportedOnValueType;
+                    }
                 }
             }
             else
             {
-                //// When value is non-primitive, it must be a compare operation and (the other operand must null or a JsonValue)
+                //// when operand is null only compare operations are valid.
 
                 if (!isCompareOperation)
-                {
-                    return OperationSupport.NotSupportedOnJsonType;
-                }
-
-                if (operand != null && otherValue == null)
                 {
                     return OperationSupport.NotSupportedOnOperand;
                 }
@@ -543,6 +557,46 @@ namespace System.Json
         }
 
         /// <summary>
+        /// Updates the <see cref="Expression"/> tree for the operands of the specified operation.
+        /// </summary>
+        /// <param name="operation">The operation to evalutes.</param>
+        /// <param name="thisOperand">The first operand.</param>
+        /// <param name="otherOperand">The second operand.</param>
+        /// <param name="thisExpression">The <see cref="Expression"/> for the first operand.</param>
+        /// <param name="otherExpression">The <see cref="Expression"/> for the second operand.</param>
+        private static void GetBinaryOperandExpressions(ExpressionType operation, DynamicMetaObject thisOperand, DynamicMetaObject otherOperand, ref Expression thisExpression, ref Expression otherExpression)
+        {
+            JsonValue thisValue = thisOperand.Value as JsonValue;
+            JsonValue otherValue = otherOperand.Value as JsonValue;
+
+            Type thisType = thisValue.Read().GetType();
+            Type otherType = otherValue != null ? otherValue.Read().GetType() : otherOperand.Value.GetType();
+            Type coercedType;
+
+            if (JsonValueDynamicMetaObject.TryCoerceType(operation, thisType, otherType, out coercedType))
+            {
+                thisType = otherType = coercedType;
+            }
+            else if (JsonValueDynamicMetaObject.TryCoerceSpecialTypes(thisOperand, otherOperand, out coercedType))
+            {
+                thisType = otherType = coercedType;
+            }
+
+            thisExpression = Expression.Convert(thisExpression, thisOperand.LimitType);
+            thisExpression = Expression.Convert(Expression.Call(thisExpression, ReadAsMethodInfo, new Expression[] { Expression.Constant(thisType) }), thisType);
+
+            otherExpression = Expression.Convert(otherExpression, otherOperand.LimitType);
+            if (otherValue != null)
+            {
+                otherExpression = Expression.Convert(Expression.Call(otherExpression, ReadAsMethodInfo, new Expression[] { Expression.Constant(otherType) }), otherType);
+            }
+            else if (otherOperand.LimitType != otherType)
+            {
+                otherExpression = Expression.Convert(otherExpression, otherType);
+            }
+        }
+
+        /// <summary>
         /// Returns an Expression representing a binary operation based on the specified operation type.
         /// </summary>
         /// <param name="operation">The operation type.</param>
@@ -557,56 +611,63 @@ namespace System.Json
 
             Expression operExpression = null;
 
-            switch (operation)
+            try
             {
-                case ExpressionType.Equal:
-                    operExpression = Expression.Equal(thisExpression, otherExpression);
-                    break;
-                case ExpressionType.NotEqual:
-                    operExpression = Expression.NotEqual(thisExpression, otherExpression);
-                    break;
-                case ExpressionType.GreaterThan:
-                    operExpression = Expression.GreaterThan(thisExpression, otherExpression);
-                    break;
-                case ExpressionType.GreaterThanOrEqual:
-                    operExpression = Expression.GreaterThanOrEqual(thisExpression, otherExpression);
-                    break;
-                case ExpressionType.LessThan:
-                    operExpression = Expression.LessThan(thisExpression, otherExpression);
-                    break;
-                case ExpressionType.LessThanOrEqual:
-                    operExpression = Expression.LessThanOrEqual(thisExpression, otherExpression);
-                    break;
-                case ExpressionType.LeftShift:
-                    operExpression = Expression.LeftShift(thisExpression, otherExpression);
-                    break;
-                case ExpressionType.RightShift:
-                    operExpression = Expression.RightShift(thisExpression, otherExpression);
-                    break;
-                case ExpressionType.And:
-                    operExpression = Expression.And(thisExpression, otherExpression);
-                    break;
-                case ExpressionType.Or:
-                    operExpression = Expression.Or(thisExpression, otherExpression);
-                    break;
-                case ExpressionType.ExclusiveOr:
-                    operExpression = Expression.ExclusiveOr(thisExpression, otherExpression);
-                    break;
-                case ExpressionType.Add:
-                    operExpression = Expression.Add(thisExpression, otherExpression);
-                    break;
-                case ExpressionType.Subtract:
-                    operExpression = Expression.Subtract(thisExpression, otherExpression);
-                    break;
-                case ExpressionType.Multiply:
-                    operExpression = Expression.Multiply(thisExpression, otherExpression);
-                    break;
-                case ExpressionType.Divide:
-                    operExpression = Expression.Divide(thisExpression, otherExpression);
-                    break;
-                case ExpressionType.Modulo:
-                    operExpression = Expression.Modulo(thisExpression, otherExpression);
-                    break;
+                switch (operation)
+                {
+                    case ExpressionType.Equal:
+                        operExpression = Expression.Equal(thisExpression, otherExpression);
+                        break;
+                    case ExpressionType.NotEqual:
+                        operExpression = Expression.NotEqual(thisExpression, otherExpression);
+                        break;
+                    case ExpressionType.GreaterThan:
+                        operExpression = Expression.GreaterThan(thisExpression, otherExpression);
+                        break;
+                    case ExpressionType.GreaterThanOrEqual:
+                        operExpression = Expression.GreaterThanOrEqual(thisExpression, otherExpression);
+                        break;
+                    case ExpressionType.LessThan:
+                        operExpression = Expression.LessThan(thisExpression, otherExpression);
+                        break;
+                    case ExpressionType.LessThanOrEqual:
+                        operExpression = Expression.LessThanOrEqual(thisExpression, otherExpression);
+                        break;
+                    case ExpressionType.LeftShift:
+                        operExpression = Expression.LeftShift(thisExpression, otherExpression);
+                        break;
+                    case ExpressionType.RightShift:
+                        operExpression = Expression.RightShift(thisExpression, otherExpression);
+                        break;
+                    case ExpressionType.And:
+                        operExpression = Expression.And(thisExpression, otherExpression);
+                        break;
+                    case ExpressionType.Or:
+                        operExpression = Expression.Or(thisExpression, otherExpression);
+                        break;
+                    case ExpressionType.ExclusiveOr:
+                        operExpression = Expression.ExclusiveOr(thisExpression, otherExpression);
+                        break;
+                    case ExpressionType.Add:
+                        operExpression = Expression.Add(thisExpression, otherExpression);
+                        break;
+                    case ExpressionType.Subtract:
+                        operExpression = Expression.Subtract(thisExpression, otherExpression);
+                        break;
+                    case ExpressionType.Multiply:
+                        operExpression = Expression.Multiply(thisExpression, otherExpression);
+                        break;
+                    case ExpressionType.Divide:
+                        operExpression = Expression.Divide(thisExpression, otherExpression);
+                        break;
+                    case ExpressionType.Modulo:
+                        operExpression = Expression.Modulo(thisExpression, otherExpression);
+                        break;
+                }
+            }
+            catch (InvalidOperationException ex)
+            { 
+                operExpression = Expression.Throw(Expression.Constant(ex), typeof(object));
             }
 
             return operExpression;
@@ -620,9 +681,10 @@ namespace System.Json
         /// <param name="thisValue">The operation left operand.</param>
         /// <param name="operand">The operation right operand.</param>
         /// <returns>A <see cref="Expression"/> representing a 'throw' instruction.</returns>
-        private static Expression GetErrorExpression(OperationSupport supportValue, ExpressionType operation, JsonValue thisValue, object operand)
+        private static Expression GetOperationErrorExpression(OperationSupport supportValue, ExpressionType operation, JsonValue thisValue, object operand)
         {
             string exceptionMessage;
+            string operandTypeName = operand != null ? operand.GetType().FullName : "<null>";
 
             switch (supportValue)
             {
@@ -634,8 +696,6 @@ namespace System.Json
                     break;
 
                 case OperationSupport.NotSupportedOnOperand:
-                    Debug.Assert(operand != null, "Operand is null!");
-                    string operandTypeName = operand != null ? operand.GetType().FullName : "'Operand'";
                     exceptionMessage = SG.GetString(SR.OperatorNotAllowedOnOperands, operation, thisValue.GetType().FullName, operandTypeName);
                     break;
             }
@@ -690,6 +750,121 @@ namespace System.Json
         }
 
         /// <summary>
+        /// Attempts to get an expression for an index parameter.
+        /// </summary>
+        /// <param name="indexes">The operation indexes parameter.</param>
+        /// <param name="expression">A <see cref="Expression"/> to be initialized to the index expression if the operation is successful, otherwise an error expression.</param>
+        /// <returns>true the operation is successful, false otherwise.</returns>
+        private static bool TryGetIndexExpression(DynamicMetaObject[] indexes, out Expression expression)
+        {
+            if (indexes.Length == 1 && indexes[0] != null && indexes[0].Value != null)
+            {
+                DynamicMetaObject index = indexes[0];
+                Type indexType = indexes[0].Value.GetType();
+
+                switch (Type.GetTypeCode(indexType))
+                {
+                    case TypeCode.Char:
+                    case TypeCode.Int16:
+                    case TypeCode.UInt16:
+                    case TypeCode.Byte:
+                    case TypeCode.SByte:
+                        Expression argExp = Expression.Convert(index.Expression, typeof(object));
+                        Expression typeExp = Expression.Constant(typeof(int));
+                        expression = Expression.Convert(Expression.Call(ChangeTypeMethodInfo, new Expression[] { argExp, typeExp }), typeof(int));
+                        return true;
+
+                    case TypeCode.Int32:
+                    case TypeCode.String:
+                        expression = index.Expression;
+                        return true;
+                }
+
+                expression = Expression.Throw(Expression.Constant(new ArgumentException(SG.GetString(SR.InvalidIndexType, indexType))), typeof(object));
+                return false;
+            }
+
+            expression = Expression.Throw(Expression.Constant(new ArgumentException(SG.GetString(SR.NonSingleNonNullIndexNotSupported))), typeof(object));
+            return false;
+        }
+
+        /// <summary>
+        /// Attempts to coerce the operand types on special type and value cases as treated by JsonValue:
+        /// "true" and "false" can be converted to boolean.
+        /// Guid, DateTime and other types can be converted to string.
+        /// </summary>
+        /// <param name="thisOperand">The first operand.</param>
+        /// <param name="otherOperand">The second operand</param>
+        /// <param name="coercedType">On success, this parameter contains the coerced type.</param>
+        /// <returns>true if the coercion is performed, false otherwise.</returns>
+        private static bool TryCoerceSpecialTypes(DynamicMetaObject thisOperand, DynamicMetaObject otherOperand, out Type coercedType)
+        {
+            JsonValue thisValue = thisOperand.Value as JsonValue;
+
+            if (thisValue is JsonPrimitive)
+            {
+                Type thisType = thisValue.Read().GetType();
+
+                if (thisType != otherOperand.LimitType)
+                {
+                    if (otherOperand.LimitType == typeof(bool) || otherOperand.LimitType == typeof(string))
+                    {
+                        object value;
+                        if (thisValue.TryReadAs(otherOperand.LimitType, out value))
+                        {
+                            coercedType = otherOperand.LimitType;
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            coercedType = default(Type);
+            return false;
+        }
+
+        /// <summary>
+        /// Attempts to coerce one of the specified types to the other if needed and if possible.
+        /// </summary>
+        /// <param name="operation">The operation for the type coercion.</param>
+        /// <param name="thisType">The type of the first operand.</param>
+        /// <param name="otherType">The type of the second operand.</param>
+        /// <param name="coercedType">The coerced type.</param>
+        /// <returns>true if the type is coerced, false otherwise.</returns>
+        private static bool TryCoerceType(ExpressionType operation, Type thisType, Type otherType, out Type coercedType)
+        {
+            //// Supported coercion operators: +, -, *, /, %, ==, !=, >, <, >=, <=
+
+            if (thisType != otherType)
+            {
+                switch (operation)
+                {
+                    case ExpressionType.Add:
+                    case ExpressionType.Subtract:
+                    case ExpressionType.Multiply:
+                    case ExpressionType.Divide:
+                    case ExpressionType.Modulo:
+                    case ExpressionType.Equal:
+                    case ExpressionType.NotEqual:
+                    case ExpressionType.GreaterThan:
+                    case ExpressionType.GreaterThanOrEqual:
+                    case ExpressionType.LessThan:
+                    case ExpressionType.LessThanOrEqual:
+
+                        if (ImplicitNumericTypeConverter.TryGetCoercionType(thisType, otherType, out coercedType))
+                        {
+                            return true;
+                        }
+
+                        break;
+                }
+            }
+            
+            coercedType = default(Type);
+            return false;
+        }
+
+        /// <summary>
         /// Gets a <see cref="DynamicMetaObject"/> for a method call.
         /// </summary>
         /// <param name="methodInfo">Info for the method to be performed.</param>
@@ -704,6 +879,99 @@ namespace System.Json
             DynamicMetaObject metaObj = new DynamicMetaObject(methodCall, restrictions);
 
             return metaObj;
+        }
+
+        /// <summary>
+        /// Helper class for numeric type coercion support.
+        /// </summary>
+        private static class ImplicitNumericTypeConverter
+        {
+            /// <summary>
+            /// Table of implicit conversion types, the 'values' in the dictionary represent the type values the 'key' type
+            /// can be converted to.
+            /// </summary>
+            /// <remarks>
+            /// Observe that this table is not the full conversion table, for storage optimization some types have been factored
+            /// out into a list; the algorithm that uses this table knows about this optimization.
+            /// For reference see Implicit Conversion table in the MSDN http://msdn.microsoft.com/en-us/library/y5b434w4.aspx
+            ///     sbyte   -> short, int, long, float, double, or decimal
+            ///     byte    -> short, ushort, int, uint, long, ulong, float, double, or decimal
+            ///     short   -> int, long, float, double, or decimal
+            ///     ushort  -> int, uint, long, ulong, float, double, or decimal
+            ///     int     -> long, float, double, or decimal
+            ///     uint    -> long, ulong, float, double, or decimal
+            ///     long    -> float, double, or decimal
+            ///     char    -> ushort, int, uint, long, ulong, float, double, or decimal
+            ///     float   -> double
+            ///     ulong   -> float, double, or decimal
+            /// </remarks>
+            private static Dictionary<string, List<string>> partialConversionTable = new Dictionary<string, List<string>>
+            {
+                { typeof(sbyte).Name, new List<string>() { typeof(short).Name,  typeof(int).Name } },
+                { typeof(byte).Name, new List<string>() { typeof(short).Name,  typeof(ushort).Name,  typeof(int).Name,  typeof(uint).Name,  typeof(ulong).Name } },
+                { typeof(short).Name, new List<string>() { typeof(int).Name } },
+                { typeof(ushort).Name, new List<string>() { typeof(int).Name,  typeof(uint).Name,  typeof(ulong).Name } },
+                { typeof(int).Name,  new List<string>() { } },
+                { typeof(uint).Name,  new List<string>() { typeof(ulong).Name } },
+                { typeof(long).Name,  new List<string>() { } },
+                { typeof(char).Name,  new List<string>() { typeof(ushort).Name,  typeof(int).Name,  typeof(uint).Name,  typeof(ulong).Name } },
+                { typeof(ulong).Name,  new List<string>() { } },
+                ////{ typeof(float).Name,  new List<string>() { typeof(double).Name }},
+            };
+
+            /// <summary>
+            /// List of types most other types can be coerced to.
+            /// </summary>
+            private static List<string> universalCoercionTypes = new List<string> { typeof(long).Name,  typeof(float).Name, typeof(double).Name, typeof(decimal).Name };
+
+            /// <summary>
+            /// Attempts to coerce one type to another.
+            /// </summary>
+            /// <param name="thisType">The first type to be evaluated.</param>
+            /// <param name="otherType">The second type to be evaluated.</param>
+            /// <param name="coercedType">The coerced resulting type to be used.</param>
+            /// <returns>true if the coercion exists, false otherwise.</returns>
+            public static bool TryGetCoercionType(Type thisType, Type otherType, out Type coercedType)
+            {
+                //// checks covering for storage optimizations in the implicit numeric converstion table
+
+                Type typeofLong = typeof(long);
+                Type typeofULong = typeof(ulong);
+
+                // special-case ulong type since it cannot be coerced to long which is part of the universal coercion list.
+                if ((thisType == typeofULong && otherType == typeofLong) || (thisType == typeofLong && otherType == typeofULong))
+                {
+                    coercedType = typeofULong;
+                    return true;
+                }
+
+                Type typeofFloat = typeof(float);
+                Type typeofDouble = typeof(double);
+                
+                // special-case float since it can be coerced to double only.
+                if ((thisType == typeofFloat && otherType == typeofDouble) || (otherType == typeofFloat && thisType == typeofDouble))
+                {
+                    coercedType = typeofDouble;
+                    return true;
+                }
+
+                if (partialConversionTable.ContainsKey(thisType.Name) && 
+                    (partialConversionTable[thisType.Name].Contains(otherType.Name) || universalCoercionTypes.Contains(otherType.Name)))
+                {
+                    coercedType = otherType;
+                    return true;
+                }
+
+                if (partialConversionTable.ContainsKey(otherType.Name) && 
+                    (partialConversionTable[otherType.Name].Contains(thisType.Name) || universalCoercionTypes.Contains(thisType.Name)))
+                {
+                    coercedType = thisType;
+                    return true;
+                }
+
+                coercedType = default(Type);
+                return false;
+            }
         }
     }
 }

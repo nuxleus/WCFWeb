@@ -9,6 +9,7 @@ namespace System.Json
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Dynamic;
+    using System.Globalization;
     using System.IO;
     using System.Linq.Expressions;
     using System.Runtime.Serialization;
@@ -164,12 +165,12 @@ namespace System.Json
         {
             get
             {
-                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SG.GetString(SR.UnsupportedOnThisJsonValue, this.GetType())));
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SG.GetString(SR.IndexerNotSupportedOnJsonType, typeof(string), this.JsonType)));
             }
 
             set
             {
-                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SG.GetString(SR.UnsupportedOnThisJsonValue, this.GetType())));
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SG.GetString(SR.IndexerNotSupportedOnJsonType, typeof(string), this.JsonType)));
             }
         }
 
@@ -185,12 +186,12 @@ namespace System.Json
         {
             get
             {
-                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SG.GetString(SR.UnsupportedOnThisJsonValue, this.GetType())));
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SG.GetString(SR.IndexerNotSupportedOnJsonType, typeof(int), this.JsonType)));
             }
 
             set
             {
-                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SG.GetString(SR.UnsupportedOnThisJsonValue, this.GetType())));
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SG.GetString(SR.IndexerNotSupportedOnJsonType, typeof(int), this.JsonType)));
             }
         }
 
@@ -741,6 +742,11 @@ namespace System.Json
         /// <returns>An instance of the specified type initialized with the value from the conversion of this instance, or the specified fallback value if the conversion cannot be made.</returns>
         public object ReadAs(Type type, object fallback)
         {
+            if (type == null)
+            {
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new ArgumentNullException("type"));
+            }
+
             object result;
             if (this.JsonType != JsonType.Default && this.TryReadAs(type, out result))
             {
@@ -760,13 +766,18 @@ namespace System.Json
         /// <exception cref="System.NotSupportedException">If this <see cref="System.Json.JsonValue"/> value cannot be converted into the type T.</exception>
         public virtual object ReadAs(Type type)
         {
+            if (type == null)
+            {
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new ArgumentNullException("type"));
+            }
+
             object result;
             if (this.TryReadAs(type, out result))
             {
                 return result;
             }
 
-            throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new NotSupportedException());
+            throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new NotSupportedException(SG.GetString(SR.CannotReadAsType, this.GetType().FullName, type.FullName)));
         }
 
         /// <summary>
@@ -978,24 +989,39 @@ namespace System.Json
             }
 
             JsonValue result = this;
+
             for (int i = 0; i < indexes.Length; i++)
             {
                 object index = indexes[i];
-                if (index is int)
+
+                if (index == null)
                 {
-                    result = result.ValueOrDefault((int)index);
+                    result = JsonValue.DefaultInstance;
+                    continue;
                 }
-                else
+
+                Type indexType = index.GetType();
+
+                switch (Type.GetTypeCode(indexType))
                 {
-                    string strIndex = index as string;
-                    if (index == null || strIndex != null)
-                    {
-                        result = result.ValueOrDefault(strIndex);
-                    }
-                    else
-                    {
-                        throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgument("indexes", SG.GetString(SR.InvalidIndexType));
-                    }
+                    case TypeCode.Char:
+                    case TypeCode.Int16:
+                    case TypeCode.UInt16:
+                    case TypeCode.Byte:
+                    case TypeCode.SByte:
+                        index = System.Convert.ChangeType(index, typeof(int), CultureInfo.InvariantCulture);
+                        goto case TypeCode.Int32;
+
+                    case TypeCode.Int32:
+                        result = result.ValueOrDefault((int)index);
+                        break;
+
+                    case TypeCode.String:
+                        result = result.ValueOrDefault((string)index);
+                        break;
+
+                    default:
+                        throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgument("indexes", SG.GetString(SR.InvalidIndexType, index.GetType()));
                 }
             }
 
@@ -1006,6 +1032,11 @@ namespace System.Json
             Justification = "Cannot make this class sealed, it need to have subclasses. But its subclasses are sealed themselves.")]
         DynamicMetaObject IDynamicMetaObjectProvider.GetMetaObject(Expression parameter)
         {
+            if (parameter == null)
+            {
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("parameter");
+            }
+
             return new JsonValueDynamicMetaObject(parameter, this);
         }
 

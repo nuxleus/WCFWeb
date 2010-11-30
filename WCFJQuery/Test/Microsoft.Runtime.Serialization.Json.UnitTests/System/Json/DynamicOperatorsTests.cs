@@ -1,5 +1,4 @@
-﻿
-namespace Microsoft.ServiceModel.Web.UnitTests
+﻿namespace Microsoft.ServiceModel.Web.UnitTests
 {
     using System;
     using System.Collections.Generic;
@@ -12,7 +11,7 @@ namespace Microsoft.ServiceModel.Web.UnitTests
     {
         const string OperationNotDefinedMsgFormat = "Operation '{0}' is not defined for JsonValue instances of JsonType '{1}'.";
         const string OperatorNotDefinedMsgFormat = "The binary operator {0} is not defined for the types '{1}' and '{2}'.";
-        const string OperatorCannotBeAppliedMsgFormat = "Operator '{0}' cannot be applied to operand of type '{1}'";
+        const string OperatorNotAllowedOnOperands = "Operation '{0}' cannot be applied on operands of type '{1}' and '{2}'.";
 
         [TestMethod]
         public void ComparisonOperatorsTest()
@@ -396,7 +395,6 @@ namespace Microsoft.ServiceModel.Web.UnitTests
             ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { var val = ja + 10; }, string.Format(OperationNotDefinedMsgFormat, "Add", "Array"));
             ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { var val = ja - 10; }, string.Format(OperationNotDefinedMsgFormat, "Subtract", "Array"));
             ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { var val = ja > 10; }, string.Format(OperationNotDefinedMsgFormat, "GreaterThan", "Array"));
-            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { var val = jd < null; }, string.Format(OperationNotDefinedMsgFormat, "LessThan", "Default"));
             ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { var val = jd >= 10; }, string.Format(OperationNotDefinedMsgFormat, "GreaterThanOrEqual", "Default"));
             ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { var val = jo <= 10.5; }, string.Format(OperationNotDefinedMsgFormat, "LessThanOrEqual", "Object"));
             ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { var val = ja & 0x001; }, string.Format(OperationNotDefinedMsgFormat, "And", "Array"));
@@ -406,8 +404,15 @@ namespace Microsoft.ServiceModel.Web.UnitTests
             ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { var val = ja >> 10; }, string.Format(OperationNotDefinedMsgFormat, "RightShift", "Array"));
 
             ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { var val = jp + "Hello"; }, string.Format(OperatorNotDefinedMsgFormat, "Add", typeof(string).FullName, typeof(string).FullName));
-            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { var val = jp <= 10.5; }, string.Format(OperationNotDefinedMsgFormat, "LessThanOrEqual", "String"));
-            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { var val = jp << 10; }, string.Format(OperationNotDefinedMsgFormat, "LeftShift", "String"));
+
+            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { var val = jp << 10; }, string.Format(OperatorNotDefinedMsgFormat, "LeftShift", "System.String", "System.Int32"));
+            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { var val = jp <= 10.5; }, string.Format(OperatorNotDefinedMsgFormat, "LessThanOrEqual", "System.String", "System.Double"));
+
+            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { var val = jd < null; }, string.Format(OperatorNotAllowedOnOperands, "LessThan", typeof(JsonValue), "<null>"));
+            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { var val = jp > null; }, string.Format(OperatorNotAllowedOnOperands, "GreaterThan", typeof(JsonPrimitive), "<null>"));
+            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { var val = ja + null; }, string.Format(OperatorNotAllowedOnOperands, "Add", typeof(JsonArray), "<null>"));
+            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { var val = jo & null; }, string.Format(OperatorNotAllowedOnOperands, "And", typeof(JsonObject), "<null>"));
+
 
             dynamic dyn = (JsonValue)20;
             string jpTypeName = typeof(JsonPrimitive).FullName;
@@ -452,16 +457,16 @@ namespace Microsoft.ServiceModel.Web.UnitTests
 
             ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { var val = dyn1 == dyn2; }, string.Format(OperatorNotDefinedMsgFormat, "Equal", typeof(int).FullName, typeof(string).FullName));
             ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { var val = dyn1 != dyn2; }, string.Format(OperatorNotDefinedMsgFormat, "NotEqual", typeof(int).FullName, typeof(string).FullName));
-            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { var val = dyn1 > dyn2; }, string.Format(OperatorNotDefinedMsgFormat, "GreaterThan", typeof(int).FullName, typeof(string).FullName));
-            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { var val = dyn1 < dyn2; }, string.Format(OperatorNotDefinedMsgFormat, "LessThan", typeof(int).FullName, typeof(string).FullName));
+            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { var val = dyn2 > dyn1; }, string.Format(OperatorNotDefinedMsgFormat, "GreaterThan", typeof(string).FullName, typeof(int).FullName));
+            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { var val = dyn2 < dyn1; }, string.Format(OperatorNotDefinedMsgFormat, "LessThan", typeof(string).FullName, typeof(int).FullName));
             ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { var val = dyn1 >= dyn2; }, string.Format(OperatorNotDefinedMsgFormat, "GreaterThanOrEqual", typeof(int).FullName, typeof(string).FullName));
             ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { var val = dyn1 <= dyn2; }, string.Format(OperatorNotDefinedMsgFormat, "LessThanOrEqual", typeof(int).FullName, typeof(string).FullName));
-            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { var val = dyn1 * dyn2; }, string.Format(OperatorNotDefinedMsgFormat, "Multiply", typeof(int).FullName, typeof(string).FullName));
-            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { var val = dyn1 / dyn2; }, string.Format(OperatorNotDefinedMsgFormat, "Divide", typeof(int).FullName, typeof(string).FullName));
+            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { var val = dyn2 * dyn1; }, string.Format(OperatorNotDefinedMsgFormat, "Multiply", typeof(string).FullName, typeof(int).FullName));
+            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { var val = dyn2 / dyn1; }, string.Format(OperatorNotDefinedMsgFormat, "Divide", typeof(string).FullName, typeof(int).FullName));
             ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { var val = dyn1 % dyn2; }, string.Format(OperatorNotDefinedMsgFormat, "Modulo", typeof(int).FullName, typeof(string).FullName));
             ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { var val = dyn1 << dyn2; }, string.Format(OperatorNotDefinedMsgFormat, "LeftShift", typeof(int).FullName, typeof(string).FullName));
-            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { var val = dyn1 >> dyn2; }, string.Format(OperatorNotDefinedMsgFormat, "RightShift", typeof(int).FullName, typeof(string).FullName));
-            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { var val = dyn1 & dyn2; }, string.Format(OperatorNotDefinedMsgFormat, "And", typeof(int).FullName, typeof(string).FullName));
+            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { var val = dyn2 >> dyn1; }, string.Format(OperatorNotDefinedMsgFormat, "RightShift", typeof(string).FullName, typeof(int).FullName));
+            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { var val = dyn2 & dyn1; }, string.Format(OperatorNotDefinedMsgFormat, "And", typeof(string).FullName, typeof(int).FullName));
             ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { var val = dyn1 | dyn2; }, string.Format(OperatorNotDefinedMsgFormat, "Or", typeof(int).FullName, typeof(string).FullName));
             ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { var val = dyn1 ^ dyn2; }, string.Format(OperatorNotDefinedMsgFormat, "ExclusiveOr", typeof(int).FullName, typeof(string).FullName));
         }

@@ -460,7 +460,7 @@ namespace System.Json
                 switch (failure)
                 {
                     case ReadAsFailureKind.InvalidFormat:
-                        throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new FormatException(SG.GetString(SR.CannotReadAsType, valueStr, typeOfTName)));
+                        throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new FormatException(SG.GetString(SR.CannotReadPrimitiveAsType, valueStr, typeOfTName)));
                     case ReadAsFailureKind.InvalidDateFormat:
                         throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(
                             new FormatException(
@@ -483,7 +483,7 @@ namespace System.Json
                         throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new OverflowException(SG.GetString(SR.OverflowReadAs, valueStr, typeOfTName)));
                     case ReadAsFailureKind.InvalidCast:
                     default:
-                        throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidCastException(SG.GetString(SR.CannotReadAsType, valueStr, typeOfTName)));
+                        throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidCastException(SG.GetString(SR.CannotReadPrimitiveAsType, valueStr, typeOfTName)));
                 }
             }
         }

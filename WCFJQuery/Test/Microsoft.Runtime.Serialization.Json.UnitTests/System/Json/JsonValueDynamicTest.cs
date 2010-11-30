@@ -10,6 +10,9 @@
     [TestClass]
     public class JsonValueDynamicTest
     {
+        const string InvalidIndexType = "Invalid '{0}' index type; only 'System.String'  and non-negative 'System.Int32' types are supported.";
+        const string NonSingleNonNullIndexNotSupported = "Null index or multidimensional indexing is not supported by this indexer; use 'System.Int32' or 'System.String' for array and object indexing respectively.";
+
         [TestMethod]
         public void SettingDifferentValueTypes()
         {
@@ -83,27 +86,6 @@
 
             ExceptionTestHelper.ExpectException<ArgumentException>(delegate { dyn.other = Console.Out; });
             ExceptionTestHelper.ExpectException<ArgumentException>(delegate { dyn.other = dyn.NonExistentProp; });
-        }
-
-        [TestMethod]
-        public void InvalidCastingTests()
-        {
-            dynamic dyn;
-            string value = "NameValue";
-            JsonValue jv = (JsonValue)value;
-
-            dyn = AnyInstance.AnyJsonPrimitive;
-            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { dyn.name = value; });
-
-            dyn = AnyInstance.AnyJsonArray;
-            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { dyn.name = value; });
-
-            dyn = AnyInstance.AnyJsonObject;
-            dyn.name = value;
-            Assert.AreEqual((string)dyn.name, value);
-
-            dyn = AnyInstance.DefaultJsonValue;
-            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { dyn.name = value; });
         }
 
         [TestMethod]
@@ -221,6 +203,42 @@
         }
 
         [TestMethod]
+        public void IndexConversionTest()
+        {
+            dynamic target = AnyInstance.AnyJsonArray;
+            dynamic expected = AnyInstance.AnyJsonArray[0];
+            dynamic result;
+
+            dynamic[] zero_indexes = 
+            {
+                (short)0,
+                (ushort)0,
+                (byte)0,
+                (sbyte)0,
+                (char)0,
+                (int)0
+            };
+
+
+            result = target[(short)0];
+            Assert.AreSame(expected, result);
+            result = target[(ushort)0];
+            Assert.AreSame(expected, result);
+            result = target[(byte)0];
+            Assert.AreSame(expected, result);
+            result = target[(sbyte)0];
+            Assert.AreSame(expected, result);
+            result = target[(char)0];
+            Assert.AreSame(expected, result);
+
+            foreach (dynamic zero_index in zero_indexes)
+            {
+                result = target[zero_index];
+                Assert.AreSame(expected, result);
+            }
+        }
+
+        [TestMethod]
         public void InvalidIndexTest()
         {
             object index1 = new object();
@@ -237,22 +255,139 @@
             {
                 target = value;
 
-                ExceptionTestHelper.ExpectException<ArgumentException>(delegate { ret = target[index1]; });
-                ExceptionTestHelper.ExpectException<ArgumentException>(delegate { ret = target[index2]; });
-                ExceptionTestHelper.ExpectException<ArgumentException>(delegate { ret = target[index3]; });
-                ExceptionTestHelper.ExpectException<ArgumentException>(delegate { ret = target[null]; });
+                ExceptionTestHelper.ExpectException<ArgumentException>(delegate { ret = target[index1]; }, string.Format(InvalidIndexType, index1.GetType().FullName));
+                ExceptionTestHelper.ExpectException<ArgumentException>(delegate { ret = target[index2]; }, string.Format(InvalidIndexType, index2.GetType().FullName));
+                ExceptionTestHelper.ExpectException<ArgumentException>(delegate { ret = target[index3]; }, string.Format(InvalidIndexType, index3.GetType().FullName));
+                ExceptionTestHelper.ExpectException<ArgumentException>(delegate { ret = target[null]; }, NonSingleNonNullIndexNotSupported);
 
-                ExceptionTestHelper.ExpectException<ArgumentException>(delegate { ret = target[0, 1]; });
-                ExceptionTestHelper.ExpectException<ArgumentException>(delegate { ret = target["key1", "key2"]; });
+                ExceptionTestHelper.ExpectException<ArgumentException>(delegate { ret = target[0, 1]; }, NonSingleNonNullIndexNotSupported);
+                ExceptionTestHelper.ExpectException<ArgumentException>(delegate { ret = target["key1", "key2"]; }, NonSingleNonNullIndexNotSupported);
 
-                ExceptionTestHelper.ExpectException<ArgumentException>(delegate { target[index1] = jo; });
-                ExceptionTestHelper.ExpectException<ArgumentException>(delegate { target[index2] = jo; });
-                ExceptionTestHelper.ExpectException<ArgumentException>(delegate { target[index3] = jo; });
-                ExceptionTestHelper.ExpectException<ArgumentException>(delegate { target[null] = jo; });
+                ExceptionTestHelper.ExpectException<ArgumentException>(delegate { ret = target[true]; }, string.Format(InvalidIndexType, true.GetType().FullName));
 
-                ExceptionTestHelper.ExpectException<ArgumentException>(delegate { target[0, 1] = jo; });
-                ExceptionTestHelper.ExpectException<ArgumentException>(delegate { target["key1", "key2"] = jo; });
+                ExceptionTestHelper.ExpectException<ArgumentException>(delegate { target[index1] = jo; }, string.Format(InvalidIndexType, index1.GetType().FullName));
+                ExceptionTestHelper.ExpectException<ArgumentException>(delegate { target[index2] = jo; }, string.Format(InvalidIndexType, index2.GetType().FullName));
+                ExceptionTestHelper.ExpectException<ArgumentException>(delegate { target[index3] = jo; }, string.Format(InvalidIndexType, index3.GetType().FullName));
+                ExceptionTestHelper.ExpectException<ArgumentException>(delegate { target[null] = jo; }, NonSingleNonNullIndexNotSupported);
+
+                ExceptionTestHelper.ExpectException<ArgumentException>(delegate { target[0, 1] = jo; }, NonSingleNonNullIndexNotSupported);
+                ExceptionTestHelper.ExpectException<ArgumentException>(delegate { target["key1", "key2"] = jo; }, NonSingleNonNullIndexNotSupported);
+
+                ExceptionTestHelper.ExpectException<ArgumentException>(delegate { target[true] = jo; }, string.Format(InvalidIndexType, true.GetType().FullName));
             }
+        }
+
+        [TestMethod]
+        public void ImplicitDataConvertionTest()
+        {
+            dynamic target;
+            
+            target = (JsonValue)"true";
+            Assert.IsTrue(target == true);
+
+            target = (JsonValue)"false";
+            Assert.IsFalse(target != false);
+
+            if (target)
+            {
+                Assert.Fail("bool conversion faild");
+            }
+
+            target = (JsonValue)AnyInstance.AnyGuid;
+            Assert.IsTrue(target == AnyInstance.AnyGuid);
+            Assert.IsTrue(target == AnyInstance.AnyGuid.ToString());
+
+            target = (JsonValue)AnyInstance.AnyChar;
+            Assert.IsTrue(target == AnyInstance.AnyChar);
+            Assert.IsTrue(target == AnyInstance.AnyChar.ToString());
+
+            target = (JsonValue)AnyInstance.AnyInt;
+            Assert.IsTrue(target == AnyInstance.AnyInt);
+            Assert.IsTrue(target == AnyInstance.AnyInt.ToString());
+        }
+
+        [TestMethod]
+        public void DynamicCoerceOperations()
+        {
+            JsonValue jv = new JsonObject { { "one", 1 }, { "one_point_two", 1.2 } };
+            dynamic actual, expected;
+
+            char charValue = 'A';
+            byte byteValue = 0x02;
+            sbyte sbyteValue = 0x10;
+            ushort ushortValue = 100;
+            short shortValue = -10;
+            int intValue = -120;
+            uint uintValue = 200;
+            long longValue = -1000;
+            ulong ulongValue = 2000;
+            float floatValue = -20.10f;
+            double doubleValue = -1200.50;
+
+            double[] values = 
+            {
+                charValue, byteValue, sbyteValue, ushortValue, shortValue, intValue, uintValue, longValue, ulongValue, floatValue, doubleValue
+            };
+
+            dynamic dyn = jv;
+
+            Assert.IsTrue(dyn.one != charValue);
+            Assert.IsTrue(dyn.one < byteValue);
+            Assert.IsFalse(dyn.one_point_two > sbyteValue);
+            Assert.IsFalse(dyn.one_point_two >= ushortValue);
+            Assert.IsTrue(dyn.one > shortValue);
+            Assert.IsFalse(dyn.one_point_two < intValue);
+            Assert.IsFalse(dyn.one_point_two == uintValue);
+            Assert.IsFalse(dyn.one_point_two == longValue);
+            Assert.IsFalse(dyn.one_point_two == ulongValue);
+            Assert.IsTrue(dyn.one > floatValue);
+            Assert.IsFalse(dyn.one <= doubleValue);
+
+            foreach (double value in values)
+            {
+                Assert.IsTrue(dyn.one != value);
+                Assert.IsFalse(dyn.one == value);
+
+                expected = dyn.one.ReadAs(value.GetType()) + value;
+                actual = dyn.one + value;
+                Assert.AreEqual(expected, actual);
+
+                expected = dyn.one.ReadAs(value.GetType()) - value;
+                actual = dyn.one - value;
+                Assert.AreEqual(expected, actual);
+
+                expected = dyn.one.ReadAs(value.GetType()) * value;
+                actual = dyn.one * value;
+                Assert.AreEqual(expected, actual);
+
+                expected = dyn.one.ReadAs(value.GetType()) / value;
+                actual = dyn.one / value;
+                Assert.AreEqual(expected, actual);
+
+                expected = dyn.one.ReadAs(value.GetType()) % value;
+                actual = dyn.one % value;
+                Assert.AreEqual(expected, actual);
+            }
+        }
+
+        [TestMethod]
+        public void InvalidCastingTests()
+        {
+            dynamic dyn;
+            string value = "NameValue";
+
+            dyn = AnyInstance.AnyJsonPrimitive;
+            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { dyn.name = value; });
+
+            dyn = AnyInstance.AnyJsonArray;
+            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { dyn.name = value; });
+
+            dyn = AnyInstance.AnyJsonObject;
+            dyn.name = value;
+            Assert.AreEqual((string)dyn.name, value);
+
+            dyn = AnyInstance.DefaultJsonValue;
+            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { dyn.name = value; });
         }
 
         [TestMethod]

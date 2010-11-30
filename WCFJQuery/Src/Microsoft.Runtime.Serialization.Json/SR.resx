@@ -121,13 +121,19 @@
     <value>Unable to cast object of type '{0}' to type '{1}'.</value>
   </data>
   <data name="CannotReadAsType" xml:space="preserve">
-    <value>Cannot cast JsonPrimitive value '{0}' as '{1}'.</value>
+    <value>Cannot read '{0}' as '{1}' type.</value>
+  </data>
+  <data name="CannotReadPrimitiveAsType" xml:space="preserve">
+    <value>Cannot read JsonPrimitive value '{0}' as '{1}'.</value>
+  </data>
+  <data name="DynamicPropertyNotDefined" xml:space="preserve">
+    <value>'{0}' does not contain a definition for property '{1}'.</value>
   </data>
   <data name="IncorrectJsonFormat" xml:space="preserve">
     <value>The input source is not correctly formatted.</value>
   </data>
-  <data name="IndexTypeNotSupported" xml:space="preserve">
-    <value>The type of the index is not supported by this indexer; use 'int' or 'string' for array and object indexing respectively.</value>
+  <data name="IndexerNotSupportedOnJsonType" xml:space="preserve">
+    <value>'{0}' type indexer is not supported on JsonValue of JsonType '{1}'.</value>
   </data>
   <data name="InvalidCastNonNullable" xml:space="preserve">
     <value>Cannot convert null to '{0}' because it is a non-nullable value type</value>
@@ -136,7 +142,7 @@
     <value>Cannot cast JsonPrimitive value '{0}' as '{1}'. It is not in a valid date format. Using .NET Custom Date format strings notation (http://msdn.microsoft.com/en-us/library/8kb3ddd4.aspx), accepted formats are '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}' and '{10}'.</value>
   </data>
   <data name="InvalidIndexType" xml:space="preserve">
-    <value>Indices for ValueOrDefault can only be of type System.Int32 and System.String.</value>
+    <value>Invalid '{0}' index type; only 'System.String'  and non-negative 'System.Int32' types are supported.</value>
   </data>
   <data name="InvalidJsonPrimitive" xml:space="preserve">
     <value>Invalid JSON primitive: {0}.</value>
@@ -153,8 +159,14 @@
   <data name="NamedValueNotPresent" xml:space="preserve">
     <value>The JsonObject does not contain a key named {0}.</value>
   </data>
+  <data name="NonSingleNonNullIndexNotSupported" xml:space="preserve">
+    <value>Null index or multidimensional indexing is not supported by this indexer; use 'System.Int32' or 'System.String' for array and object indexing respectively.</value>
+  </data>
   <data name="OperationNotAllowedOnDefault" xml:space="preserve">
     <value>Default JsonValue cannot perform this operation.</value>
+  </data>
+  <data name="OperationNotSupportedOnJsonType" xml:space="preserve">
+    <value>Operation not supported on JsonValue instance of JsonType '{0}'.</value>
   </data>
   <data name="OperatorNotAllowedOnOperands" xml:space="preserve">
     <value>Operation '{0}' cannot be applied on operands of type '{1}' and '{2}'.</value>
@@ -168,10 +180,7 @@
   <data name="TypeNotSupported" xml:space="preserve">
     <value>Object type not supported.</value>
   </data>
-  <data name="UnsupportedOnThisJsonValue" xml:space="preserve">
-    <value>This method or property is not supported on a JSON value of type '{0}'. Some operations may only be performed on JSON Arrays and some may only be performed on JSON Objects.</value>
-  </data>
   <data name="UseOfDefaultNotAllowed" xml:space="preserve">
-    <value>Default JsonValue cannot be used in this operation.</value>
+    <value>Operation not supported on JsonValue instances of JsonType.Default type.</value>
   </data>
 </root>

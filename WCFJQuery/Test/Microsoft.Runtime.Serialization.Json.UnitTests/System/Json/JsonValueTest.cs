@@ -14,6 +14,9 @@
     [TestClass]
     public class JsonValueTest
     {
+        const string IndexerNotSupportedOnJsonType = "'{0}' type indexer is not supported on JsonValue of JsonType '{1}'.";
+        const string InvalidIndexType = "Invalid '{0}' index type; only 'System.String'  and non-negative 'System.Int32' types are supported.\r\nParameter name: indexes";
+
         [TestMethod]
         public void ContainsKeyTest()
         {
@@ -468,16 +471,20 @@
         public void ItemTest()
         {
             //// Positive tests for Item on JsonArray and JsonObject are on JsonArrayTest and JsonObjectTest, respectively.
+            JsonValue target;
+            target = AnyInstance.AnyJsonPrimitive;
+            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { var c = target[1]; }, string.Format(IndexerNotSupportedOnJsonType, typeof(int), target.JsonType));
+            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { target[0] = 123; }, string.Format(IndexerNotSupportedOnJsonType, typeof(int), target.JsonType));
+            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { var c = target["key"]; }, string.Format(IndexerNotSupportedOnJsonType, typeof(string), target.JsonType));
+            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { target["here"] = 123; }, string.Format(IndexerNotSupportedOnJsonType, typeof(string), target.JsonType));
 
-            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { var c = AnyInstance.AnyJsonPrimitive[1]; });
-            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { AnyInstance.AnyJsonPrimitive[0] = 123; });
-            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { var c = AnyInstance.AnyJsonPrimitive["key"]; });
-            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { AnyInstance.AnyJsonPrimitive["here"] = 123; });
+            target = AnyInstance.AnyJsonObject;
+            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { var c = target[0]; }, string.Format(IndexerNotSupportedOnJsonType, typeof(int), target.JsonType));
+            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { target[0] = 123; }, string.Format(IndexerNotSupportedOnJsonType, typeof(int), target.JsonType));
 
-            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { var c = AnyInstance.AnyJsonObject[0]; });
-            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { AnyInstance.AnyJsonObject[0] = 123; });
-            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { var c = AnyInstance.AnyJsonArray["key"]; });
-            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { AnyInstance.AnyJsonArray["here"] = 123; });
+            target = AnyInstance.AnyJsonArray;
+            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { var c = target["key"]; }, string.Format(IndexerNotSupportedOnJsonType, typeof(string), target.JsonType));
+            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { target["here"] = 123; }, string.Format(IndexerNotSupportedOnJsonType, typeof(string), target.JsonType));
         }
 
         [TestMethod]
@@ -506,12 +513,33 @@
             Assert.AreEqual(JsonType.Default, AnyInstance.AnyJsonValue1.ValueOrDefault((object[])null).JsonType);
             Assert.AreEqual(JsonType.Default, jv.ValueOrDefault("Friends", null).JsonType);
             Assert.AreEqual(JsonType.Default, AnyInstance.AnyJsonValue1.ValueOrDefault((string)null).JsonType);
+            Assert.AreEqual(JsonType.Default, AnyInstance.AnyJsonPrimitive.ValueOrDefault(AnyInstance.AnyString, AnyInstance.AnyShort).JsonType);
+            Assert.AreEqual(JsonType.Default, AnyInstance.AnyJsonArray.ValueOrDefault((string)null).JsonType);
+            Assert.AreEqual(JsonType.Default, AnyInstance.AnyJsonObject.ValueOrDefault(AnyInstance.AnyString, null).JsonType);
+            Assert.AreEqual(JsonType.Default, AnyInstance.AnyJsonArray.ValueOrDefault(-1).JsonType);
 
             Assert.AreSame(AnyInstance.AnyJsonValue1, AnyInstance.AnyJsonValue1.ValueOrDefault());
 
-            ExceptionTestHelper.ExpectException<ArgumentException>(delegate { var c = AnyInstance.AnyJsonValue1.ValueOrDefault(AnyInstance.AnyLong); });
-            ExceptionTestHelper.ExpectException<ArgumentException>(delegate { var c = AnyInstance.AnyJsonValue1.ValueOrDefault("str", AnyInstance.AnyShort); });
-            ExceptionTestHelper.ExpectException<ArgumentException>(delegate { var c = AnyInstance.AnyJsonValue1.ValueOrDefault("str", AnyInstance.AnyUInt); });
+            Assert.AreSame(AnyInstance.AnyJsonArray.ValueOrDefault(0), AnyInstance.AnyJsonArray.ValueOrDefault((short)0));
+            Assert.AreSame(AnyInstance.AnyJsonArray.ValueOrDefault(0), AnyInstance.AnyJsonArray.ValueOrDefault((ushort)0));
+            Assert.AreSame(AnyInstance.AnyJsonArray.ValueOrDefault(0), AnyInstance.AnyJsonArray.ValueOrDefault((byte)0));
+            Assert.AreSame(AnyInstance.AnyJsonArray.ValueOrDefault(0), AnyInstance.AnyJsonArray.ValueOrDefault((sbyte)0));
+            Assert.AreSame(AnyInstance.AnyJsonArray.ValueOrDefault(0), AnyInstance.AnyJsonArray.ValueOrDefault((char)0));
+
+            jv = new JsonObject();
+            jv[AnyInstance.AnyString] = AnyInstance.AnyJsonArray;
+
+            Assert.AreSame(jv.ValueOrDefault(AnyInstance.AnyString, 0), jv.ValueOrDefault(AnyInstance.AnyString, (short)0));
+            Assert.AreSame(jv.ValueOrDefault(AnyInstance.AnyString, 0), jv.ValueOrDefault(AnyInstance.AnyString, (ushort)0));
+            Assert.AreSame(jv.ValueOrDefault(AnyInstance.AnyString, 0), jv.ValueOrDefault(AnyInstance.AnyString, (byte)0));
+            Assert.AreSame(jv.ValueOrDefault(AnyInstance.AnyString, 0), jv.ValueOrDefault(AnyInstance.AnyString, (sbyte)0));
+            Assert.AreSame(jv.ValueOrDefault(AnyInstance.AnyString, 0), jv.ValueOrDefault(AnyInstance.AnyString, (char)0));
+
+            jv = AnyInstance.AnyJsonObject;
+
+            ExceptionTestHelper.ExpectException<ArgumentException>(delegate { var c = jv.ValueOrDefault(AnyInstance.AnyString, AnyInstance.AnyLong); }, string.Format(InvalidIndexType, typeof(long)));
+            ExceptionTestHelper.ExpectException<ArgumentException>(delegate { var c = jv.ValueOrDefault(AnyInstance.AnyString, AnyInstance.AnyUInt); }, string.Format(InvalidIndexType, typeof(uint)));
+            ExceptionTestHelper.ExpectException<ArgumentException>(delegate { var c = jv.ValueOrDefault(AnyInstance.AnyString, AnyInstance.AnyBool); }, string.Format(InvalidIndexType, typeof(bool)));
         }
     }
 }
