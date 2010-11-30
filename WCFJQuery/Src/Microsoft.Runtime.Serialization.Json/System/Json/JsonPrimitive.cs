@@ -21,7 +21,7 @@ namespace System.Json
         private const string DateTimeIsoFormat = "yyyy-MM-ddTHH:mm:ss.fffK";
         private static readonly string[] JSDateOrTimeLocalFormats = new string[] { "yyyy-MM-dd", "HH:mm:ss", "HH:mm", "yyyy-MM-ddTHH:mm:ss" };
         private static readonly string[] JSDateUtcFormats = { @"ddd, d MMM yyyy HH:mm:ss \U\T\C", @"ddd, d MMM yyyy HH:mm:ss \G\M\T" };
-        private static readonly string[] JSDateWithTimezoneFormats = { "yyyy-MM-ddTHH:mm:ssK", DateTimeIsoFormat, "yyyy-MM-ddTHH:mm:sszzz" };
+        private static readonly string[] JSDateWithTimezoneFormats = { "yyyy-MM-ddTHH:mm:ssK", DateTimeIsoFormat, "yyyy-MM-ddTHH:mm:sszzz", @"ddd, d MMM yyyy HH:mm:ss zzz" };
         private static readonly long UnixEpochTicks = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).Ticks;
         private static readonly char[] FloatingPointChars = new char[] { '.', 'e', 'E' };
         private static readonly Dictionary<Type, Func<string, ConvertResult>> stringConverters = new Dictionary<Type, Func<string, ConvertResult>>
@@ -473,6 +473,7 @@ namespace System.Json
                                     JSDateWithTimezoneFormats[0],
                                     JSDateWithTimezoneFormats[1],
                                     JSDateWithTimezoneFormats[2],
+                                    JSDateWithTimezoneFormats[3],
                                     JSDateOrTimeLocalFormats[0],
                                     JSDateOrTimeLocalFormats[1],
                                     JSDateOrTimeLocalFormats[2],

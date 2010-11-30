@@ -519,12 +519,16 @@
             DateTime dateTime = dateTimeOffset.UtcDateTime;
             TestReadAsFromStringRoundtrip<DateTime>(dateTime, dateTimeOffset.ToUniversalTime().ToString(@"ddd, d MMM yyyy HH:mm:ss \U\T\C"));
             TestReadAsFromStringRoundtrip<DateTime>(dateTime, dateTimeOffset.ToUniversalTime().ToString(@"ddd, d MMM yyyy HH:mm:ss \G\M\T"));
+            TestReadAsFromStringRoundtrip<DateTime>(dateTime, dateTimeOffset.ToUniversalTime().ToString(@"ddd, d MMM yyyy HH:mm:ss zzz"));
             TestReadAsFromStringRoundtrip<DateTime>(dateTime, dateTimeOffset.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssK"));
+            TestReadAsFromStringRoundtrip<DateTime>(dateTime, dateTimeOffset.ToString(@"ddd, d MMM yyyy HH:mm:ss zzz"));
             TestReadAsFromStringRoundtrip<DateTime>(dateTime, dateTimeOffset.ToString("yyyy-MM-ddTHH:mm:sszzz"));
             TestReadAsFromStringRoundtrip<DateTimeOffset>(dateTimeOffset.UtcDateTime, dateTimeOffset.ToUniversalTime().ToString(@"ddd, d MMM yyyy HH:mm:ss \U\T\C"));
             TestReadAsFromStringRoundtrip<DateTimeOffset>(dateTimeOffset.UtcDateTime, dateTimeOffset.ToUniversalTime().ToString(@"ddd, d MMM yyyy HH:mm:ss \G\M\T"));
+            TestReadAsFromStringRoundtrip<DateTimeOffset>(dateTimeOffset, dateTimeOffset.ToUniversalTime().ToString(@"ddd, d MMM yyyy HH:mm:ss zzz"));
             TestReadAsFromStringRoundtrip<DateTimeOffset>(dateTimeOffset, dateTimeOffset.ToString("yyyy-MM-ddTHH:mm:ssK"));
             TestReadAsFromStringRoundtrip<DateTimeOffset>(dateTimeOffset, dateTimeOffset.ToString("yyyy-MM-ddTHH:mm:sszzz"));
+            TestReadAsFromStringRoundtrip<DateTimeOffset>(dateTimeOffset, dateTimeOffset.ToString(@"ddd, d MMM yyyy HH:mm:ss zzz"));
 
             ExpectException<FormatException>(delegate { new JsonPrimitive("INF").ReadAs<float>(); });
             ExpectException<FormatException>(delegate { new JsonPrimitive("-INF").ReadAs<float>(); });
