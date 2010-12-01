@@ -12,6 +12,8 @@ namespace System.Runtime.Serialization.Json
     using System.Linq.Expressions;
     using System.Xml;
 
+    using Fx = System.Json.DiagnosticUtility;
+
     /// <summary>
     /// This class extends the funcionality of the <see cref="JsonValue"/> type. 
     /// </summary>
@@ -251,7 +253,7 @@ namespace System.Runtime.Serialization.Json
             }
             catch (Exception e)
             {
-                if (DiagnosticUtility.IsFatal(e))
+                if (Fx.IsFatal(e))
                 {
                     throw;
                 }

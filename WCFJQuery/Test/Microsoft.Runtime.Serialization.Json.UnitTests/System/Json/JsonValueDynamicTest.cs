@@ -10,7 +10,7 @@
     [TestClass]
     public class JsonValueDynamicTest
     {
-        const string InvalidIndexType = "Invalid '{0}' index type; only 'System.String'  and non-negative 'System.Int32' types are supported.";
+        const string InvalidIndexType = "Invalid '{0}' index type; only 'System.String' and non-negative 'System.Int32' types are supported.";
         const string NonSingleNonNullIndexNotSupported = "Null index or multidimensional indexing is not supported by this indexer; use 'System.Int32' or 'System.String' for array and object indexing respectively.";
 
         [TestMethod]

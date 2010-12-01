@@ -9,6 +9,7 @@ namespace System.Json
     /// <summary>
     /// This class extends the funcionality of the <see cref="JsonValue"/> type for better Linq support . 
     /// </summary>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", Justification = "Linq is a technical name.")]
     public static class JsonValueLinqExtensions
     {
         /// <summary>

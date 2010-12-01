@@ -133,7 +133,7 @@ namespace System.Json {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid &apos;{0}&apos; index type; only &apos;System.String&apos;  and non-negative &apos;System.Int32&apos; types are supported..
+        ///   Looks up a localized string similar to Invalid &apos;{0}&apos; index type; only &apos;System.String&apos; and non-negative &apos;System.Int32&apos; types are supported..
         /// </summary>
         internal static string InvalidIndexType {
             get {
