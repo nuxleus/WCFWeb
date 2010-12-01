@@ -14,7 +14,7 @@
     [TestClass]
     public class JsonValueTest
     {
-        const string IndexerNotSupportedOnJsonType = "'{0}' type indexer is not supported on JsonValue of JsonType '{1}'.";
+        const string IndexerNotSupportedOnJsonType = "'{0}' type indexer is not supported on JsonValue of 'JsonType.{1}' type.";
         const string InvalidIndexType = "Invalid '{0}' index type; only 'System.String'  and non-negative 'System.Int32' types are supported.\r\nParameter name: indexes";
 
         [TestMethod]

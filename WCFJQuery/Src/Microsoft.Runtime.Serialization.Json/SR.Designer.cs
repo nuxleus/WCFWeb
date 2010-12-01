@@ -106,7 +106,7 @@ namespace System.Json {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &apos;{0}&apos; type indexer is not supported on JsonValue of JsonType &apos;{1}&apos;..
+        ///   Looks up a localized string similar to &apos;{0}&apos; type indexer is not supported on JsonValue of &apos;JsonType.{1}&apos; type..
         /// </summary>
         internal static string IndexerNotSupportedOnJsonType {
             get {
@@ -250,7 +250,7 @@ namespace System.Json {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Operation not supported on JsonValue instances of JsonType.Default type..
+        ///   Looks up a localized string similar to Operation not supported on JsonValue instances of &apos;JsonType.Default&apos; type..
         /// </summary>
         internal static string UseOfDefaultNotAllowed {
             get {

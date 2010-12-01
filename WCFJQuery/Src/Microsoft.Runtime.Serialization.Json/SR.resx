@@ -133,7 +133,7 @@
     <value>The input source is not correctly formatted.</value>
   </data>
   <data name="IndexerNotSupportedOnJsonType" xml:space="preserve">
-    <value>'{0}' type indexer is not supported on JsonValue of JsonType '{1}'.</value>
+    <value>'{0}' type indexer is not supported on JsonValue of 'JsonType.{1}' type.</value>
   </data>
   <data name="InvalidCastNonNullable" xml:space="preserve">
     <value>Cannot convert null to '{0}' because it is a non-nullable value type</value>
@@ -181,6 +181,6 @@
     <value>Object type not supported.</value>
   </data>
   <data name="UseOfDefaultNotAllowed" xml:space="preserve">
-    <value>Operation not supported on JsonValue instances of JsonType.Default type.</value>
+    <value>Operation not supported on JsonValue instances of 'JsonType.Default' type.</value>
   </data>
 </root>

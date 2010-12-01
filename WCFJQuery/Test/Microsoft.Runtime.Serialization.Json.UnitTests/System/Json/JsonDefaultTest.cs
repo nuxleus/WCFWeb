@@ -12,6 +12,9 @@
     [TestClass()]
     public class JsonDefaultTest
     {
+        const string IndexerNotSupportedMsgFormat = "'{0}' type indexer is not supported on JsonValue of 'JsonType.Default' type.";
+        const string OperationNotAllowedOnDefaultMsgFormat = "Operation not supported on JsonValue instances of 'JsonType.Default' type.";
+
         [TestMethod()]
         public void PropertiesTest()
         {
@@ -88,8 +91,8 @@
         {
             JsonValue target = AnyInstance.DefaultJsonValue;
 
-            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { var v = target["MissingProperty"]; });
-            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { target["NewProperty"] = AnyInstance.AnyJsonValue1; });
+            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { var v = target["MissingProperty"]; }, string.Format(IndexerNotSupportedMsgFormat, typeof(string).FullName));
+            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { target["NewProperty"] = AnyInstance.AnyJsonValue1; }, string.Format(IndexerNotSupportedMsgFormat, typeof(string).FullName));
         }
 
         [TestMethod()]
@@ -103,8 +106,21 @@
             var getByIndex = target[10];
             Assert.AreSame(getByIndex, AnyInstance.DefaultJsonValue);
 
-            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { target["SomeKey"] = AnyInstance.AnyJsonObject; });
-            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { target[10] = AnyInstance.AnyJsonObject; });
+            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { target["SomeKey"] = AnyInstance.AnyJsonObject; }, string.Format(IndexerNotSupportedMsgFormat, typeof(string).FullName));
+            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { target[10] = AnyInstance.AnyJsonObject; }, string.Format(IndexerNotSupportedMsgFormat, typeof(int).FullName));
+        }
+
+        [TestMethod()]
+        public void InvalidAssignmentValueTest()
+        {
+            JsonValue target;
+            JsonValue value = AnyInstance.DefaultJsonValue;
+
+            target = AnyInstance.AnyJsonArray;
+            ExceptionTestHelper.ExpectException<ArgumentException>(delegate { target[0] = value; }, OperationNotAllowedOnDefaultMsgFormat);
+
+            target = AnyInstance.AnyJsonObject;
+            ExceptionTestHelper.ExpectException<ArgumentException>(delegate { target["key"] = value; }, OperationNotAllowedOnDefaultMsgFormat);
         }
 
         [TestMethod()]
