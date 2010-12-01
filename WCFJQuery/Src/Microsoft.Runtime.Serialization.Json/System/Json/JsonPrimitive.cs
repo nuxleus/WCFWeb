@@ -6,10 +6,10 @@ namespace System.Json
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.Globalization;
     using System.Text;
     using System.Xml;
+    using Fx = System.Diagnostics.Debug;
 
     /// <summary>
     /// Represents a JavaScript Object Notation (JSON) primitive type in the common language runtime (CLR).
@@ -920,7 +920,7 @@ namespace System.Json
                     }
 
                     sb.Append(val, startIndex, count);
-                    Debug.Assert(i < val.Length, "Found that a '\' was the last character in a string, which is invalid JSON. Verify the calling method uses a valid JSON string as the input parameter of this method.");
+                    Fx.Assert(i < val.Length, "Found that a '\' was the last character in a string, which is invalid JSON. Verify the calling method uses a valid JSON string as the input parameter of this method.");
                     switch (val[i])
                     {
                         case '"':
@@ -945,7 +945,7 @@ namespace System.Json
                             sb.Append('\t');
                             break;
                         case 'u':
-                            Debug.Assert((i + 3) < val.Length, String.Format(CultureInfo.CurrentCulture, "Unexpected char {0} at position {1}. The unicode escape sequence should be followed by 4 digits.", val[i], i));
+                            Fx.Assert((i + 3) < val.Length, String.Format(CultureInfo.CurrentCulture, "Unexpected char {0} at position {1}. The unicode escape sequence should be followed by 4 digits.", val[i], i));
                             sb.Append(ParseChar(val.Substring(i + 1, 4), NumberStyles.HexNumber));
                             i += 4;
                             break;
@@ -1043,7 +1043,7 @@ namespace System.Json
             if (this.JsonType == JsonType.String)
             {
                 string str = UnescapeJsonString(this.ToString());
-                Debug.Assert(str.Length >= 2 && str.StartsWith("\"", StringComparison.Ordinal) && str.EndsWith("\"", StringComparison.Ordinal), "The unescaped string must begin and end with quotes.");
+                Fx.Assert(str.Length >= 2 && str.StartsWith("\"", StringComparison.Ordinal) && str.EndsWith("\"", StringComparison.Ordinal), "The unescaped string must begin and end with quotes.");
                 str = str.Substring(1, str.Length - 2);
 
                 if (stringConverters.ContainsKey(type))
