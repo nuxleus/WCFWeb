@@ -91,11 +91,17 @@ namespace System.Json
 
             if (jsonValue is JsonPrimitive)
             {
-                Type operationType = binder.ReturnType == typeof(object) ? jsonValue.Read().GetType() : binder.ReturnType;
-                Expression instance = Expression.Convert(this.Expression, this.LimitType);
-                Expression thisExpression = Expression.Convert(Expression.Call(instance, ReadAsMethodInfo, new Expression[] { Expression.Constant(operationType) }), operationType);
+                OperationSupport supportValue = GetUnaryOperationSupport(binder.Operation, jsonValue);
 
-                operExpression = JsonValueDynamicMetaObject.GetUnaryOperationExpression(binder.Operation, thisExpression);
+                if (supportValue == OperationSupport.Supported)
+                {
+                    Type operationReturnType = this.GetUnaryOperationReturnType(binder);
+
+                    Expression instance = Expression.Convert(this.Expression, this.LimitType);
+                    Expression thisExpression = Expression.Convert(Expression.Call(instance, ReadAsMethodInfo, new Expression[] { Expression.Constant(operationReturnType) }), operationReturnType);
+
+                    operExpression = JsonValueDynamicMetaObject.GetUnaryOperationExpression(binder.Operation, thisExpression);
+                }
             }
             
             if (operExpression == null)
@@ -428,6 +434,43 @@ namespace System.Json
         }
 
         /// <summary>
+        /// Gets the operation support value for the specified operation on the specified operand.
+        /// </summary>
+        /// <param name="operation">The operation type.</param>
+        /// <param name="thisValue">The JsonValue instance to check operation for.</param>
+        /// <returns>An <see cref="OperationSupport"/> value.</returns>
+        private static OperationSupport GetUnaryOperationSupport(ExpressionType operation, JsonValue thisValue)
+        {
+            //// Unary operators: +, -, !, ~, false (&&), true (||)
+            //// unsupported: ++, --
+
+            switch (operation)
+            {
+                case ExpressionType.UnaryPlus:
+                case ExpressionType.Negate:
+                case ExpressionType.OnesComplement:
+                case ExpressionType.IsFalse:
+                case ExpressionType.IsTrue:
+                    break;
+
+                case ExpressionType.Not:
+                    ////  The DLR converts the 'Not' operation into a 'OnesComplement' operation for integer numbers, need to block that scenario.
+                    bool boolVal;
+                    if (!thisValue.TryReadAs<bool>(out boolVal))
+                    {
+                        return OperationSupport.NotSupportedOnOperand;
+                    }
+
+                    break;
+   
+                default:
+                    return OperationSupport.NotSupported;
+            }
+
+            return OperationSupport.Supported;
+        }
+
+        /// <summary>
         /// Gets the operation support value for the specified operation and operands.
         /// </summary>
         /// <param name="operation">The operation type.</param>
@@ -531,26 +574,33 @@ namespace System.Json
 
             Expression operExpression = null;
 
-            switch (operation)
+            try
             {
-                case ExpressionType.UnaryPlus:
-                    operExpression = Expression.UnaryPlus(thisExpression);
-                    break;
-                case ExpressionType.Negate:
-                    operExpression = Expression.Negate(thisExpression);
-                    break;
-                case ExpressionType.Not:
-                    operExpression = Expression.Not(thisExpression);
-                    break;
-                case ExpressionType.OnesComplement:
-                    operExpression = Expression.OnesComplement(thisExpression);
-                    break;
-                case ExpressionType.IsFalse:
-                    operExpression = Expression.IsFalse(thisExpression);
-                    break;
-                case ExpressionType.IsTrue:
-                    operExpression = Expression.IsTrue(thisExpression);
-                    break;
+                switch (operation)
+                {
+                    case ExpressionType.UnaryPlus:
+                        operExpression = Expression.UnaryPlus(thisExpression);
+                        break;
+                    case ExpressionType.Negate:
+                        operExpression = Expression.Negate(thisExpression);
+                        break;
+                    case ExpressionType.Not:
+                        operExpression = Expression.Not(thisExpression);
+                        break;
+                    case ExpressionType.OnesComplement:
+                        operExpression = Expression.OnesComplement(thisExpression);
+                        break;
+                    case ExpressionType.IsFalse:
+                        operExpression = Expression.IsFalse(thisExpression);
+                        break;
+                    case ExpressionType.IsTrue:
+                        operExpression = Expression.IsTrue(thisExpression);
+                        break;
+                }
+            }
+            catch (InvalidOperationException ex)
+            {
+                operExpression = Expression.Throw(Expression.Constant(ex), typeof(object));
             }
 
             return operExpression;
@@ -789,7 +839,7 @@ namespace System.Json
         }
 
         /// <summary>
-        /// Attempts to coerce the operand types on special type and value cases as treated by JsonValue:
+        /// Attempts to coerce the operand types on a binary operation for some special type and value cases as treated by JsonValue:
         /// "true" and "false" can be converted to boolean.
         /// Guid, DateTime and other types can be converted to string.
         /// </summary>
@@ -800,6 +850,7 @@ namespace System.Json
         private static bool TryCoerceSpecialTypes(DynamicMetaObject thisOperand, DynamicMetaObject otherOperand, out Type coercedType)
         {
             JsonValue thisValue = thisOperand.Value as JsonValue;
+            JsonValue otherValue = otherOperand.Value as JsonValue;
 
             if (thisValue is JsonPrimitive)
             {
@@ -807,7 +858,7 @@ namespace System.Json
 
                 if (thisType != otherOperand.LimitType)
                 {
-                    if (otherOperand.LimitType == typeof(bool) || otherOperand.LimitType == typeof(string))
+                    if (otherOperand.LimitType == typeof(string) || (thisType == typeof(string) && otherValue == null))
                     {
                         object value;
                         if (thisValue.TryReadAs(otherOperand.LimitType, out value))
@@ -862,6 +913,32 @@ namespace System.Json
             
             coercedType = default(Type);
             return false;
+        }
+
+        /// <summary>
+        /// Gets the return type for unary operations.
+        /// </summary>
+        /// <param name="binder">The unary operation binder.</param>
+        /// <returns>The type representing the operation return type.</returns>
+        private Type GetUnaryOperationReturnType(UnaryOperationBinder binder)
+        {
+            JsonValue thisValue = this.Value as JsonValue;
+
+            Type returnType = binder.ReturnType == typeof(object) ? thisValue.Read().GetType() : binder.ReturnType;
+
+            //// The DLR sets the binder.ReturnType for the unary 'Not' operation as 'object' as opposed to 'bool', 
+            //// we need to detect this case and fix up the type to enable boolean conversions from strings.
+
+            if (returnType == typeof(string) && binder.Operation == ExpressionType.Not)
+            {
+                bool boolVal;
+                if (thisValue.TryReadAs<bool>(out boolVal))
+                {
+                    returnType = typeof(bool);
+                }
+            }
+
+            return returnType;
         }
 
         /// <summary>
@@ -941,8 +1018,8 @@ namespace System.Json
                 // special-case ulong type since it cannot be coerced to long which is part of the universal coercion list.
                 if ((thisType == typeofULong && otherType == typeofLong) || (thisType == typeofLong && otherType == typeofULong))
                 {
-                    coercedType = typeofULong;
-                    return true;
+                    coercedType = default(Type);
+                    return false;
                 }
 
                 Type typeofFloat = typeof(float);

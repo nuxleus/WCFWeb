@@ -285,6 +285,11 @@
             target = (JsonValue)"true";
             Assert.IsTrue(target == true);
 
+            if (!target)
+            {
+                Assert.Fail("bool conversion faild");
+            }
+
             target = (JsonValue)"false";
             Assert.IsFalse(target != false);
 
@@ -307,7 +312,7 @@
         }
 
         [TestMethod]
-        public void DynamicCoerceOperations()
+        public void DynamicCoerceOperationsSimpleTest()
         {
             JsonValue jv = new JsonObject { { "one", 1 }, { "one_point_two", 1.2 } };
             dynamic actual, expected;
@@ -367,6 +372,151 @@
                 expected = dyn.one.ReadAs(value.GetType()) % value;
                 actual = dyn.one % value;
                 Assert.AreEqual(expected, actual);
+            }
+        }
+
+        [TestMethod]
+        public void DynamicCoerceOperationsTest()
+        {
+            object ret = null;
+            Dictionary<Type, JsonValue> jsonValueTypeTable;
+            Dictionary<Type, List<Type>> convertionTable;
+
+            InitializeNumericConverionTables(out jsonValueTypeTable, out convertionTable);
+
+            foreach (KeyValuePair<Type, JsonValue> jsonValueType in jsonValueTypeTable)
+            {
+                Type type = jsonValueType.Key;
+                dynamic target = jsonValueType.Value;
+
+                foreach (KeyValuePair<Type, List<Type>> typeInfo in convertionTable)
+                {
+                    Type convertType = typeInfo.Key;
+
+                    // DISABLED: 197545 - remove this condition when the bug is fixed.
+                    if (type == typeof(char))
+                    {
+                        continue;
+                    }
+
+                    if (type != convertType && (convertionTable[type].Contains(convertType) || convertionTable[convertType].Contains(type)))
+                    {
+                        try
+                        {
+                            switch (Type.GetTypeCode(convertType))
+                            {
+                                case TypeCode.SByte:
+                                    ret = target + AnyInstance.AnySByte;
+                                    break;
+                                case TypeCode.Byte:
+                                    ret = target - AnyInstance.AnyByte;
+                                    break;
+                                case TypeCode.Int16:
+                                    ret = target / AnyInstance.AnyShort;
+                                    break;
+                                case TypeCode.UInt16:
+                                    ret = target * AnyInstance.AnyUShort;
+                                    break;
+                                case TypeCode.Int32:
+                                    ret = target + AnyInstance.AnyInt;
+                                    break;
+                                case TypeCode.UInt32:
+                                    ret = target - AnyInstance.AnyUInt;
+                                    break;
+                                case TypeCode.Int64:
+                                    ret = target * AnyInstance.AnyLong;
+                                    break;
+                                case TypeCode.UInt64:
+                                    ret = target / AnyInstance.AnyULong;
+                                    break;
+                                case TypeCode.Char:
+                                    ret = target + AnyInstance.AnyChar;
+                                    break;
+                                case TypeCode.Single:
+                                    ret = target - AnyInstance.AnyFloat;
+                                    break;
+                                case TypeCode.Double:
+                                    ret = target * AnyInstance.AnyDouble;
+                                    break;
+                                case TypeCode.Decimal:
+                                    ret = target / AnyInstance.AnyDecimal;
+                                    break;
+                            }
+                        }
+                        catch (OverflowException ex)
+                        {
+                            Console.WriteLine("Caught overflow exception with message: '{0}' - this is ok for this test.", ex.Message);
+                        }
+                        catch (Exception ex)
+                        {
+                            Assert.Fail("{0}: {1}", ex.GetType().FullName, ex.Message);
+                        }
+                    }
+                }
+            }
+        }
+
+        [TestMethod]
+        public void InvalidDynamicCoerceOperations()
+        {
+            object ret;
+            Dictionary<Type, JsonValue> jsonValueTypeTable;
+            Dictionary<Type, List<Type>> convertionTable;
+
+            InitializeNumericConverionTables(out jsonValueTypeTable, out convertionTable);
+
+            foreach (KeyValuePair<Type, JsonValue> jsonValueType in jsonValueTypeTable)
+            {
+                Type type = jsonValueType.Key;
+                dynamic target = jsonValueType.Value;
+
+                foreach (KeyValuePair<Type, List<Type>> typeInfo in convertionTable)
+                {
+                    Type convertType = typeInfo.Key;
+
+                    if (type != convertType && !convertionTable[type].Contains(convertType) && !convertionTable[convertType].Contains(type))
+                    {
+                        switch (Type.GetTypeCode(convertType))
+                        {
+                            case TypeCode.SByte:
+                                ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { ret = target + AnyInstance.AnySByte; });
+                                break;
+                            case TypeCode.Byte:
+                                ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { ret = target - AnyInstance.AnyByte; });
+                                break;
+                            case TypeCode.Int16:
+                                ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { ret = target * AnyInstance.AnyShort; });
+                                break;
+                            case TypeCode.UInt16:
+                                ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { ret = target / AnyInstance.AnyUShort; });
+                                break;
+                            case TypeCode.Int32:
+                                ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { ret = target + AnyInstance.AnyInt; });
+                                break;
+                            case TypeCode.UInt32:
+                                ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { ret = target - AnyInstance.AnyUInt; });
+                                break;
+                            case TypeCode.Int64:
+                                ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { ret = target * AnyInstance.AnyLong; });
+                                break;
+                            case TypeCode.UInt64:
+                                ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { ret = target / AnyInstance.AnyULong; });
+                                break;
+                            case TypeCode.Char:
+                                ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { ret = target + AnyInstance.AnyChar; });
+                                break;
+                            case TypeCode.Single:
+                                ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { ret = target - AnyInstance.AnyFloat; });
+                                break;
+                            case TypeCode.Double:
+                                ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { ret = target * AnyInstance.AnyDouble; });
+                                break;
+                            case TypeCode.Decimal:
+                                ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { ret = target / AnyInstance.AnyDecimal; });
+                                break;
+                        }
+                    }
+                }
             }
         }
 
@@ -560,6 +710,67 @@
             if (retstr2.EndsWith(".")) retstr2 = retstr2.Substring(0, retstr2.Length - 1);
 
             Assert.AreEqual<string>(retstr1, retstr2);
+        }
+
+        static void InitializeNumericConverionTables(out Dictionary<Type, JsonValue> jsonValueTypeTable, out Dictionary<Type, List<Type>> convertionTable)
+        {
+            Type typeofSbyte = typeof(sbyte);
+            Type typeofByte = typeof(byte);
+            Type typeofShort = typeof(short);
+            Type typeofUShort = typeof(ushort);
+            Type typeofInt = typeof(int);
+            Type typeofUInt = typeof(uint);
+            Type typeofLong = typeof(long);
+            Type typeofULong = typeof(ulong);
+            Type typeofChar = typeof(char);
+            Type typeofFloat = typeof(float);
+            Type typeofDouble = typeof(double);
+            Type typeofDecimal = typeof(decimal);
+
+            jsonValueTypeTable = new Dictionary<Type, JsonValue>()
+            {
+                { typeofSbyte, AnyInstance.AnySByte },
+                { typeofByte, AnyInstance.AnyByte },
+                { typeofShort, AnyInstance.AnyShort },
+                { typeofUShort, AnyInstance.AnyUShort },
+                { typeofInt, AnyInstance.AnyInt }, 
+                { typeofUInt, AnyInstance.AnyUInt },
+                { typeofLong, AnyInstance.AnyLong },
+                { typeofULong, AnyInstance.AnyULong },
+                { typeofChar, AnyInstance.AnyChar },
+                { typeofFloat, AnyInstance.AnyFloat },
+                { typeofDouble, AnyInstance.AnyDouble },
+                { typeofDecimal, AnyInstance.AnyDecimal }
+            };
+
+            convertionTable = new Dictionary<Type, List<Type>>()
+            {
+                ///     sbyte   -> short, int, long, float, double, or decimal
+                ///     byte    -> short, ushort, int, uint, long, ulong, float, double, or decimal
+                ///     short   -> int, long, float, double, or decimal
+                ///     ushort  -> int, uint, long, ulong, float, double, or decimal
+                ///     int     -> long, float, double, or decimal
+                ///     uint    -> long, ulong, float, double, or decimal
+                ///     long    -> float, double, or decimal
+                ///     char    -> ushort, int, uint, long, ulong, float, double, or decimal
+                ///     float   -> double
+                ///     ulong   -> float, double, or decimal
+                ///     double  ->
+                ///     decimal ->
+                ///     
+                { typeofSbyte, new List<Type>() { typeofShort, typeofInt, typeofLong, typeofFloat, typeofDouble, typeofDecimal } },
+                { typeofByte, new List<Type>() { typeofShort, typeofUShort, typeofInt, typeofUInt, typeofLong, typeofULong, typeofFloat, typeofDouble, typeofDecimal }},
+                { typeofShort, new List<Type>() { typeofInt, typeofLong, typeofFloat, typeofDouble, typeofDecimal }},
+                { typeofUShort, new List<Type>() { typeofInt, typeofUInt, typeofLong, typeofULong, typeofFloat, typeofDouble, typeofDecimal }},
+                { typeofInt  , new List<Type>() { typeofLong, typeofFloat, typeofDouble, typeofDecimal }},
+                { typeofUInt , new List<Type>() { typeofLong, typeofULong, typeofFloat, typeofDouble, typeofDecimal }},
+                { typeofLong , new List<Type>() { typeofFloat, typeofDouble, typeofDecimal }},
+                { typeofULong, new List<Type>() { typeofFloat, typeofDouble, typeofDecimal }},
+                { typeofChar , new List<Type>() { typeofUShort, typeofInt, typeofUInt, typeofLong, typeofULong, typeofFloat, typeofDouble, typeofDecimal }},
+                { typeofFloat, new List<Type>() { typeofDouble }},
+                { typeofDouble, new List<Type>() { }}, 
+                { typeofDecimal, new List<Type>() { }}
+            };
         }
     }
 }

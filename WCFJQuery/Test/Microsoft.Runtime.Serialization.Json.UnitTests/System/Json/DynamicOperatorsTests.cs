@@ -217,6 +217,23 @@
         }
 
         [TestMethod]
+        public void NotOperandSpecialTest()
+        { 
+            //// special-case for Not on int types since the DLR would change the operation to OnesComplement.
+
+            dynamic target;
+
+            target = (JsonValue)true;
+            Assert.IsFalse(!target);
+
+            target = (JsonValue)"false";
+            Assert.IsTrue(!target);
+
+            target = (JsonValue)AnyInstance.AnyInt;
+            ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { var v = !target; }, string.Format(OperationNotDefinedMsgFormat, "Not", "Number"));
+        }
+
+        [TestMethod]
         public void AsDynamicTest()
         {
             JsonValue jv2 = 3;
