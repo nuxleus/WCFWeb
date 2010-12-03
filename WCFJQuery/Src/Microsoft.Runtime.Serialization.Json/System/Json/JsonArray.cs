@@ -296,31 +296,6 @@ namespace System.Json
         }
 
         /// <summary>
-        /// Returns an enumerator which iterates through the values in this object.
-        /// </summary>
-        /// <returns>An <see cref="System.Collections.Generic.IEnumerator{T}"/> which iterates through the values in this object.</returns>
-        /// <remarks>The enumerator returned by this class contains one pair for each element
-        /// in this array, whose key is the element index (as a string), and the value is the
-        /// element itself.</remarks>
-        public override IEnumerator<KeyValuePair<string, JsonValue>> GetEnumerator()
-        {
-            for (int i = 0; i < this.values.Count; i++)
-            {
-                yield return new KeyValuePair<string, JsonValue>(i.ToString(CultureInfo.InvariantCulture), this.values[i]);
-            }
-        }
-
-        /// <summary>
-        /// Returns an enumerator that iterates through the <see cref="System.Json.JsonValue"/> objects in the array.
-        /// </summary>
-        /// <returns>Returns an <see cref="System.Collections.Generic.IEnumerator{T}"/> object that
-        /// iterates through the <see cref="System.Json.JsonValue"/> elements in this <see cref="System.Json.JsonArray"/>.</returns>
-        IEnumerator<JsonValue> IEnumerable<JsonValue>.GetEnumerator()
-        {
-            return this.values.GetEnumerator();
-        }
-
-        /// <summary>
         /// Returns an enumerator that iterates through the <see cref="System.Json.JsonValue"/> objects in the array.
         /// </summary>
         /// <returns>Returns an <see cref="System.Collections.IEnumerator"/> object that
@@ -346,6 +321,31 @@ namespace System.Json
             }
 
             return base.ValueOrDefault(index);
+        }
+
+        /// <summary>
+        /// Returns an enumerator that iterates through the <see cref="System.Json.JsonValue"/> objects in the array.
+        /// </summary>
+        /// <returns>Returns an <see cref="System.Collections.Generic.IEnumerator{T}"/> object that
+        /// iterates through the <see cref="System.Json.JsonValue"/> elements in this <see cref="System.Json.JsonArray"/>.</returns>
+        public new IEnumerator<JsonValue> GetEnumerator()
+        {
+            return this.values.GetEnumerator();
+        }
+
+        /// <summary>
+        /// Returns an enumerator which iterates through the values in this object.
+        /// </summary>
+        /// <returns>An <see cref="System.Collections.Generic.IEnumerator{T}"/> which iterates through the values in this object.</returns>
+        /// <remarks>The enumerator returned by this class contains one pair for each element
+        /// in this array, whose key is the element index (as a string), and the value is the
+        /// element itself.</remarks>
+        protected override IEnumerator<KeyValuePair<string, JsonValue>> GetKeyValuePairEnumerator()
+        {
+            for (int i = 0; i < this.values.Count; i++)
+            {
+                yield return new KeyValuePair<string, JsonValue>(i.ToString(CultureInfo.InvariantCulture), this.values[i]);
+            }
         }
 
         /// <summary>

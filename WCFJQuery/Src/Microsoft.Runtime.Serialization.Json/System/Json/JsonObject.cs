@@ -375,7 +375,7 @@ namespace System.Json
         /// </summary>
         /// <returns>An <see cref="System.Collections.Generic.IEnumerator{T}"/> which iterates
         /// through the members of this instance.</returns>
-        public override IEnumerator<KeyValuePair<string, JsonValue>> GetEnumerator()
+        protected override IEnumerator<KeyValuePair<string, JsonValue>> GetKeyValuePairEnumerator()
         {
             return this.values.GetEnumerator();
         }

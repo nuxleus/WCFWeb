@@ -9,7 +9,7 @@
     [TestClass]
     public class JsonValueDynamicOperatorOveloadTests
     {
-        const string OperationNotDefinedMsgFormat = "Operation '{0}' is not defined for JsonValue instances of JsonType '{1}'.";
+        const string OperationNotDefinedMsgFormat = "Operation '{0}' is not defined for JsonValue instances of 'JsonType.{1}' type.";
         const string OperatorNotDefinedMsgFormat = "The binary operator {0} is not defined for the types '{1}' and '{2}'.";
         const string OperatorNotAllowedOnOperands = "Operation '{0}' cannot be applied on operands of type '{1}' and '{2}'.";
 

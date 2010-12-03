@@ -665,11 +665,9 @@ namespace System.Json
         /// </summary>
         /// <returns>An enumerator which which iterates through the values in this object.</returns>
         /// <remarks>The enumerator returned by this class is empty; subclasses will override this method to return appropriate enumerators for themselves.</remarks>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1033",
-            Justification = "Cannot make this class sealed, it need to have subclasses. But its subclasses are sealed themselves.")]
-        public virtual IEnumerator<KeyValuePair<string, JsonValue>> GetEnumerator()
+        public IEnumerator<KeyValuePair<string, JsonValue>> GetEnumerator()
         {
-            yield break;
+            return this.GetKeyValuePairEnumerator();
         }
 
         /// <summary>
@@ -677,11 +675,9 @@ namespace System.Json
         /// </summary>
         /// <returns>An <see cref="System.Collections.IEnumerator"/> which iterates through the values in this object.</returns>
         /// <remarks>The enumerator returned by this class is empty; subclasses will override this method to return appropriate enumerators for themselves.</remarks>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1033",
-             Justification = "Cannot make this class sealed, there's already a GetEnumerator method.")]
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return ((IEnumerable<KeyValuePair<string, JsonValue>>)this).GetEnumerator();
+            return this.GetKeyValuePairEnumerator();
         }
 
         /// <summary>
@@ -1040,6 +1036,11 @@ namespace System.Json
             return new JsonValueDynamicMetaObject(parameter, this);
         }
 
+        /// <summary>
+        /// Resolves the specified object to an approprite JsonValue instance.
+        /// </summary>
+        /// <param name="value">The object to resolve.</param>
+        /// <returns>A <see cref="JsonValue"/> instance resolved from the specified object.</returns>
         internal static JsonValue ResolveObject(object value)
         {
             JsonPrimitive primitive;
@@ -1064,6 +1065,11 @@ namespace System.Json
             throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgument("value", SG.GetString(SR.TypeNotSupported));
         }
 
+        /// <summary>
+        /// Determines whether an explicit cast to JsonValue is provided from the specified type.
+        /// </summary>
+        /// <param name="type">The type to check.</param>
+        /// <returns>true if an explicit cast exists for the specified type, false otherwise.</returns>
         internal static bool IsSupportedExplicitCastType(Type type)
         {
             TypeCode typeCode = Type.GetTypeCode(type);
@@ -1103,6 +1109,10 @@ namespace System.Json
             return null;
         }
 
+        /// <summary>
+        /// Serializes this object into the specified <see cref="XmlDictionaryWriter"/> instance.
+        /// </summary>
+        /// <param name="jsonWriter">An <see cref="XmlDictionaryWriter"/> instance to serialize this instance into.</param>
         internal virtual void Save(XmlDictionaryWriter jsonWriter)
         {
             if (jsonWriter == null)
@@ -1165,6 +1175,21 @@ namespace System.Json
             }
 
             this.OnSaveEnded();
+        }
+
+        /// <summary>
+        /// Returns an enumerator which iterates through the values in this object.
+        /// </summary>
+        /// <returns>An <see cref="System.Collections.IEnumerator"/> which iterates through the values in this object.</returns>
+        /// <remarks>This method is the virtual version of the IEnumerator.GetEnumerator method and is provided to allow derived classes to implement the 
+        /// appropriate version of the generic interface (enumerator of values or key/value pairs).</remarks>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate",
+            Justification = "This method is a virtual version of the IEnumerable.GetEnumerator method.")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures",
+            Justification = "This class is a collection that is properly represented by the nested generic type.")]
+        protected virtual IEnumerator<KeyValuePair<string, JsonValue>> GetKeyValuePairEnumerator()
+        {
+            yield break;
         }
 
         /// <summary>

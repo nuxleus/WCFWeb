@@ -166,13 +166,13 @@
     <value>Default JsonValue cannot perform this operation.</value>
   </data>
   <data name="OperationNotSupportedOnJsonType" xml:space="preserve">
-    <value>Operation not supported on JsonValue instance of JsonType '{0}'.</value>
+    <value>Operation not supported on JsonValue instance of 'JsonType.{0}' type.</value>
   </data>
   <data name="OperatorNotAllowedOnOperands" xml:space="preserve">
     <value>Operation '{0}' cannot be applied on operands of type '{1}' and '{2}'.</value>
   </data>
   <data name="OperatorNotDefinedForJsonType" xml:space="preserve">
-    <value>Operation '{0}' is not defined for JsonValue instances of JsonType '{1}'.</value>
+    <value>Operation '{0}' is not defined for JsonValue instances of 'JsonType.{1}' type.</value>
   </data>
   <data name="OverflowReadAs" xml:space="preserve">
     <value>Cannot cast JsonPrimitive value '{0}' as '{1}'. The value is either too large or too small for the specified CLR type.</value>

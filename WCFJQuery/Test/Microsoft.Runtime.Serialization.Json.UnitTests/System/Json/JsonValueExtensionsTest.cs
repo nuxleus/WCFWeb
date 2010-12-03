@@ -15,7 +15,9 @@ namespace Microsoft.ServiceModel.Web.UnitTests
     [TestClass]
     public class JsonValueExtesnsionsTest
     {
-        const string DynamicPropertyNotDefined = "'{0}' does not contain a definition for property '{1}'.";	
+        const string DynamicPropertyNotDefined = "'{0}' does not contain a definition for property '{1}'.";
+        const string OperationNotSupportedOnJsonTypeMsgFormat = "Operation not supported on JsonValue instance of 'JsonType.{0}' type.";
+
 
         [TestMethod()]
         public void CreateFromTypeTest()
@@ -365,15 +367,14 @@ namespace Microsoft.ServiceModel.Web.UnitTests
             JsonValue jp = AnyInstance.AnyJsonPrimitive;
             JsonValue jd = AnyInstance.DefaultJsonValue;
 
-            string errorMsgFormat = "Operation not supported on JsonValue instance of JsonType '{0}'.";
-            ExceptionTestHelper.ExpectException<NotSupportedException>(delegate { var ret = jd.ToObjectArray(); }, string.Format(errorMsgFormat, jd.JsonType));
-            ExceptionTestHelper.ExpectException<NotSupportedException>(delegate { var ret = jd.ToDictionary(); }, string.Format(errorMsgFormat, jd.JsonType));
+            ExceptionTestHelper.ExpectException<NotSupportedException>(delegate { var ret = jd.ToObjectArray(); }, string.Format(OperationNotSupportedOnJsonTypeMsgFormat, jd.JsonType));
+            ExceptionTestHelper.ExpectException<NotSupportedException>(delegate { var ret = jd.ToDictionary(); }, string.Format(OperationNotSupportedOnJsonTypeMsgFormat, jd.JsonType));
 
-            ExceptionTestHelper.ExpectException<NotSupportedException>(delegate { var ret = jp.ToObjectArray(); }, string.Format(errorMsgFormat, jp.JsonType));
-            ExceptionTestHelper.ExpectException<NotSupportedException>(delegate { var ret = jp.ToDictionary(); }, string.Format(errorMsgFormat, jp.JsonType));
+            ExceptionTestHelper.ExpectException<NotSupportedException>(delegate { var ret = jp.ToObjectArray(); }, string.Format(OperationNotSupportedOnJsonTypeMsgFormat, jp.JsonType));
+            ExceptionTestHelper.ExpectException<NotSupportedException>(delegate { var ret = jp.ToDictionary(); }, string.Format(OperationNotSupportedOnJsonTypeMsgFormat, jp.JsonType));
 
-            ExceptionTestHelper.ExpectException<NotSupportedException>(delegate { var ret = jo.ToObjectArray(); }, string.Format(errorMsgFormat, jo.JsonType));
-            ExceptionTestHelper.ExpectException<NotSupportedException>(delegate { var ret = ja.ToDictionary(); }, string.Format(errorMsgFormat, ja.JsonType));
+            ExceptionTestHelper.ExpectException<NotSupportedException>(delegate { var ret = jo.ToObjectArray(); }, string.Format(OperationNotSupportedOnJsonTypeMsgFormat, jo.JsonType));
+            ExceptionTestHelper.ExpectException<NotSupportedException>(delegate { var ret = ja.ToDictionary(); }, string.Format(OperationNotSupportedOnJsonTypeMsgFormat, ja.JsonType));
         }
 
         [TestMethod]

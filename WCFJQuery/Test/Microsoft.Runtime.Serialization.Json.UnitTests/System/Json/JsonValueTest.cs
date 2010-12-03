@@ -222,6 +222,41 @@
         }
 
         [TestMethod]
+        public void IEnumerableTest()
+        {
+            JsonValue target = AnyInstance.AnyJsonArray;
+
+            // Test IEnumerable<JsonValue> on JsonArray
+            int count = 0;
+
+            foreach (JsonValue value in ((JsonArray)target))
+            {
+                count++;
+                Assert.IsNotNull(value);
+            }
+            Assert.AreEqual<int>(target.Count, count);
+
+            // Test IEnumerable<KeyValuePair<string, JsonValue>> on JsonValue
+            count = 0;
+            foreach (KeyValuePair<string, JsonValue> pair in target)
+            {
+                count++;
+                int index = Int32.Parse(pair.Key);
+                Assert.AreSame(target[index], pair.Value);
+            }
+            Assert.AreEqual<int>(target.Count, count);
+
+            target = AnyInstance.AnyJsonObject;
+            count = 0;
+            foreach (KeyValuePair<string, JsonValue> pair in target)
+            {
+                count++;
+                Assert.AreSame(AnyInstance.AnyJsonObject[pair.Key], pair.Value);
+            }
+            Assert.AreEqual<int>(AnyInstance.AnyJsonObject.Count, count);
+        }
+
+        [TestMethod]
         public void GetJsonPrimitiveEnumeratorTest()
         {
             JsonValue target = AnyInstance.AnyJsonPrimitive;

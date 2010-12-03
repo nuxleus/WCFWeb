@@ -205,7 +205,7 @@ namespace System.Json {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Operation not supported on JsonValue instance of JsonType &apos;{0}&apos;..
+        ///   Looks up a localized string similar to Operation not supported on JsonValue instance of &apos;JsonType.{0}&apos; type..
         /// </summary>
         internal static string OperationNotSupportedOnJsonType {
             get {
@@ -223,7 +223,7 @@ namespace System.Json {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Operation &apos;{0}&apos; is not defined for JsonValue instances of JsonType &apos;{1}&apos;..
+        ///   Looks up a localized string similar to Operation &apos;{0}&apos; is not defined for JsonValue instances of &apos;JsonType.{1}&apos; type..
         /// </summary>
         internal static string OperatorNotDefinedForJsonType {
             get {
