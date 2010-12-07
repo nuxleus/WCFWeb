@@ -60,7 +60,7 @@ namespace ContactManager
         [WebInvoke(UriTemplate = "", Method = "POST")]
         public JsonValue Post(JsonValue contact)
         {
-            Contact added = contact.ReadAsComplex<Contact>();
+            Contact added = contact.ReadAsType<Contact>();
             
             using (var context = new ContactsDataContext(connectionString))
             {
@@ -76,7 +76,7 @@ namespace ContactManager
         public JsonValue Update(string id, JsonValue contact)
         {
             Contact original = this.GetType(id);
-            Contact updated = contact.ReadAsComplex<Contact>();
+            Contact updated = contact.ReadAsType<Contact>();
 
             using (var context = new ContactsDataContext(connectionString))
             {
