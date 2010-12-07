@@ -1,11 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalendarEntry", "CalendarEntry\CalendarEntry.csproj", "{375C3AB0-F37C-4F8E-9F04-2E70CED635C7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalendarEntry", "Scenarios\CalendarEntry\CalendarEntry.csproj", "{375C3AB0-F37C-4F8E-9F04-2E70CED635C7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContactManager", "ContactManager\ContactManager.csproj", "{696A7E32-E9D2-49D2-A52A-4B4DD0741B6F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContactManager", "Scenarios\ContactManager\ContactManager.csproj", "{696A7E32-E9D2-49D2-A52A-4B4DD0741B6F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeatherWidget", "WeatherWidget\WeatherWidget.csproj", "{8235DC35-C7EF-4E60-9EEB-750CBA9E6866}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeatherWidget", "Scenarios\WeatherWidget\WeatherWidget.csproj", "{8235DC35-C7EF-4E60-9EEB-750CBA9E6866}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scenarios", "Scenarios", "{B9E40B8C-B0B1-4A69-AEC2-92B0795C0D94}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Features", "Features", "{9E864485-A3DD-4AB2-9701-7A2694AB8905}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -28,5 +32,10 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{375C3AB0-F37C-4F8E-9F04-2E70CED635C7} = {B9E40B8C-B0B1-4A69-AEC2-92B0795C0D94}
+		{696A7E32-E9D2-49D2-A52A-4B4DD0741B6F} = {B9E40B8C-B0B1-4A69-AEC2-92B0795C0D94}
+		{8235DC35-C7EF-4E60-9EEB-750CBA9E6866} = {B9E40B8C-B0B1-4A69-AEC2-92B0795C0D94}
 	EndGlobalSection
 EndGlobal
