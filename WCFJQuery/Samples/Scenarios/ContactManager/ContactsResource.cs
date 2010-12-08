@@ -12,6 +12,7 @@ namespace ContactManager
     using System.ServiceModel;
     using System.ServiceModel.Activation;
     using System.ServiceModel.Web;
+    using System.Globalization;
 
     [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Allowed)]
     [ServiceContract]
@@ -19,7 +20,7 @@ namespace ContactManager
     {
         private static string connectionString = ConfigurationManager.ConnectionStrings["ContactManagerConnectionString"].ConnectionString;
 
-        private Contact GetType(string id)
+        private static Contact GetType(string id)
         {
             Contact result;
             using (var context = new ContactsDataContext(connectionString))
@@ -69,13 +70,13 @@ namespace ContactManager
                 context.Refresh(System.Data.Linq.RefreshMode.KeepCurrentValues, added);
             }
 
-            return this.Get(added.ContactID.ToString());
+            return this.Get(added.ContactID.ToString(CultureInfo.InvariantCulture));
         }
 
         [WebInvoke(UriTemplate = "{id}", Method = "PUT")]
         public JsonValue Update(string id, JsonValue contact)
         {
-            Contact original = this.GetType(id);
+            Contact original = GetType(id);
             Contact updated = contact.ReadAsType<Contact>();
 
             using (var context = new ContactsDataContext(connectionString))
@@ -90,7 +91,7 @@ namespace ContactManager
         [WebInvoke(UriTemplate = "{id}", Method = "DELETE")]
         public JsonValue Delete(string id)
         {
-            Contact deleted = this.GetType(id);
+            Contact deleted = GetType(id);
 
             using (var context = new ContactsDataContext(connectionString))
             {
