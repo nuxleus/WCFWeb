@@ -5,6 +5,7 @@
 namespace ContactManager
 {
     using System.Configuration;
+    using System.Globalization;
     using System.Json;
     using System.Linq;
     using System.Net;
@@ -12,29 +13,12 @@ namespace ContactManager
     using System.ServiceModel;
     using System.ServiceModel.Activation;
     using System.ServiceModel.Web;
-    using System.Globalization;
 
     [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Allowed)]
     [ServiceContract]
     public class ContactsResource
     {
         private static string connectionString = ConfigurationManager.ConnectionStrings["ContactManagerConnectionString"].ConnectionString;
-
-        private static Contact GetType(string id)
-        {
-            Contact result;
-            using (var context = new ContactsDataContext(connectionString))
-            {
-                result = context.Contacts.Where<Contact>(x => x.ContactID == int.Parse(id)).FirstOrDefault();
-            }
-
-            if (result == null)
-            {
-                throw new WebFaultException<string>("Contact not found", HttpStatusCode.NotFound);
-            }
-
-            return result;
-        }
 
         [WebGet(UriTemplate = "{id}")]
         public JsonValue Get(string id)
@@ -50,11 +34,16 @@ namespace ContactManager
         {
             using (var context = new ContactsDataContext(connectionString))
             {
+                // For some reason a lambda doesn't work here but a delegate does
                 var result = context.Contacts.OrderBy<Contact, string>(x => x.Name).Select<Contact, JsonObject>(
-                    // For some reason a lambda doesn't work here but a delegate does
-                    delegate(Contact x) { return new JsonObject { { "Name", x.Name }, { "Self", "contacts/" + x.ContactID }}; });
+                    delegate(Contact x) 
+                    { 
+                        return new JsonObject 
+                        { 
+                            { "Name", x.Name }, { "Self", "contacts/" + x.ContactID }
+                        };
+                    });
                 return new JsonArray(result);
-
             }
         }
 
@@ -101,6 +90,22 @@ namespace ContactManager
             }
 
             return JsonValueExtensions.CreateFrom(deleted);
+        }
+
+        private static Contact GetType(string id)
+        {
+            Contact result;
+            using (var context = new ContactsDataContext(connectionString))
+            {
+                result = context.Contacts.Where<Contact>(x => x.ContactID == int.Parse(id)).FirstOrDefault();
+            }
+
+            if (result == null)
+            {
+                throw new WebFaultException<string>("Contact not found", HttpStatusCode.NotFound);
+            }
+
+            return result;
         }
     }
 }
