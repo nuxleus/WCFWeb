@@ -33,7 +33,7 @@ namespace System.Json
         /// <exception cref="System.ArgumentNullException">If items is null.</exception>
         /// <exception cref="System.ArgumentException">If any of the values in the collection
         /// is a <see cref="System.Json.JsonValue"/> with <see cref="System.Json.JsonValue.JsonType"/> property of
-        /// value <see cref="System.Json.JsonType">Default</see>.</exception>
+        /// value <see cref="F:System.Json.JsonType.Default"/>.</exception>
         public JsonObject(IEnumerable<KeyValuePair<string, JsonValue>> items)
         {
             this.AddRange(items);
@@ -45,7 +45,7 @@ namespace System.Json
         /// <param name="items">The <see cref="System.Collections.Generic.KeyValuePair{K, V}"/> objects used to initialize the key/value pairs.</param>
         /// <exception cref="System.ArgumentException">If any of the values in the collection
         /// is a <see cref="System.Json.JsonValue"/> with <see cref="System.Json.JsonValue.JsonType"/> property of
-        /// value <see cref="System.Json.JsonType">Default</see>.</exception>
+        /// value <see cref="F:System.Json.JsonType.Default"/>.</exception>
         public JsonObject(params KeyValuePair<string, JsonValue>[] items)
         {
             if (items != null)
@@ -56,7 +56,7 @@ namespace System.Json
 
         /// <summary>
         /// Gets the JSON type of this <see cref="System.Json.JsonObject"/>. The return value
-        /// is always <see cref="System.Json.JsonType">Object</see>.
+        /// is always <see cref="F:System.Json.JsonType.Object"/>.
         /// </summary>
         public override JsonType JsonType
         {
@@ -118,7 +118,7 @@ namespace System.Json
         /// <exception cref="System.ArgumentNullException">If key is null.</exception>
         /// <exception cref="System.ArgumentException">The property is set and the value is a
         /// <see cref="System.Json.JsonValue"/> with <see cref="System.Json.JsonValue.JsonType"/>
-        /// property of value <see cref="System.Json.JsonType">Default</see>.</exception>
+        /// property of value <see cref="F:System.Json.JsonType.Default"/>.</exception>
         public override JsonValue this[string key]
         {
             get
@@ -174,7 +174,7 @@ namespace System.Json
         /// <returns>If this instance contains the given key and the value corresponding to
         /// the key is not null, then it will return that value. Otherwise it will return a
         /// <see cref="System.Json.JsonValue"/> instance with <see cref="System.Json.JsonValue.JsonType"/>
-        /// equals to <see cref="System.Json.JsonType">Default</see>.</returns>
+        /// equals to <see cref="F:System.Json.JsonType.Default"/>.</returns>
         public override JsonValue ValueOrDefault(string key)
         {
             if (key != null && this.ContainsKey(key) && this[key] != null)
@@ -192,7 +192,7 @@ namespace System.Json
         /// <exception cref="System.ArgumentNullException">If items is null.</exception>
         /// <exception cref="System.ArgumentException">If the value of any of the items in the collection
         /// is a <see cref="System.Json.JsonValue"/> with <see cref="System.Json.JsonValue.JsonType"/> property of
-        /// value <see cref="System.Json.JsonType">Default</see>.</exception>
+        /// value <see cref="F:System.Json.JsonType.Default"/>.</exception>
         public void AddRange(IEnumerable<KeyValuePair<string, JsonValue>> items)
         {
             if (items == null)
@@ -226,7 +226,7 @@ namespace System.Json
         /// <param name="items">The array of key/value paris to be added to this instance.</param>
         /// <exception cref="System.ArgumentException">If the value of any of the items in the array
         /// is a <see cref="System.Json.JsonValue"/> with <see cref="System.Json.JsonValue.JsonType"/> property of
-        /// value <see cref="System.Json.JsonType">Default</see>.</exception>
+        /// value <see cref="F:System.Json.JsonType.Default"/>.</exception>
         public void AddRange(params KeyValuePair<string, JsonValue>[] items)
         {
             this.AddRange(items as IEnumerable<KeyValuePair<string, JsonValue>>);
@@ -244,7 +244,7 @@ namespace System.Json
         /// <param name="value">The <see cref="System.Json.JsonValue"/> for the element added.</param>
         /// <exception cref="System.ArgumentException">If the value is a <see cref="System.Json.JsonValue"/>
         /// with <see cref="System.Json.JsonValue.JsonType"/> property of
-        /// value <see cref="System.Json.JsonType">Default</see>.</exception>
+        /// value <see cref="F:System.Json.JsonType.Default"/>.</exception>
         public void Add(string key, JsonValue value)
         {
             if (value != null && value.JsonType == JsonType.Default)
@@ -263,7 +263,7 @@ namespace System.Json
         /// <param name="item">The key/value pair to be added.</param>
         /// <exception cref="System.ArgumentException">If the value of the pair is a
         /// <see cref="System.Json.JsonValue"/> with <see cref="System.Json.JsonValue.JsonType"/>
-        /// property of value <see cref="System.Json.JsonType">Default</see>.</exception>
+        /// property of value <see cref="F:System.Json.JsonType.Default"/>.</exception>
         public void Add(KeyValuePair<string, JsonValue> item)
         {
             this.Add(item.Key, item.Value);

@@ -31,7 +31,7 @@ namespace System.Json
         /// <exception cref="System.ArgumentNullException">If items is null.</exception>
         /// <exception cref="System.ArgumentException">If any of the items in the collection
         /// is a <see cref="System.Json.JsonValue"/> with <see cref="System.Json.JsonValue.JsonType"/> property of
-        /// value <see cref="System.Json.JsonType">Default</see>.</exception>
+        /// value <see cref="F:System.Json.JsonType.Default"/>.</exception>
         public JsonArray(IEnumerable<JsonValue> items)
         {
             this.AddRange(items);
@@ -44,7 +44,7 @@ namespace System.Json
         /// JavaScript Object Notation (JSON) array.</param>
         /// <exception cref="System.ArgumentException">If any of the items in the collection
         /// is a <see cref="System.Json.JsonValue"/> with <see cref="System.Json.JsonValue.JsonType"/> property of
-        /// value <see cref="System.Json.JsonType">Default</see>.</exception>
+        /// value <see cref="F:System.Json.JsonType.Default"/>.</exception>
         public JsonArray(params JsonValue[] items)
         {
             if (items != null)
@@ -55,7 +55,7 @@ namespace System.Json
 
         /// <summary>
         /// Gets the JSON type of this <see cref="System.Json.JsonArray"/>. The return value
-        /// is always <see cref="System.Json.JsonType">Array</see>.
+        /// is always <see cref="F:System.Json.JsonType.Array"/>.
         /// </summary>
         public override JsonType JsonType
         {
@@ -95,7 +95,7 @@ namespace System.Json
         /// <exception cref="System.ArgumentOutOfRangeException">If index is not a valid index for this array.</exception>
         /// <exception cref="System.ArgumentException">The property is set and the value is a
         /// <see cref="System.Json.JsonValue"/> with <see cref="System.Json.JsonValue.JsonType"/>
-        /// property of value <see cref="System.Json.JsonType">Default</see>.</exception>
+        /// property of value <see cref="F:System.Json.JsonType.Default"/>.</exception>
         public override JsonValue this[int index]
         {
             get
@@ -124,7 +124,7 @@ namespace System.Json
         /// <exception cref="System.ArgumentNullException">If items is null.</exception>
         /// <exception cref="System.ArgumentException">If any of the items in the collection
         /// is a <see cref="System.Json.JsonValue"/> with <see cref="System.Json.JsonValue.JsonType"/> property of
-        /// value <see cref="System.Json.JsonType">Default</see>.</exception>
+        /// value <see cref="F:System.Json.JsonType.Default"/>.</exception>
         public void AddRange(IEnumerable<JsonValue> items)
         {
             if (items == null)
@@ -160,7 +160,7 @@ namespace System.Json
         /// <exception cref="System.ArgumentNullException">If items is null.</exception>
         /// <exception cref="System.ArgumentException">If any of the items in the array
         /// is a <see cref="System.Json.JsonValue"/> with <see cref="System.Json.JsonValue.JsonType"/> property of
-        /// value <see cref="System.Json.JsonType">Default</see>.</exception>
+        /// value <see cref="F:System.Json.JsonType.Default"/>.</exception>
         public void AddRange(params JsonValue[] items)
         {
             this.AddRange(items as IEnumerable<JsonValue>);
@@ -187,7 +187,7 @@ namespace System.Json
         /// the size of the array.</exception>
         /// <exception cref="System.ArgumentException">If the object to insert has a
         /// <see cref="System.Json.JsonValue.JsonType"/> property of value
-        /// <see cref="System.Json.JsonType">Default</see>.</exception>
+        /// <see cref="F:System.Json.JsonType.Default"/>.</exception>
         public void Insert(int index, JsonValue item)
         {
             if (item != null && item.JsonType == JsonType.Default)
@@ -220,7 +220,7 @@ namespace System.Json
         /// <param name="item">The <see cref="System.Json.JsonValue"/> object to add.</param>
         /// <exception cref="System.ArgumentException">If the object to add has a
         /// <see cref="System.Json.JsonValue.JsonType"/> property of value
-        /// <see cref="System.Json.JsonType">Default</see>.</exception>
+        /// <see cref="F:System.Json.JsonType.Default"/>.</exception>
         public void Add(JsonValue item)
         {
             if (item != null && item.JsonType == JsonType.Default)
@@ -312,7 +312,7 @@ namespace System.Json
         /// <returns>If the index is within the array bounds and the value corresponding to the
         /// index is not null, then it will return that value. Otherwise it will return a
         /// <see cref="System.Json.JsonValue"/> instance with <see cref="System.Json.JsonValue.JsonType"/>
-        /// equals to <see cref="System.Json.JsonType">Default</see>.</returns>
+        /// equals to <see cref="F:System.Json.JsonType.Default"/>.</returns>
         public override JsonValue ValueOrDefault(int index)
         {
             if (index >= 0 && index < this.Count && this[index] != null)

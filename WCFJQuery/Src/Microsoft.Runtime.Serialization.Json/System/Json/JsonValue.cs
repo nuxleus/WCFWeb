@@ -887,7 +887,7 @@ namespace System.Json
         /// <returns>If this is an instance of <see cref="System.Json.JsonObject"/>, it contains
         /// the given key and the value corresponding to the key is not null, then it will return that value.
         /// Otherwise it will return a <see cref="System.Json.JsonValue"/> instance with <see cref="System.Json.JsonValue.JsonType"/>
-        /// equals to <see cref="System.Json.JsonType">Default</see>.</returns>
+        /// equals to <see cref="F:System.Json.JsonType.Default"/>.</returns>
         [EditorBrowsable(EditorBrowsableState.Never)]
         public virtual JsonValue GetValue(string key)
         {
@@ -901,7 +901,7 @@ namespace System.Json
         /// <returns>If this is an instance of <see cref="System.Json.JsonArray"/>, the index is within the array
         /// bounds, and the value corresponding to the index is not null, then it will return that value.
         /// Otherwise it will return a <see cref="System.Json.JsonValue"/> instance with <see cref="System.Json.JsonValue.JsonType"/>
-        /// equals to <see cref="System.Json.JsonType">Default</see>.</returns>
+        /// equals to <see cref="F:System.Json.JsonType.Default"/>.</returns>
         [EditorBrowsable(EditorBrowsableState.Never)]
         public virtual JsonValue GetValue(int index)
         {
@@ -943,7 +943,7 @@ namespace System.Json
         /// <returns>If this is an instance of <see cref="System.Json.JsonObject"/>, it contains
         /// the given key and the value corresponding to the key is not null, then it will return that value.
         /// Otherwise it will return a <see cref="System.Json.JsonValue"/> instance with <see cref="System.Json.JsonValue.JsonType"/>
-        /// equals to <see cref="System.Json.JsonType">Default</see>.</returns>
+        /// equals to <see cref="F:System.Json.JsonType.Default"/>.</returns>
         public virtual JsonValue ValueOrDefault(string key)
         {
             return JsonValue.DefaultInstance;
@@ -956,7 +956,7 @@ namespace System.Json
         /// <returns>If this is an instance of <see cref="System.Json.JsonArray"/>, the index is within the array
         /// bounds, and the value corresponding to the index is not null, then it will return that value.
         /// Otherwise it will return a <see cref="System.Json.JsonValue"/> instance with <see cref="System.Json.JsonValue.JsonType"/>
-        /// equals to <see cref="System.Json.JsonType">Default</see>.</returns>
+        /// equals to <see cref="F:System.Json.JsonType.Default"/>.</returns>
         public virtual JsonValue ValueOrDefault(int index)
         {
             return JsonValue.DefaultInstance;
