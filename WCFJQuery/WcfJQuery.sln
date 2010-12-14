@@ -39,6 +39,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Runtime.Serializa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Runtime.Serialization.Json.FunctionalTest", "test\Microsoft.Runtime.Serialization.Json.FunctionalTests\Microsoft.Runtime.Serialization.Json.FunctionalTest.csproj", "{5CC8981A-2B63-46A1-8829-819272C2ABE9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonValueEvents", "Samples\Features\JsonValueEvents\JsonValueEvents.csproj", "{5687BD3D-297C-4705-AE7C-387AA9DB2E9F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -149,6 +151,16 @@ Global
 		{5CC8981A-2B63-46A1-8829-819272C2ABE9}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{5CC8981A-2B63-46A1-8829-819272C2ABE9}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{5CC8981A-2B63-46A1-8829-819272C2ABE9}.Release|x86.ActiveCfg = Release|Any CPU
+		{5687BD3D-297C-4705-AE7C-387AA9DB2E9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5687BD3D-297C-4705-AE7C-387AA9DB2E9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5687BD3D-297C-4705-AE7C-387AA9DB2E9F}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{5687BD3D-297C-4705-AE7C-387AA9DB2E9F}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{5687BD3D-297C-4705-AE7C-387AA9DB2E9F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5687BD3D-297C-4705-AE7C-387AA9DB2E9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5687BD3D-297C-4705-AE7C-387AA9DB2E9F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5687BD3D-297C-4705-AE7C-387AA9DB2E9F}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{5687BD3D-297C-4705-AE7C-387AA9DB2E9F}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{5687BD3D-297C-4705-AE7C-387AA9DB2E9F}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -164,5 +176,6 @@ Global
 		{375C3AB0-F37C-4F8E-9F04-2E70CED635C7} = {40E1A260-C455-4552-870F-96E31E8B2D75}
 		{696A7E32-E9D2-49D2-A52A-4B4DD0741B6F} = {40E1A260-C455-4552-870F-96E31E8B2D75}
 		{8235DC35-C7EF-4E60-9EEB-750CBA9E6866} = {40E1A260-C455-4552-870F-96E31E8B2D75}
+		{5687BD3D-297C-4705-AE7C-387AA9DB2E9F} = {40E1A260-C455-4552-870F-96E31E8B2D75}
 	EndGlobalSection
 EndGlobal
