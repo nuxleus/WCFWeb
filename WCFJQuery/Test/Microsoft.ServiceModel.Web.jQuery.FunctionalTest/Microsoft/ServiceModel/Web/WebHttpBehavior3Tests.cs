@@ -8,6 +8,9 @@
     using System.Text;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+    /// <summary>
+    /// Tests for endpoints created using the <see cref="WebHttpBehavior3"/> behavior.
+    /// </summary>
     [TestClass]
     public class WebHttpBehavior3Tests
     {
@@ -17,6 +20,9 @@
         static readonly Encoding UTF8Encoding = new UTF8Encoding(false);
         static WebServiceHost3 jQueryServiceHost;
 
+        /// <summary>
+        /// Callback method, called in the beginning of the test to set up the service used for tests.
+        /// </summary>
         [TestInitialize]
         public void MyTestInitialize()
         {
@@ -24,6 +30,9 @@
             jQueryServiceHost.Open();
         }
 
+        /// <summary>
+        /// Callback method, called in the end of the test to tear down the service used for tests.
+        /// </summary>
         [TestCleanup]
         public void MyClassCleanup()
         {
@@ -40,12 +49,18 @@
             }
         }
 
+        /// <summary>
+        /// Simple test for POST calls.
+        /// </summary>
         [TestMethod]
         public void WebInvokeTest()
         {
             WebInvokeTestWithEncoding(UTF8Encoding, FormUrlEncodedContentType);
         }
 
+        /// <summary>
+        /// Simple test for POST calls, with UTF-16LE-encoded body.
+        /// </summary>
         [TestMethod]
         public void WebInvokeTestUTF16()
         {
@@ -53,6 +68,9 @@
             WebInvokeTestWithEncoding(encoding, FormUrlEncodedContentType + "; charset=utf-16");
         }
 
+        /// <summary>
+        /// Simple test for POST calls, with UTF-16BE-encoded body.
+        /// </summary>
         [TestMethod]
         public void WebInvokeTestUTF16BigEndian()
         {
@@ -60,6 +78,9 @@
             WebInvokeTestWithEncoding(encoding, FormUrlEncodedContentType + "; charset=utf-16BE");
         }
 
+        /// <summary>
+        /// Simple test for GET calls.
+        /// </summary>
         [TestMethod]
         public void WebGetTest()
         {
@@ -72,24 +93,36 @@
             WebHttpBehavior3Tests.Test("GET", Endpoint + queryString, null, null, HttpStatusCode.OK, ApplicationJsonContentTypeWithCharset, expectedReturn);
         }
 
+        /// <summary>
+        /// Simple test for GET calls for operations which use the operation context.
+        /// </summary>
         [TestMethod]
         public void WebGetWithWebOperationContext()
         {
             WebHttpBehavior3Tests.Test("GET", Endpoint + "/GetSettingHttpHeaders?X-Foo=something", null, null, HttpStatusCode.OK, ApplicationJsonContentTypeWithCharset, "{\"X-Foo\":\"something\"}");
         }
 
+        /// <summary>
+        /// Simple test for POST calls for operations which use the operation context.
+        /// </summary>
         [TestMethod]
         public void WebInvokeWithWebOperationContext()
         {
             WebHttpBehavior3Tests.Test("POST", Endpoint + "/PostSettingHttpHeaders", FormUrlEncodedContentType, "Cache-Control=no-cache", HttpStatusCode.OK, ApplicationJsonContentTypeWithCharset, "{\"Cache-Control\":\"no-cache\"}");
         }
 
+        /// <summary>
+        /// Simple test for POST calls for operations which use the operation context to change the response content-type.
+        /// </summary>
         [TestMethod]
         public void WebInvokeWithWebOperationContextChangingContentType()
         {
             WebHttpBehavior3Tests.Test("POST", Endpoint + "/PostSettingHttpHeaders", FormUrlEncodedContentType, "Content-Type=text%2Fplain", HttpStatusCode.OK, "text/plain", "{\"Content-Type\":\"text\\/plain\"}");
         }
 
+        /// <summary>
+        /// Simple test to ensure that the <see cref="WebHttpBehavior3"/> can be used for parameters other than <see cref="JsonValue"/>.
+        /// </summary>
         [TestMethod]
         public void TestJsonInputWithNoJsonValue()
         {
@@ -104,6 +137,9 @@
             WebHttpBehavior3Tests.Test("POST", Endpoint + "/AddXml", "application/json", json, HttpStatusCode.OK, ApplicationJsonContentTypeWithCharset, expectedJson);
         }
 
+        /// <summary>
+        /// Simple test to ensure that the <see cref="WebHttpBehavior3"/> can be used for parameters other than <see cref="JsonValue"/>.
+        /// </summary>
         [TestMethod]
         public void TestXmlInputWithNoJsonValue()
         {

@@ -349,7 +349,7 @@
             target.Add("", item4);
 
             string expected = string.Format(CultureInfo.InvariantCulture, "{{\"item1\":{0},\"item2\":null,\"item3\":{1},\"\":{2}}}", item1, item3, item4);
-            Assert.AreEqual(expected, target.ToString());
+            Assert.AreEqual<string>(expected, target.ToString());
 
             string json = "{\r\n  \"item1\": \"hello\",\r\n  \"item2\": null,\r\n  \"item3\": [\r\n    1,\r\n    2,\r\n    3\r\n  ],\r\n  \"\": \"notnull\"\r\n}";
             target = JsonValue.Parse(json) as JsonObject;

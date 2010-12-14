@@ -5,9 +5,15 @@
     using System.Json;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+    /// <summary>
+    /// Tests for parsing form-url-encoded data.
+    /// </summary>
     [TestClass]
     public class FormUrlEncodedTests
     {
+        /// <summary>
+        /// Tests for parsing form-urlencoded data originated from JS primitives.
+        /// </summary>
         [TestMethod]
         public void TestJsonPrimitive()
         {
@@ -18,16 +24,22 @@
             this.TestFormEncodedParsing("%2fabc%2f", @"{""\/abc\/"":null}");
         }
 
+        /// <summary>
+        /// Negative tests for parsing form-urlencoded data originated from JS primitives.
+        /// </summary>
         [TestMethod]
         public void TestJsonPrimitiveNegative()
         {
-            this.ExpectException<ArgumentException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded("a[b]=1&a=2"));
-            this.ExpectException<ArgumentException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded("a=2&a[b]=1"));
-            this.ExpectException<ArgumentException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded("[]=1"));
-            this.ExpectException<ArgumentNullException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded((string)null));
+            this.ExpectException<ArgumentException>(() => ParseFormUrlEncoded("a[b]=1&a=2"));
+            this.ExpectException<ArgumentException>(() => ParseFormUrlEncoded("a=2&a[b]=1"));
+            this.ExpectException<ArgumentException>(() => ParseFormUrlEncoded("[]=1"));
+            this.ExpectException<ArgumentNullException>(() => ParseFormUrlEncoded((string)null));
             this.ExpectException<ArgumentNullException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded((NameValueCollection)null));
         }
 
+        /// <summary>
+        /// Tests for parsing form-urlencoded data originated from JS objects.
+        /// </summary>
         [TestMethod]
         public void TestObjects()
         {
@@ -37,6 +49,9 @@
             this.TestFormEncodedParsing("1=1", "{\"1\":\"1\"}");
         }
 
+        /// <summary>
+        /// Tests for parsing form-urlencoded data originated from JS arrays.
+        /// </summary>
         [TestMethod]
         public void TestArray()
         {
@@ -54,6 +69,9 @@
             this.TestFormEncodedParsing("z%5B0%5D%5B%5D=9&z%5B0%5D%5B%5D=true&z%5B1%5D%5B%5D=undefined&z%5B1%5D%5B%5D=null", @"{""z"":[[""9"",""true""],[""undefined"",""null""]]}");
         }
 
+        /// <summary>
+        /// Tests for parsing form-urlencoded data originated from JS arrays, using the jQuery 1.3 format (no []'s).
+        /// </summary>
         [TestMethod]
         public void TestArrayCompat()
         {
@@ -62,12 +80,18 @@
             this.TestFormEncodedParsing("z=9&z=true&z=undefined&z=null&a=hello", @"{""z"":[""9"",""true"",""undefined"",""null""],""a"":""hello""}");
         }
 
+        /// <summary>
+        /// Negative tests for parsing form-urlencoded data originated from JS arrays.
+        /// </summary>
         [TestMethod]
         public void TestArrayCompatNegative()
         {
-            this.ExpectException<ArgumentException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded("a[z]=2&a[z]=3"), "a[z]");
+            this.ExpectException<ArgumentException>(() => ParseFormUrlEncoded("a[z]=2&a[z]=3"), "a[z]");
         }
 
+        /// <summary>
+        /// Tests for form-urlencoded data originated from sparse JS arrays.
+        /// </summary>
         [TestMethod]
         public void TestArraySparse()
         {
@@ -83,17 +107,23 @@
             this.TestFormEncodedParsing("a[0][]=2&a[0][]=3&a[2][]=1", "{\"a\":{\"0\":[\"2\",\"3\"],\"2\":[\"1\"]}}");
         }
 
+        /// <summary>
+        /// Negative tests for parsing form-urlencoded arrays.
+        /// </summary>
         [TestMethod]
         public void TestArrayIndexNegative()
         {
-            this.ExpectException<ArgumentException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded("a[x]=2&a[x][]=3"), "a[x]");
-            this.ExpectException<ArgumentException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded("a[x][]=1&a[x][0]=2"), "a[x][0]");
-            this.ExpectException<ArgumentException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded("a[x][]=1&a[x][1]=2"), "a[x][1]");
-            this.ExpectException<ArgumentException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded("a[x][0]=1&a[x][]=2"), "a[x][]");
-            this.ExpectException<ArgumentException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded("a[][]=0"), "a[]");
-            this.ExpectException<ArgumentException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded("a[][x]=0"), "a[]");
+            this.ExpectException<ArgumentException>(() => ParseFormUrlEncoded("a[x]=2&a[x][]=3"), "a[x]");
+            this.ExpectException<ArgumentException>(() => ParseFormUrlEncoded("a[x][]=1&a[x][0]=2"), "a[x][0]");
+            this.ExpectException<ArgumentException>(() => ParseFormUrlEncoded("a[x][]=1&a[x][1]=2"), "a[x][1]");
+            this.ExpectException<ArgumentException>(() => ParseFormUrlEncoded("a[x][0]=1&a[x][]=2"), "a[x][]");
+            this.ExpectException<ArgumentException>(() => ParseFormUrlEncoded("a[][]=0"), "a[]");
+            this.ExpectException<ArgumentException>(() => ParseFormUrlEncoded("a[][x]=0"), "a[]");
         }
 
+        /// <summary>
+        /// Tests for parsing complex object graphs form-urlencoded.
+        /// </summary>
         [TestMethod]
         public void TestObject()
         {
@@ -127,6 +157,9 @@
             this.TestFormEncodedParsing(encoded, resultStr);
         }
 
+        /// <summary>
+        /// Tests for parsing form-urlencoded data with encoded names.
+        /// </summary>
         [TestMethod]
         public void TestEncodedName()
         {
@@ -143,14 +176,22 @@
             this.TestFormEncodedParsing(encoded, resultStr);
         }
 
+        /// <summary>
+        /// Tests for malformed form-urlencoded data.
+        /// </summary>
         [TestMethod]
         public void TestNegative()
         {
-            this.ExpectException<ArgumentException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded("a[b=2"), "1");
-            this.ExpectException<ArgumentException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded("a[[b]=2"), "2");
-            this.ExpectException<ArgumentException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded("a[b]]=2"), "4");
-            this.ExpectException<ArgumentException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded("&some+thing=10&%E5%B8%A6%E4%B8%89%E4%B8%AA%E8%A1%A8=bar"));
-            this.ExpectException<ArgumentException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded("some+thing=10&%E5%B8%A6%E4%B8%89%E4%B8%AA%E8%A1%A8=bar&"));
+            this.ExpectException<ArgumentException>(() => ParseFormUrlEncoded("a[b=2"), "1");
+            this.ExpectException<ArgumentException>(() => ParseFormUrlEncoded("a[[b]=2"), "2");
+            this.ExpectException<ArgumentException>(() => ParseFormUrlEncoded("a[b]]=2"), "4");
+            this.ExpectException<ArgumentException>(() => ParseFormUrlEncoded("&some+thing=10&%E5%B8%A6%E4%B8%89%E4%B8%AA%E8%A1%A8=bar"));
+            this.ExpectException<ArgumentException>(() => ParseFormUrlEncoded("some+thing=10&%E5%B8%A6%E4%B8%89%E4%B8%AA%E8%A1%A8=bar&"));
+        }
+
+        private static JsonObject ParseFormUrlEncoded(string data)
+        {
+            return FormUrlEncodedExtensions.ParseFormUrlEncoded(data);
         }
 
         void TestFormEncodedParsing(string encoded, string expectedResult)

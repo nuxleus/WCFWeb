@@ -18,7 +18,7 @@ namespace System.Json
         Justification = "JsonPrimitive does not represent a collection.")]
     public sealed class JsonPrimitive : JsonValue
     {
-        private const string DateTimeIsoFormat = "yyyy-MM-ddTHH:mm:ss.fffK";
+        internal const string DateTimeIsoFormat = "yyyy-MM-ddTHH:mm:ss.fffK";
         private static readonly string[] JSDateOrTimeLocalFormats = new string[] { "yyyy-MM-dd", "HH:mm:ss", "HH:mm", "yyyy-MM-ddTHH:mm:ss" };
         private static readonly string[] JSDateUtcFormats = { @"ddd, d MMM yyyy HH:mm:ss \U\T\C", @"ddd, d MMM yyyy HH:mm:ss \G\M\T" };
         private static readonly string[] JSDateWithTimezoneFormats = { "yyyy-MM-ddTHH:mm:ssK", DateTimeIsoFormat, "yyyy-MM-ddTHH:mm:sszzz", @"ddd, d MMM yyyy HH:mm:ss zzz" };

@@ -211,6 +211,7 @@
 
             foreach (string json in jsonValues)
             {
+                Log.Info("Testing unbalanced JSON: {0}", json);
                 ExpectException<FormatException>(() => JsonValue.Parse(json));
             }
         }

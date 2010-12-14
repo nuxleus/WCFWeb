@@ -231,19 +231,22 @@
 
             foreach (JsonValue value in ((JsonArray)target))
             {
+                Assert.AreSame(target[count], value);
                 count++;
-                Assert.IsNotNull(value);
             }
+
             Assert.AreEqual<int>(target.Count, count);
 
             // Test IEnumerable<KeyValuePair<string, JsonValue>> on JsonValue
             count = 0;
             foreach (KeyValuePair<string, JsonValue> pair in target)
             {
-                count++;
                 int index = Int32.Parse(pair.Key);
+                Assert.AreEqual(count, index);
                 Assert.AreSame(target[index], pair.Value);
+                count++;
             }
+
             Assert.AreEqual<int>(target.Count, count);
 
             target = AnyInstance.AnyJsonObject;

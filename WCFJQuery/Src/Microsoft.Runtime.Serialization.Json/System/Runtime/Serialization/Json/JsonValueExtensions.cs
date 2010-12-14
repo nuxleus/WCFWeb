@@ -222,15 +222,15 @@ namespace System.Runtime.Serialization.Json
 
             if (type == typeof(object[]) || type == typeof(Dictionary<string, object>))
             {
-                if (JsonValueExtensions.CanConvertToClrCollection(jsonValue, type))
-                {
-                    value = JsonValueExtensions.ToClrCollection(jsonValue, type);
-                    return true;
-                }
-                else
+                if (!JsonValueExtensions.CanConvertToClrCollection(jsonValue, type))
                 {
                     value = null;
                     return false;
+                }
+                else
+                {
+                    value = JsonValueExtensions.ToClrCollection(jsonValue, type);
+                    return true;
                 }
             }
 

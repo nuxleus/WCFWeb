@@ -22,8 +22,8 @@ namespace System.Json
         private static readonly MethodInfo SetValueByIndexMethodInfo = typeof(JsonValue).GetMethod("SetValue", new Type[] { typeof(int), typeof(object) });
         private static readonly MethodInfo SetValueByKeyMethodInfo = typeof(JsonValue).GetMethod("SetValue", new Type[] { typeof(string), typeof(object) });
         private static readonly MethodInfo CastValueMethodInfo = typeof(JsonValue).GetMethod("CastValue", new Type[] { typeof(JsonValue) });
-        private static readonly MethodInfo ReadAsMethodInfo = typeof(JsonValue).GetMethod("ReadAs", new Type[] { typeof(Type) });
         private static readonly MethodInfo ChangeTypeMethodInfo = typeof(Convert).GetMethod("ChangeType", new Type[] { typeof(object), typeof(Type) });
+        private static readonly MethodInfo ReadAsMethodInfo = typeof(JsonValue).GetMethod("ReadAs", new Type[] { typeof(Type) });
 
         /// <summary>
         /// Class constructor.

@@ -26,7 +26,9 @@ namespace System.Json
     public class JsonValue : IEnumerable<KeyValuePair<string, JsonValue>>, IDynamicMetaObjectProvider
     {
         private static object lockKey = new object();
-        private static JsonValue defaultInstance;
+
+        // Double-checked locking pattern requires volatile for read/write synchronization
+        private static volatile JsonValue defaultInstance;
         private int changingListenersCount = 0;
         private int changedListenersCount = 0;
 

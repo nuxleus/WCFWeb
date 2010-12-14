@@ -1,5 +1,4 @@
-﻿
-namespace Microsoft.ServiceModel.Web.UnitTests
+﻿namespace Microsoft.ServiceModel.Web.UnitTests
 {
     using System;
     using System.Collections;
@@ -297,6 +296,41 @@ namespace Microsoft.ServiceModel.Web.UnitTests
         }
 
         [TestMethod]
+        public void SaveExtensionsOnDynamicTest()
+        {
+            string json = "{\"a\":123,\"b\":[false,null,12.34]}";
+            string expectedJxml = "<root type=\"object\"><a type=\"number\">123</a><b type=\"array\"><item type=\"boolean\">false</item><item type=\"null\"/><item type=\"number\">12.34</item></b></root>";
+            dynamic target = JsonValue.Parse(json);
+            using (MemoryStream ms = new MemoryStream())
+            {
+                using (XmlDictionaryWriter xdw = XmlDictionaryWriter.CreateTextWriter(ms))
+                {
+                    target.Save(xdw);
+                    xdw.Flush();
+                    string saved = Encoding.UTF8.GetString(ms.ToArray());
+                    Assert.AreEqual(expectedJxml, saved);
+                }
+            }
+        }
+
+        [TestMethod]
+        public void ReadAsExtensionsOnDynamicTest()
+        {
+            dynamic jv = JsonValueExtensions.CreateFrom(AnyInstance.AnyPerson);
+            bool success;
+            object obj;
+
+            success = jv.TryReadAsType(typeof(Person), out obj);
+            Assert.IsTrue(success);
+            Assert.IsNotNull(obj);
+            Assert.AreEqual<string>(AnyInstance.AnyPerson.ToString(), obj.ToString());
+
+            obj = jv.ReadAsType(typeof(Person));
+            Assert.IsNotNull(obj);
+            Assert.AreEqual<string>(AnyInstance.AnyPerson.ToString(), obj.ToString());
+        }
+
+        [TestMethod]
         public void ToCollectionTest()
         {
             JsonValue target;
@@ -375,41 +409,6 @@ namespace Microsoft.ServiceModel.Web.UnitTests
 
             ExceptionTestHelper.ExpectException<NotSupportedException>(delegate { var ret = jo.ToObjectArray(); }, string.Format(OperationNotSupportedOnJsonTypeMsgFormat, jo.JsonType));
             ExceptionTestHelper.ExpectException<NotSupportedException>(delegate { var ret = ja.ToDictionary(); }, string.Format(OperationNotSupportedOnJsonTypeMsgFormat, ja.JsonType));
-        }
-
-        [TestMethod]
-        public void SaveExtensionsOnDynamicTest()
-        {
-            string json = "{\"a\":123,\"b\":[false,null,12.34]}";
-            string expectedJxml = "<root type=\"object\"><a type=\"number\">123</a><b type=\"array\"><item type=\"boolean\">false</item><item type=\"null\"/><item type=\"number\">12.34</item></b></root>";
-            dynamic target = JsonValue.Parse(json);
-            using (MemoryStream ms = new MemoryStream())
-            {
-                using (XmlDictionaryWriter xdw = XmlDictionaryWriter.CreateTextWriter(ms))
-                {
-                    target.Save(xdw);
-                    xdw.Flush();
-                    string saved = Encoding.UTF8.GetString(ms.ToArray());
-                    Assert.AreEqual(expectedJxml, saved);
-                }
-            }
-        }
-
-        [TestMethod]
-        public void ReadAsExtensionsOnDynamicTest()
-        {
-            dynamic jv = JsonValueExtensions.CreateFrom(AnyInstance.AnyPerson);
-            bool success;
-            object obj;
-
-            success = jv.TryReadAsType(typeof(Person), out obj);
-            Assert.IsTrue(success);
-            Assert.IsNotNull(obj);
-            Assert.AreEqual<string>(AnyInstance.AnyPerson.ToString(), obj.ToString());
-
-            obj = jv.ReadAsType(typeof(Person));
-            Assert.IsNotNull(obj);
-            Assert.AreEqual<string>(AnyInstance.AnyPerson.ToString(), obj.ToString());
         }
 
         // 195843 JsonValue to support generic extension methods defined in JsonValueExtensions.
