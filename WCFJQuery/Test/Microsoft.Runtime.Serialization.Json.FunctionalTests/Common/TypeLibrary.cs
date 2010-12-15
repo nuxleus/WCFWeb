@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Runtime.Serialization;
+using System.Text;
 using Microsoft.Silverlight.Cdf.Test.Common.Utility;
 
 namespace Microsoft.ServiceModel.Web.Test.Common
@@ -246,6 +248,15 @@ namespace Microsoft.ServiceModel.Web.Test.Common
             int result = this.Member0.GetHashCode();
             return result;
         }
+
+        /// <summary>
+        /// Returns a debug representation for this instance.
+        /// </summary>
+        /// <returns>A debug representation for this instance.</returns>
+        public override string ToString()
+        {
+            return string.Format(CultureInfo.InvariantCulture, "DCType_1<Member0={0:X2}>", (int)this.Member0);
+        }
     }
 
     /// <summary>
@@ -324,6 +335,15 @@ namespace Microsoft.ServiceModel.Web.Test.Common
             result ^= this.Member0.GetHashCode();
             result ^= (this.Member1 == null) ? 0 : this.Member1.GetHashCode();
             return result;
+        }
+
+        /// <summary>
+        /// Returns a debug representation for this instance.
+        /// </summary>
+        /// <returns>A debug representation for this instance.</returns>
+        public override string ToString()
+        {
+            return string.Format(CultureInfo.InvariantCulture, "SerType_4<Member0=(char){0},Member1={1}>", (int)this.Member0, Util.EscapeString(this.Member1));
         }
     }
 
@@ -1494,6 +1514,15 @@ namespace Microsoft.ServiceModel.Web.Test.Common
         {
             return new DerivedType(rndGen);
         }
+
+        /// <summary>
+        /// Returns a debug representation for this instance.
+        /// </summary>
+        /// <returns>A debug representation for this instance.</returns>
+        public override string ToString()
+        {
+            return string.Format(CultureInfo.InvariantCulture, "BaseType<Member0={0},Member1={1}>", Util.EscapeString(this.Member0), Util.EscapeString(this.Member1));
+        }
     }
 
     /// <summary>
@@ -1553,6 +1582,20 @@ namespace Microsoft.ServiceModel.Web.Test.Common
             result ^= this.Member2 == null ? 0 : this.Member2.GetHashCode();
             result ^= this.Member3.GetHashCode();
             return result;
+        }
+
+        /// <summary>
+        /// Returns a debug representation for this instance.
+        /// </summary>
+        /// <returns>A debug representation for this instance.</returns>
+        public override string ToString()
+        {
+            return string.Format(
+                CultureInfo.InvariantCulture,
+                "DerivedType<Base={0},Member2={1},Member3={2}>",
+                base.ToString(),
+                Util.EscapeString(this.Member2),
+                Util.EscapeString(this.Member3));
         }
     }
 
@@ -1684,6 +1727,81 @@ namespace Microsoft.ServiceModel.Web.Test.Common
             result ^= this.DictionaryOfInterface == null ? 0 : Util.ComputeArrayHashCode(new List<string>(this.DictionaryOfInterface.Keys).ToArray());
             result ^= this.DictionaryOfInterface == null ? 0 : Util.ComputeArrayHashCode(new List<IEmptyInterface>(this.DictionaryOfInterface.Values).ToArray());
             return result;
+        }
+
+        /// <summary>
+        /// Returns a debug representation for this instance.
+        /// </summary>
+        /// <returns>A debug representation for this instance.</returns>
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("CollectionsWithPolymorphicMember<");
+            PrintList(sb, "ListOfBase", this.ListOfBase);
+            sb.Append(", ");
+            PrintList(sb, "ListOfInterface", this.ListOfBase);
+            sb.Append(", ");
+            PrintDictionary(sb, "DictionaryOfBase", this.DictionaryOfBase);
+            sb.Append(", ");
+            PrintDictionary(sb, "DictionaryOfInterface", this.DictionaryOfInterface);
+            sb.Append('>');
+            return sb.ToString();
+        }
+
+        private static void PrintList<T>(StringBuilder sb, string name, List<T> list)
+        {
+            sb.Append(name);
+            sb.Append('=');
+            if (list == null)
+            {
+                sb.Append("<<null>>");
+            }
+            else
+            {
+                sb.Append('[');
+                for (int i = 0; i < list.Count; i++)
+                {
+                    if (i > 0)
+                    {
+                        sb.Append(',');
+                    }
+
+                    sb.Append(Util.EscapeString(list[i]));
+                }
+
+                sb.Append(']');
+            }
+        }
+
+        private static void PrintDictionary<T>(StringBuilder sb, string name, Dictionary<string, T> dict)
+        {
+            sb.Append(name);
+            sb.Append('=');
+            if (dict == null)
+            {
+                sb.Append("<<null>>");
+            }
+            else
+            {
+                sb.Append('{');
+                bool first = true;
+                foreach (string key in dict.Keys)
+                {
+                    if (first)
+                    {
+                        first = false;
+                    }
+                    else
+                    {
+                        sb.Append(',');
+                    }
+
+                    sb.AppendFormat("\"{0}\":", Util.EscapeString(key));
+                    sb.Append(Util.EscapeString(dict[key]));
+                }
+
+                sb.Append('}');
+            }
         }
     }
 

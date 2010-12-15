@@ -158,6 +158,33 @@
             return result;
         }
 
+        public static string EscapeString(object obj)
+        {
+            StringBuilder sb = new StringBuilder();
+            if (obj == null)
+            {
+                return "<<null>>";
+            }
+            else
+            {
+                string str = obj.ToString();
+                for (int i = 0; i < str.Length; i++)
+                {
+                    char c = str[i];
+                    if (c < ' ' || c > '~')
+                    {
+                        sb.AppendFormat("\\u{0:X4}", (int)c);
+                    }
+                    else
+                    {
+                        sb.Append(c);
+                    }
+                }
+            }
+
+            return sb.ToString();
+        }
+
         static object[] ToObjectArray(IEnumerable enumerable)
         {
             List<object> result = new List<object>();
