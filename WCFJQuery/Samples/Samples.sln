@@ -13,6 +13,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Features", "Features", "{9E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonValueEvents", "Features\JsonValueEvents\JsonValueEvents.csproj", "{5687BD3D-297C-4705-AE7C-387AA9DB2E9F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonValueBasic", "Features\JsonValueBasic\JsonValueBasic.csproj", "{64DE183A-B961-4313-996B-B74139CD8E77}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,16 @@ Global
 		{5687BD3D-297C-4705-AE7C-387AA9DB2E9F}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{5687BD3D-297C-4705-AE7C-387AA9DB2E9F}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{5687BD3D-297C-4705-AE7C-387AA9DB2E9F}.Release|x86.ActiveCfg = Release|Any CPU
+		{64DE183A-B961-4313-996B-B74139CD8E77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64DE183A-B961-4313-996B-B74139CD8E77}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64DE183A-B961-4313-996B-B74139CD8E77}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{64DE183A-B961-4313-996B-B74139CD8E77}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{64DE183A-B961-4313-996B-B74139CD8E77}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{64DE183A-B961-4313-996B-B74139CD8E77}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64DE183A-B961-4313-996B-B74139CD8E77}.Release|Any CPU.Build.0 = Release|Any CPU
+		{64DE183A-B961-4313-996B-B74139CD8E77}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{64DE183A-B961-4313-996B-B74139CD8E77}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{64DE183A-B961-4313-996B-B74139CD8E77}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -72,5 +84,6 @@ Global
 		{8235DC35-C7EF-4E60-9EEB-750CBA9E6866} = {B9E40B8C-B0B1-4A69-AEC2-92B0795C0D94}
 		{375C3AB0-F37C-4F8E-9F04-2E70CED635C7} = {B9E40B8C-B0B1-4A69-AEC2-92B0795C0D94}
 		{5687BD3D-297C-4705-AE7C-387AA9DB2E9F} = {9E864485-A3DD-4AB2-9701-7A2694AB8905}
+		{64DE183A-B961-4313-996B-B74139CD8E77} = {9E864485-A3DD-4AB2-9701-7A2694AB8905}
 	EndGlobalSection
 EndGlobal
