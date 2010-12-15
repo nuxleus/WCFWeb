@@ -128,7 +128,7 @@ namespace System.Json
                             InsertJsonValue(jsonStack, ref parent, ref currentName, jsonObject, isEmptyElement);
                             break;
                         default:
-                            throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new FormatException(SR.IncorrectJsonFormat));
+                            throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new FormatException(SG.GetString(SR.IncorrectJsonFormat)));
                     }
 
                     while (jsonReader.NodeType == XmlNodeType.EndElement && jsonStack.Count > 0)
@@ -145,12 +145,12 @@ namespace System.Json
             }
             catch (XmlException xmlException)
             {
-                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new FormatException(SR.IncorrectJsonFormat, xmlException));
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new FormatException(SG.GetString(SR.IncorrectJsonFormat), xmlException));
             }
 
             if (jsonStack.Count != 1)
             {
-                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new FormatException(SR.IncorrectJsonFormat));
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new FormatException(SG.GetString(SR.IncorrectJsonFormat)));
             }
 
             return parent[RootObjectName];
