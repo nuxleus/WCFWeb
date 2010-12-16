@@ -1,8 +1,11 @@
 ﻿namespace Microsoft.ServiceModel.Web.Test
 {
     using System;
-    using System.Collections.Specialized;
+    using System.Collections.Generic;
     using System.Json;
+    using System.Text;
+    using System.Web;
+    using Microsoft.Silverlight.Cdf.Test.Common.Utility;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     /// <summary>
@@ -34,7 +37,6 @@
             this.ExpectException<ArgumentException>(() => ParseFormUrlEncoded("a=2&a[b]=1"));
             this.ExpectException<ArgumentException>(() => ParseFormUrlEncoded("[]=1"));
             this.ExpectException<ArgumentNullException>(() => ParseFormUrlEncoded((string)null));
-            this.ExpectException<ArgumentNullException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded((NameValueCollection)null));
         }
 
         /// <summary>
@@ -96,15 +98,17 @@
         public void TestArraySparse()
         {
             this.TestFormEncodedParsing("a[2]=hello", @"{""a"":{""2"":""hello""}}");
-            this.TestFormEncodedParsing("a[x][0]=2", @"{""a"":{""x"":{""0"":""2""}}}");
+            this.TestFormEncodedParsing("a[x][0]=2", @"{""a"":{""x"":[""2""]}}");
             this.TestFormEncodedParsing("a[x][1]=2", @"{""a"":{""x"":{""1"":""2""}}}");
-            this.TestFormEncodedParsing("a[x][0]=0&a[x][1]=1", @"{""a"":{""x"":{""0"":""0"",""1"":""1""}}}");
-            this.TestFormEncodedParsing("a[0][0][0]=hello&a[1][0][0][0][]=hello", @"{""a"":[[{""0"":""hello""}],[[[[""hello""]]]]]}");
-            this.TestFormEncodedParsing("a[0][0][0]=hello&a[1][0][0][0]=hello", @"{""a"":[[{""0"":""hello""}],[[{""0"":""hello""}]]]}");
+            this.TestFormEncodedParsing("a[x][0]=0&a[x][1]=1", @"{""a"":{""x"":[""0"",""1""]}}");
+            this.TestFormEncodedParsing("a[0][0][0]=hello&a[1][0][0][0][]=hello", @"{""a"":[[[""hello""]],[[[[""hello""]]]]]}");
+            this.TestFormEncodedParsing("a[0][0][0]=hello&a[1][0][0][0]=hello", @"{""a"":[[[""hello""]],[[[""hello""]]]]}");
             this.TestFormEncodedParsing("a[1][0][]=1", @"{""a"":{""1"":[[""1""]]}}");
             this.TestFormEncodedParsing("a[1][1][]=1", @"{""a"":{""1"":{""1"":[""1""]}}}");
-            this.TestFormEncodedParsing("a[1][1][0]=1", @"{""a"":{""1"":{""1"":{""0"":""1""}}}}");
+            this.TestFormEncodedParsing("a[1][1][0]=1", @"{""a"":{""1"":{""1"":[""1""]}}}");
             this.TestFormEncodedParsing("a[0][]=2&a[0][]=3&a[2][]=1", "{\"a\":{\"0\":[\"2\",\"3\"],\"2\":[\"1\"]}}");
+            this.TestFormEncodedParsing("a[x][]=1&a[x][1]=2", @"{""a"":{""x"":[""1"",""2""]}}");
+            this.TestFormEncodedParsing("a[x][0]=1&a[x][]=2", @"{""a"":{""x"":[""1"",""2""]}}");
         }
 
         /// <summary>
@@ -115,8 +119,6 @@
         {
             this.ExpectException<ArgumentException>(() => ParseFormUrlEncoded("a[x]=2&a[x][]=3"), "a[x]");
             this.ExpectException<ArgumentException>(() => ParseFormUrlEncoded("a[x][]=1&a[x][0]=2"), "a[x][0]");
-            this.ExpectException<ArgumentException>(() => ParseFormUrlEncoded("a[x][]=1&a[x][1]=2"), "a[x][1]");
-            this.ExpectException<ArgumentException>(() => ParseFormUrlEncoded("a[x][0]=1&a[x][]=2"), "a[x][]");
             this.ExpectException<ArgumentException>(() => ParseFormUrlEncoded("a[][]=0"), "a[]");
             this.ExpectException<ArgumentException>(() => ParseFormUrlEncoded("a[][x]=0"), "a[]");
         }
@@ -187,6 +189,136 @@
             this.ExpectException<ArgumentException>(() => ParseFormUrlEncoded("a[b]]=2"), "4");
             this.ExpectException<ArgumentException>(() => ParseFormUrlEncoded("&some+thing=10&%E5%B8%A6%E4%B8%89%E4%B8%AA%E8%A1%A8=bar"));
             this.ExpectException<ArgumentException>(() => ParseFormUrlEncoded("some+thing=10&%E5%B8%A6%E4%B8%89%E4%B8%AA%E8%A1%A8=bar&"));
+        }
+
+        [TestMethod]
+        public void GeneratedJsonValueTest()
+        {
+            Random rndGen = new Random(1);
+            int oldMaxArray = CreatorSettings.MaxArrayLength;
+            int oldMaxList = CreatorSettings.MaxListLength;
+            int oldMaxStr = CreatorSettings.MaxStringLength;
+            double oldNullProbability = CreatorSettings.NullValueProbability;
+            bool oldCreateAscii = CreatorSettings.CreateOnlyAsciiChars;
+            CreatorSettings.MaxArrayLength = 5;
+            CreatorSettings.MaxListLength = 3;
+            CreatorSettings.MaxStringLength = 3;
+            CreatorSettings.NullValueProbability = 0;
+            CreatorSettings.CreateOnlyAsciiChars = true;
+            JsonValueCreatorSurrogate jsonValueCreator = new JsonValueCreatorSurrogate();
+            try
+            {
+                for (int i = 0; i < 1000; i++)
+                {
+                    JsonValue jv = (JsonValue)jsonValueCreator.CreateInstanceOf(typeof(JsonValue), rndGen);
+                    if (jv.JsonType == JsonType.Array || jv.JsonType == JsonType.Object)
+                    {
+                        string jaStr = FormUrlEncoding(jv);
+                        JsonValue deserJv = FormUrlEncodedExtensions.ParseFormUrlEncoded(jaStr);
+                        bool compare = true;
+                        if (deserJv is JsonObject && ((JsonObject)deserJv).ContainsKey("JV"))
+                        {
+                            compare = JsonValueRoundTripComparer.Compare(jv, deserJv["JV"]);
+                        }
+                        else
+                        {
+                            compare = JsonValueRoundTripComparer.Compare(jv, deserJv);
+                        }
+
+                        Assert.IsTrue(compare, "Comparison failed for test instance " + i);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Assert.Fail("Exception {e} is throw", e.Message);
+            }
+            finally
+            {
+                CreatorSettings.MaxArrayLength = oldMaxArray;
+                CreatorSettings.MaxListLength = oldMaxList;
+                CreatorSettings.MaxStringLength = oldMaxStr;
+                CreatorSettings.NullValueProbability = oldNullProbability;
+                CreatorSettings.CreateOnlyAsciiChars = oldCreateAscii;
+            }
+        }
+
+        private static string FormUrlEncoding(JsonValue jsonValue)
+        {
+            List<string> results = new List<string>();
+            if (jsonValue is JsonPrimitive)
+            {
+                return HttpUtility.UrlEncode(((JsonPrimitive)jsonValue).Value.ToString());
+            }
+
+            BuildParams("JV", jsonValue, results);
+            StringBuilder strResult = new StringBuilder();
+            foreach (var result in results)
+            {
+                strResult.Append("&" + result);
+            }
+            if (strResult.Length > 0)
+            {
+                return strResult.Remove(0, 1).ToString();
+            }
+            return strResult.ToString();
+        }
+
+        private static void BuildParams(string prefix, JsonValue jsonValue, List<string> results)
+        {
+            if (jsonValue is JsonPrimitive)
+            {
+                JsonPrimitive jsonPrimitive = jsonValue as JsonPrimitive;
+                if (jsonPrimitive != null)
+                {
+                    if (jsonPrimitive.JsonType == JsonType.String && string.IsNullOrEmpty(jsonPrimitive.Value.ToString()))
+                    {
+                        results.Add(prefix + "=" + string.Empty);
+                    }
+                    else
+                    {
+                        if (jsonPrimitive.Value is DateTime || jsonPrimitive.Value is DateTimeOffset)
+                        {
+                            string dateStr = jsonPrimitive.ToString();
+                            if (!string.IsNullOrEmpty(dateStr) && dateStr.StartsWith("\""))
+                            {
+                                dateStr = dateStr.Substring(1, dateStr.Length - 2);
+                            }
+                            results.Add(prefix + "=" + HttpUtility.UrlEncode(dateStr));
+                        }
+                        else
+                        {
+                            results.Add(prefix + "=" + HttpUtility.UrlEncode(jsonPrimitive.Value.ToString()));
+                        }
+                    }
+                }
+                else
+                {
+                    results.Add(prefix + "=" + string.Empty);
+                }
+            }
+
+            if (jsonValue is JsonArray)
+            {
+                for (int i = 0; i < jsonValue.Count; i++)
+                {
+                    if (jsonValue[i] is JsonArray || jsonValue[i] is JsonObject)
+                    {
+                        BuildParams(prefix + "[" + i + "]", jsonValue[i], results);
+                    }
+                    else
+                    {
+                        BuildParams(prefix + "[]", jsonValue[i], results);
+                    }
+                }
+            }
+            else //jsonValue is JsonObject
+            {
+                foreach (KeyValuePair<string, JsonValue> item in jsonValue)
+                {
+                    BuildParams(prefix + "[" + item.Key + "]", item.Value, results);
+                }
+            }
         }
 
         private static JsonObject ParseFormUrlEncoded(string data)

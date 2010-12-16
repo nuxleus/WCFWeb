@@ -11,3 +11,4 @@ relre:/StyleCop\.Cache
 relre:/Settings\.StyleCop
 \.orig
 \.log
+_ReSharper.WcfJQuery/

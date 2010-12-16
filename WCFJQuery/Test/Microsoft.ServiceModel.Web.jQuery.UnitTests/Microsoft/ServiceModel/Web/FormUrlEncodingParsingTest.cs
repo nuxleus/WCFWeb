@@ -1,7 +1,6 @@
 ﻿namespace Microsoft.ServiceModel.Web.UnitTests
 {
     using System;
-    using System.Collections.Specialized;
     using System.Json;
     using System.Linq;
     using Microsoft.ServiceModel.Web;
@@ -29,7 +28,6 @@
             Assert.IsNotNull(FormUrlEncodedExtensions.ParseFormUrlEncoded(anyFormUrlEncoded));
 
             ExceptionTestHelper.ExpectException<ArgumentNullException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded((string)null));
-            ExceptionTestHelper.ExpectException<ArgumentNullException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded((NameValueCollection)null));
         }
 
         [TestMethod]
@@ -58,6 +56,7 @@
             ValidateFormsEncodingParsing("a[b][]=1&a[b][]=hello&a[b][]=333", "{\"a\":{\"b\":[\"1\",\"hello\",\"333\"]}}");
             ValidateFormsEncodingParsing("a[]=", "{\"a\":[\"\"]}");
             ValidateFormsEncodingParsing("a%5B%5D=2", @"{""a"":[""2""]}");
+            ValidateFormsEncodingParsing("a[x][0]=1&a[x][]=2", @"{""a"":{""x"":[""1"",""2""]}}");
         }
 
         [TestMethod]
@@ -72,9 +71,15 @@
         public void SparseArraysTest()
         {
             ValidateFormsEncodingParsing("a[0][]=hello&a[2][]=333", "{\"a\":{\"0\":[\"hello\"],\"2\":[\"333\"]}}");
-            ValidateFormsEncodingParsing("a[0]=hello", "{\"a\":{\"0\":\"hello\"}}");
+            ValidateFormsEncodingParsing("a[0]=hello", "{\"a\":[\"hello\"]}");
             ValidateFormsEncodingParsing("a[1][]=hello", "{\"a\":{\"1\":[\"hello\"]}}");
-            ValidateFormsEncodingParsing("a[1][0]=hello", "{\"a\":{\"1\":{\"0\":\"hello\"}}}");
+            ValidateFormsEncodingParsing("a[1][0]=hello", "{\"a\":{\"1\":[\"hello\"]}}");
+        }
+
+        [TestMethod]
+        public void ArraysWithMixedMembers()
+        {
+            ValidateFormsEncodingParsing("b[]=2&b[1][c]=d", "{\"b\":[\"2\",{\"c\":\"d\"}]}");
         }
 
         [TestMethod]
@@ -91,7 +96,6 @@
             ExceptionTestHelper.ExpectException<ArgumentException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded("a[b]=1&a=2"));
             ExceptionTestHelper.ExpectException<ArgumentException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded("a[b]=1&a[b][]=2"));
             ExceptionTestHelper.ExpectException<ArgumentException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded("a[x][]=1&a[x][0]=2"));
-            ExceptionTestHelper.ExpectException<ArgumentException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded("a[x][0]=1&a[x][]=2"));
             ExceptionTestHelper.ExpectException<ArgumentException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded("a=2&a[b]=1"));
             ExceptionTestHelper.ExpectException<ArgumentException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded("[]=1"));
             ExceptionTestHelper.ExpectException<ArgumentException>(() => FormUrlEncodedExtensions.ParseFormUrlEncoded("a[][]=0"));

@@ -49,6 +49,7 @@
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceModel.Web" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
@@ -66,6 +67,8 @@
     <Compile Include="Common\InstanceCreator.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Common\JsonValueCreatorSurrogate.cs" />
+    <Compile Include="Microsoft\ServiceModel\Web\JsonValueRoundTripComparer.cs" />
     <Compile Include="Microsoft\ServiceModel\Web\ConfigTests.cs" />
     <Compile Include="Microsoft\ServiceModel\Web\FormUrlEncodedTests.cs" />
     <Compile Include="Microsoft\ServiceModel\Web\WebHttpBehavior3WebFaultsTests.cs" />

@@ -4,6 +4,7 @@
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Text;
 
     internal static class Util
     {
@@ -42,7 +43,9 @@
             return CompareArrays(list1.ToArray(), list2.ToArray());
         }
 
-        public static bool CompareDictionaries<K, V>(Dictionary<K, V> dict1, Dictionary<K, V> dict2) where K : IComparable where V : class
+        public static bool CompareDictionaries<K, V>(Dictionary<K, V> dict1, Dictionary<K, V> dict2)
+            where K : IComparable
+            where V : class
         {
             if (dict1 == null)
             {
