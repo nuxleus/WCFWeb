@@ -2,11 +2,10 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 
-namespace JsonValueBasic
+namespace JsonValueDynamic
 {
     using System;
     using System.Json;
-    using System.Runtime.Serialization.Json;
 
     public static class Program
     {
@@ -43,8 +42,8 @@ namespace JsonValueBasic
                 }
             ]";
 
-            JsonArray ja = JsonValue.Parse(customers) as JsonArray;
-            Console.WriteLine(ja + Environment.NewLine);
+            dynamic ja = JsonValue.Parse(customers);
+            Console.WriteLine(ja.ToString() + Environment.NewLine);
 
             Console.WriteLine("Construct a JsonArray using code");
 
@@ -89,131 +88,124 @@ namespace JsonValueBasic
                 }
             };
 
-            Console.WriteLine(ja + Environment.NewLine);
+            Console.WriteLine(ja.ToString() + Environment.NewLine);
 
-            Console.WriteLine("Get a value in two equivalent ways");
+            Console.WriteLine("Get a value");
 
-            string name = (string)ja[0]["Name"];
-            float orderAmount = (float)ja[0]["OrderAmount"];
-            Console.WriteLine("{0}, {1}", name, orderAmount);
-            
-            // ReadAs<T> is equivalent to an explicit (T) cast, but yields 
-            // more fluent code so we will use it for the rest of this example
-            name = ja[0]["Name"].ReadAs<string>();
-            orderAmount = ja[0]["OrderAmount"].ReadAs<float>();
+            string name = ja[0].Name;
+            float orderAmount = ja[0].OrderAmount;
             Console.WriteLine("{0}, {1}" + Environment.NewLine, name, orderAmount);
 
-            Console.WriteLine("Get the raw value");
-            
-            // The explicit (T) cast and ReadAs<T> let you get the value as any 
-            // type you want. If you just want the value without any casting
-            // (maybe if you are trying to clone the JsonObject) you can use 
-            // this approach
-            object orderAmountObject = (ja[0]["OrderAmount"] as JsonPrimitive).Value;
-            Console.WriteLine(orderAmountObject + Environment.NewLine);
+            /// Values are cast to the appropriate type implicitly, so
+            /// there is no need to cast as (T) or do ReadAs<T>()
 
             Console.WriteLine("Set a value");
 
-            ja[0]["Name"] = "Yavor Georgiev";
-            ja[0]["ID"] = new Guid();
-            ja[0]["OrderAmount"] = 30000;
+            ja[0].Name = "Yavor Georgiev";
+            ja[0].ID = new Guid();
+            ja[0].OrderAmount = 30000;
 
             // Add a new value
-            ja[0]["Phone"] = 4251234567; 
-            Console.WriteLine(ja[0] + Environment.NewLine);
+            ja[0].Phone = 4251234567;
+            Console.WriteLine(ja[0].ToString() + Environment.NewLine);
 
             Console.WriteLine("Delete a value");
 
-            (ja[0] as JsonObject).Remove("Phone");
-            Console.WriteLine(ja[0] + Environment.NewLine);
+            // Unfortunately dynamics don't have a removal syntax we have to 
+            // drop down to the Remove method, which is not discoverable because
+            // dynamic types don't generate IntelliSense. For an example of using 
+            // this method, check the JsonValueBasic sample
+            ja[0].Remove("Phone");
+            Console.WriteLine(ja[0].ToString() + Environment.NewLine);
+
+            Console.WriteLine("Working with values");
+            ja[0].Phone = null;
+            bool isTrue = ja[0].Phone == null;
+            Console.WriteLine("Null comparison {0}", isTrue);
+
+            // TODO Currently we have a bug where if you add a null to a type
+            // it will cause ToObjectArray (used later) to throw an exception
+            ja[0].Remove("Phone");
+
+            isTrue = ja[0].OrderAmount > 20000;
+            Console.WriteLine("Relational operators {0}", isTrue);
+
+            isTrue = ja[0].OrderAmount + 10000 == 40000;
+            Console.WriteLine("Arithmetic operators {0}", isTrue);
+
+            ja[0].IsMarried = false;
+            isTrue = !ja[0].IsMarried;
+            Console.WriteLine("Logical operators {0}" + Environment.NewLine, isTrue);
 
             Console.WriteLine("Get a value parsed from inside a JSON string");
-            
-            Guid id = ja[0]["ID"].ReadAs<Guid>();
+
+            Guid id = ja[0].ID;
             Console.WriteLine(id + Environment.NewLine);
 
             Console.WriteLine("Get DateTime parsed from inside a JSON string");
-            
+
             // Relative date format - relative to this machine time
-            DateTime dob1 = ja[0]["DOB"].ReadAs<DateTime>();
+            DateTime dob1 = ja[0].DOB;
 
             // Absolute date format - fixed to reference UTC
-            DateTime dob2 = ja[1]["DOB"].ReadAs<DateTime>();
-            DateTime dob3 = ja[2]["DOB"].ReadAs<DateTime>();
+            DateTime dob2 = ja[1].DOB;
+            DateTime dob3 = ja[2].DOB;
             Console.WriteLine("{0}, {1}, {2}" + Environment.NewLine, dob1, dob2, dob3);
 
             Console.WriteLine("Get DateTimeOffset parsed from inside a JSON string");
-            
+
             // Relative date format - relative to this machine time
-            DateTimeOffset dobOffset1 = ja[0]["DOB"].ReadAs<DateTimeOffset>();
+            DateTimeOffset dobOffset1 = ja[0].DOB;
 
             // Absolute date format - fixed to reference UTC
-            DateTimeOffset dobOffset2 = ja[1]["DOB"].ReadAs<DateTimeOffset>();
-            DateTimeOffset dobOffset3 = ja[2]["DOB"].ReadAs<DateTimeOffset>();
+            DateTimeOffset dobOffset2 = ja[1].DOB;
+            DateTimeOffset dobOffset3 = ja[2].DOB;
             Console.WriteLine("{0}, {1}, {2}" + Environment.NewLine, dobOffset1, dobOffset2, dobOffset3);
 
             Console.WriteLine("Try get a value parsed from inside a JSON string " +
                 "but encounter wrong format in the string");
-            
-            int wrongType;
 
-            // Throwing exceptions is bad form
             try
             {
-                wrongType = ja[0]["ID"].ReadAs<int>();
+                int wrongType = ja[0].ID;
+                Console.WriteLine(wrongType);
             }
-            catch (FormatException)
+            catch (InvalidCastException)
             {
-                Console.WriteLine("ReadAs could not parse the required format and threw an exception");
-            }
-
-            if (ja[0]["ID"].TryReadAs<Guid>(out id))
-            {
-                Console.WriteLine(id);
-            }
-            
-            if (!ja[0]["ID"].TryReadAs<int>(out wrongType))
-            {
-                Console.WriteLine("TryReadAs could not parse the required format and returned false");
+                Console.WriteLine("Could not parse the required format and threw an exception");
             }
 
             Console.WriteLine();
 
-            Console.WriteLine("Get a value from a string, providing a fallback value");
-            
-            id = ja[0]["ID"].ReadAs<Guid>(new Guid());
-            wrongType = ja[0]["ID"].ReadAs<int>(0);
-            Console.WriteLine("{0} {1}" + Environment.NewLine, id, wrongType);
+            /// If you prefer to not use an exception-based model to handle invalid
+            /// cast/parse operations, TryReadAs<T>(out T valueOfT) and ReadAs<T>(T fallback)
+            /// are still available to you, however they are not discoverable because
+            /// dynamic types don't generate IntelliSense. For an example of using 
+            /// these methods, check the JsonValueBasic sample.
 
             Console.WriteLine("Index into the type");
 
-            Guid firstFriend = ja[0]["Friends"][0].ReadAs<Guid>(new Guid());
-            Console.WriteLine(firstFriend);
+            Guid firstFriend = ja[0].Friends[0];
+            Console.WriteLine(firstFriend + Environment.NewLine);
 
-            Guid wrongIndex;
             try
             {
-                wrongIndex = ja[0]["Friends"][10].ReadAs<Guid>(new Guid());
+                Guid wrongIndex = ja[0].Friends[10];
+                Console.WriteLine(wrongIndex);
             }
-            catch (ArgumentOutOfRangeException)
+            catch (InvalidCastException)
             {
-                Console.WriteLine("Tried to index into type but specified invalid index and got an exception");
+                Console.WriteLine("Tried to index into type but specified invalid index " +
+                    "and only got an exception when trying to access the value itself.");
             }
-
-            Console.WriteLine();
-
-            Console.WriteLine("Index into the type while avoiding throwing exceptions");
-
-            firstFriend = ja.ValueOrDefault(0, "Friends", 0).ReadAs<Guid>(new Guid());
-            Console.WriteLine(firstFriend);
-             
-            if (!ja.ValueOrDefault(0, "Friends", 10).TryReadAs<Guid>(out wrongIndex))
-            {
-                Console.WriteLine("Successfully indexed using safe indexer, but got false for the value");
-            }
-
-            wrongIndex = ja.ValueOrDefault(0, "Friends", 10).ReadAs<Guid>(new Guid());
-            Console.WriteLine(wrongIndex + Environment.NewLine);
+            
+            /// Indexing into a type will never yield an exception along the lines of
+            /// KeyNotFoundException or ArgumentOutOfRangeException, because under the
+            /// covers this uses the ValueOrDefault method. To learn more about that method 
+            /// see the JsonValueBasic sample. If the user indexes into an invalid element,
+            /// they will only get an exception when they try to access the value itself
+            /// This is nice since you don't have to worry about catching exceptions due to 
+            /// invalid indices - just catch the final exception when the value is accessed.
 
             Console.WriteLine("Strip out JsonValue hierarchy to get regular CLR types");
 
