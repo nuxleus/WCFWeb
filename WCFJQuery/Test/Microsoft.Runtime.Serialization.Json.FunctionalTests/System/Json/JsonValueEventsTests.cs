@@ -7,6 +7,9 @@
     using Microsoft.ServiceModel.Web.Test.Common;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+    /// <summary>
+    /// Tests for events on <see cref="JsonValue"/> instances.
+    /// </summary>
     [TestClass]
     public class JsonValueEventsTests
     {
@@ -127,6 +130,9 @@
                 });
         }
 
+        /// <summary>
+        /// Tests for events for <see cref="JsonValue"/> instances when using the dynamic programming.
+        /// </summary>
         [TestMethod]
         public void DynamicEventsTest()
         {
@@ -171,6 +177,9 @@
                 });
         }
 
+        /// <summary>
+        /// Tests for events in <see cref="JsonObject"/> instances.
+        /// </summary>
         [TestMethod]
         public void JsonObjectEventsTest()
         {
@@ -275,6 +284,9 @@
                 obj => ((IDictionary<string, JsonValue>)obj).Remove(new KeyValuePair<string, JsonValue>(key1, jo[key1])));
         }
 
+        /// <summary>
+        /// Tests for events in <see cref="JsonValue"/> instances when multiple listeners are registered.
+        /// </summary>
         [TestMethod]
         public void MultipleListenersTest()
         {

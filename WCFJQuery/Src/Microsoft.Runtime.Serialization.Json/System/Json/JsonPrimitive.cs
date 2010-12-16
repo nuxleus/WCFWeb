@@ -801,7 +801,8 @@ namespace System.Json
             }
         }
 
-        // The returned DateTime object is adjusted to UTC timezone.
+        // The returned DateTime object is adjusted to UTC timezone, if there is an offset in the value to be parsed.
+        // Otherwise it will be returned as local.
         private static bool TryParseDateTime(string valueString, out DateTime dateTime)
         {
             if (DateTime.TryParseExact(valueString, JSDateUtcFormats, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out dateTime))

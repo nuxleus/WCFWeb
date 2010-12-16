@@ -408,6 +408,8 @@
                 rndGen.Next(0, 60), // minute
                 rndGen.Next(0, 60), // second
                 DateTimeKind.Utc);
+            Log.Info("dt = {0}", dt);
+
             const string JsonDateFormat = "yyyy-MM-ddTHH:mm:ssZ";
             string dateString = dt.ToString(JsonDateFormat, CultureInfo.InvariantCulture);
             JsonValue jv = dateString;
@@ -450,6 +452,77 @@
                     JsonValue jvFromString = JsonValue.Load(ms);
                     Assert.AreEqual(dateUtc, jvFromString.ReadAs<DateTime>());
                 }
+            }
+        }
+
+        /// <summary>
+        /// Tests for date parsing form the RFC2822 format.
+        /// </summary>
+        [TestMethod]
+        public void Rfc2822DateTimeFormatTest()
+        {
+            string[] localFormats = new string[]
+            {
+                "ddd, d MMM yyyy HH:mm:ss zzz",
+                // DISABLED, 199676, "d MMM yyyy HH:mm:ss zzz",
+                "ddd, dd MMM yyyy HH:mm:ss zzz",
+                // DISABLED, 199676, "ddd, dd MMM yyyy HH:mm zzz",
+            };
+
+            string[] utcFormats = new string[]
+            {
+                @"ddd, d MMM yyyy HH:mm:ss \U\T\C",
+                // DISABLED, 199676, "d MMM yyyy HH:mm:ssZ",
+                @"ddd, dd MMM yyyy HH:mm:ss \U\T\C",
+                // DISABLED, 199676, "ddd, dd MMM yyyy HH:mmZ",
+            };
+
+            DateTime today = DateTime.Today;
+            int seed = today.Year * 10000 + today.Month * 100 + today.Day;
+            Log.Info("Seed: {0}", seed);
+            Random rndGen = new Random(seed);
+            const int DatesToTry = 100;
+            const string DateTraceFormat = "ddd yyyy/MM/dd HH:mm:ss.fffZ";
+
+            for (int i = 0; i < DatesToTry; i++)
+            {
+                DateTime dt = PrimitiveCreator.CreateInstanceOfDateTime(rndGen);
+                dt = new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second, dt.Kind);
+                Log.Info("Test with date: {0} ({1})", dt.ToString(DateTraceFormat, CultureInfo.InvariantCulture), dt.Kind);
+                string[] formatsToTest = dt.Kind == DateTimeKind.Utc ? utcFormats : localFormats;
+                foreach (string format in formatsToTest)
+                {
+                    string strDate = dt.ToString(format, CultureInfo.InvariantCulture);
+                    Log.Info("As string: {0} (format = {1})", strDate, format);
+                    JsonPrimitive jp = new JsonPrimitive(strDate);
+                    DateTime parsedDate = jp.ReadAs<DateTime>();
+                    Log.Info("Parsed date: {0} ({1})", parsedDate.ToString(DateTraceFormat, CultureInfo.InvariantCulture), parsedDate.Kind);
+
+                    DateTime dtExpected = dt;
+                    DateTime dtActual = parsedDate;
+
+                    if (dt.Kind != parsedDate.Kind)
+                    {
+                        dtExpected = dtExpected.ToUniversalTime();
+                        dtActual = dtActual.ToUniversalTime();
+                    }
+
+                    Assert.AreEqual(dtExpected.Year, dtActual.Year);
+                    Assert.AreEqual(dtExpected.Month, dtActual.Month);
+                    Assert.AreEqual(dtExpected.Day, dtActual.Day);
+                    Assert.AreEqual(dtExpected.Hour, dtActual.Hour);
+                    Assert.AreEqual(dtExpected.Minute, dtActual.Minute);
+                    if (format.Contains(":ss"))
+                    {
+                        Assert.AreEqual(dtExpected.Second, dtActual.Second);
+                    }
+                    else
+                    {
+                        Assert.AreEqual(0, parsedDate.Second);
+                    }
+                }
+
+                Log.Info("");
             }
         }
 
