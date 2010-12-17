@@ -14,7 +14,7 @@ namespace ContactManager
         protected void Application_Start(object sender, EventArgs e)
         {
             var configuration = new ContactManagerConfiguration();
-            RouteTable.Routes.AddServiceRoute<ContactResource>("contact/", configuration);
+            RouteTable.Routes.AddServiceRoute<ContactResource>("contact", configuration);
             RouteTable.Routes.AddServiceRoute<ContactsResource>("contacts", configuration);
         }
     }

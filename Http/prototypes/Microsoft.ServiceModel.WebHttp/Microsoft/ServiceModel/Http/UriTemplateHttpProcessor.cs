@@ -34,11 +34,17 @@ namespace Microsoft.ServiceModel.Http
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1308:NormalizeStringsToUppercase", Justification = "necessary for parameter match")]
         protected override IEnumerable<ProcessorArgument> OnGetOutArguments()
         {
-            var args = this.template.PathSegmentVariableNames
+            var pathSegmentArgs = this.template.PathSegmentVariableNames
                     .Select(s => new ProcessorArgument(
                                           s.ToLowerInvariant(),
                                           stringType));
-            return args;
+
+            var querystringArgs = this.template.QueryValueVariableNames
+                    .Select(s => new ProcessorArgument(
+                                          s.ToLowerInvariant(),
+                                          stringType));
+
+            return pathSegmentArgs.Concat(querystringArgs);
         }
 
         protected override ProcessorResult OnExecute(object[] input)
