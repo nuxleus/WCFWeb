@@ -532,7 +532,7 @@
             dyn = AnyInstance.AnyJsonArray;
             ExceptionTestHelper.ExpectException<InvalidOperationException>(delegate { dyn.name = value; });
 
-            dyn = AnyInstance.AnyJsonObject;
+            dyn = new JsonObject(AnyInstance.AnyJsonObject);
             dyn.name = value;
             Assert.AreEqual((string)dyn.name, value);
 
