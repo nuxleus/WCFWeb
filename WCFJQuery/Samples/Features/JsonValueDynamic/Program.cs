@@ -19,6 +19,8 @@ namespace JsonValueDynamic
                     ""Name"" : ""Yavor"",
                     ""DOB"" : ""1984-01-17"",
                     ""OrderAmount"" : 1e+4,
+                    ""IsMarried"" : false,
+                    ""OrderHistory"" : null,
                     ""Friends"" :   [
                                         ""007cf155-7fb4-4070-9d78-ade638df44c7"",
                                         ""91c50a40-7ade-4c37-a88f-3b7e066644dc""
@@ -55,6 +57,8 @@ namespace JsonValueDynamic
                     { "Name", "Yavor" },
                     { "DOB", new DateTime(1984, 01, 17) },
                     { "OrderAmount", 10000 },
+                    { "IsMarried", false },
+                    { "OrderHistory", null },
                     { "Friends", new JsonArray
                         {
                             new Guid("007cf155-7fb4-4070-9d78-ade638df44c7"),
@@ -119,13 +123,13 @@ namespace JsonValueDynamic
             Console.WriteLine(ja[0].ToString() + Environment.NewLine);
 
             Console.WriteLine("Working with values");
-            ja[0].Phone = null;
-            bool isTrue = ja[0].Phone == null;
+
+            bool isTrue = ja[0].OrderHistory == null;
             Console.WriteLine("Null comparison {0}", isTrue);
 
             // TODO Currently we have a bug where if you add a null to a type
             // it will cause ToObjectArray (used later) to throw an exception
-            ja[0].Remove("Phone");
+            ja[0].Remove("OrderHistory");
 
             isTrue = ja[0].OrderAmount > 20000;
             Console.WriteLine("Relational operators {0}", isTrue);
@@ -133,7 +137,6 @@ namespace JsonValueDynamic
             isTrue = ja[0].OrderAmount + 10000 == 40000;
             Console.WriteLine("Arithmetic operators {0}", isTrue);
 
-            ja[0].IsMarried = false;
             isTrue = !ja[0].IsMarried;
             Console.WriteLine("Logical operators {0}" + Environment.NewLine, isTrue);
 
