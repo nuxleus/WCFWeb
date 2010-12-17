@@ -440,17 +440,20 @@ namespace Microsoft.ServiceModel.Web
                     queryString = queryString.Substring(1);
                 }
 
-                string[] pairs = queryString.Split('&');
-                foreach (string str in pairs)
+                if (!string.IsNullOrEmpty(queryString))
                 {
-                    string[] keyValue = str.Split('=');
-                    if (keyValue.Length == 2)
+                    string[] pairs = queryString.Split('&');
+                    foreach (string str in pairs)
                     {
-                        yield return new Tuple<string, string>(HttpUtility.UrlDecode(keyValue[0]), HttpUtility.UrlDecode(keyValue[1]));
-                    }
-                    else if (keyValue.Length == 1)
-                    {
-                        yield return new Tuple<string, string>(null, HttpUtility.UrlDecode(keyValue[0]));
+                        string[] keyValue = str.Split('=');
+                        if (keyValue.Length == 2)
+                        {
+                            yield return new Tuple<string, string>(HttpUtility.UrlDecode(keyValue[0]), HttpUtility.UrlDecode(keyValue[1]));
+                        }
+                        else if (keyValue.Length == 1)
+                        {
+                            yield return new Tuple<string, string>(null, HttpUtility.UrlDecode(keyValue[0]));
+                        }
                     }
                 }
             }

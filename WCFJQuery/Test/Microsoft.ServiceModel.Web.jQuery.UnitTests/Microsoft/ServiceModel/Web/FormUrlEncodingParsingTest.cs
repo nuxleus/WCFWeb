@@ -23,6 +23,7 @@
             ValidateFormsEncodingParsing(escaped, "{\".abc.\":null}");
 
             ValidateFormsEncodingParsing("", "{}");
+            ValidateFormsEncodingParsing("?", "{}");
 
             string anyFormUrlEncoded = "a=1";
             Assert.IsNotNull(FormUrlEncodedExtensions.ParseFormUrlEncoded(anyFormUrlEncoded));

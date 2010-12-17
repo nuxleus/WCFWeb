@@ -191,6 +191,9 @@
             this.ExpectException<ArgumentException>(() => ParseFormUrlEncoded("some+thing=10&%E5%B8%A6%E4%B8%89%E4%B8%AA%E8%A1%A8=bar&"));
         }
 
+        /// <summary>
+        /// Tests for parsing generated form-urlencoded data.
+        /// </summary>
         [TestMethod]
         public void GeneratedJsonValueTest()
         {
@@ -228,10 +231,6 @@
                         Assert.IsTrue(compare, "Comparison failed for test instance " + i);
                     }
                 }
-            }
-            catch (Exception e)
-            {
-                Assert.Fail("Exception {e} is throw", e.Message);
             }
             finally
             {

@@ -223,7 +223,7 @@
         {
             public override bool CanCreateInstanceOf(Type type)
             {
-                return type == typeof(float) || type == typeof(double) || type == typeof(IEmptyInterface);
+                return type == typeof(float) || type == typeof(double) || type == typeof(IEmptyInterface) || type == typeof(BaseType);
             }
 
             public override object CreateInstanceOf(Type type, Random rndGen)
