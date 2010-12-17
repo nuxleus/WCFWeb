@@ -140,7 +140,7 @@
                 string key;
                 do
                 {
-                    key = PrimitiveCreator.CreateRandomString(rndGen, 10, keyChars);
+                    key = PrimitiveCreator.CreateInstanceOfString(rndGen, 10, keyChars);
                 } while (result.ContainsKey(key));
 
                 result.Add(key, CreateJsonValue(rndGen, depth + 1));
