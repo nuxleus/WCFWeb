@@ -29,12 +29,13 @@
         public static readonly DateTimeOffset AnyDateTimeOffset = new DateTimeOffset(2010, 2, 5, 15, 45, 20, TimeSpan.FromHours(-3));
         public static readonly Uri AnyUri = new Uri("http://tempuri.org/");
 
-        public static readonly JsonArray AnyJsonArray = new JsonArray { 1, 2, 3 };
-        public static readonly JsonObject AnyJsonObject = new JsonObject { { "one", 1 }, { "two", 2 } };
+        public static readonly JsonArray AnyJsonArray;
+        public static readonly JsonObject AnyJsonObject;
+
         public static readonly JsonPrimitive AnyJsonPrimitive = new JsonPrimitive("hello");
 
         public static readonly JsonValue AnyJsonValue1 = AnyJsonPrimitive;
-        public static readonly JsonValue AnyJsonValue2 = AnyJsonArray;
+        public static readonly JsonValue AnyJsonValue2;
         public static readonly JsonValue AnyJsonValue3 = null;
 
         public static readonly JsonValue DefaultJsonValue = GetDefaultJsonValue();
@@ -44,15 +45,35 @@
 
         public static readonly dynamic AnyDynamic = TestDynamicObject.CreatePersonAsDynamic(AnyPerson);
 
-        public static readonly JsonValue[] AnyJsonValueArray = 
+        public static JsonValue[] AnyJsonValueArray
         {
-                AnyInstance.AnyJsonArray,
-                AnyInstance.AnyJsonObject,
-                AnyInstance.AnyJsonPrimitive,
-                AnyInstance.DefaultJsonValue
-        };
+            get
+            {
+                return new JsonValue[]
+                {
+                    AnyInstance.AnyJsonArray,
+                    AnyInstance.AnyJsonObject,
+                    AnyInstance.AnyJsonPrimitive,
+                    AnyInstance.DefaultJsonValue
+                };
+            }
+        }
 
-        public static JsonValue GetDefaultJsonValue()
+        static AnyInstance()
+        {
+            AnyJsonArray = new JsonArray { 1, 2, 3 };
+            AnyJsonObject = new JsonObject { { "one", 1 }, { "two", 2 } };
+            AnyJsonArray.Changing += new EventHandler<JsonValueChangeEventArgs>(PreventChanging);
+            AnyJsonObject.Changing += new EventHandler<JsonValueChangeEventArgs>(PreventChanging);
+            AnyJsonValue2 = AnyJsonArray;
+        }
+
+        private static void PreventChanging(object sender, JsonValueChangeEventArgs e)
+        {
+            throw new InvalidOperationException("AnyInstance.AnyJsonArray or AnyJsonObject cannot be modified; please clone the instance if the test needs to change it.");
+        }
+
+        private static JsonValue GetDefaultJsonValue()
         {
             PropertyInfo propInfo = typeof(JsonValue).GetProperty("DefaultInstance", BindingFlags.Static | BindingFlags.NonPublic);
             return propInfo.GetValue(null, null) as JsonValue;

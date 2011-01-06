@@ -628,6 +628,396 @@
         }
 
         /// <summary>
+        /// Tests for implicit casts between dynamic references to <see cref="JsonPrimitive"/> instances
+        /// and the supported CLR types.
+        /// </summary>
+        [TestMethod]
+        public void ImplicitPrimitiveCastTests()
+        {
+            DateTime now = DateTime.Now;
+            int seed = now.Year * 10000 + now.Month * 100 + now.Day;
+            Log.Info("Seed: {0}", seed);
+            Random rndGen = new Random(seed);
+            int intValue = rndGen.Next(1, 127);
+            Log.Info("Value: {0}", intValue);
+
+            uint uintValue = (uint)intValue;
+            short shortValue = (short)intValue;
+            ushort ushortValue = (ushort)intValue;
+            long longValue = (long)intValue;
+            ulong ulongValue = (ulong)intValue;
+            byte byteValue = (byte)intValue;
+            sbyte sbyteValue = (sbyte)intValue;
+            float floatValue = (float)intValue;
+            double doubleValue = (double)intValue;
+            decimal decimalValue = (decimal)intValue;
+            string stringValue = intValue.ToString(CultureInfo.InvariantCulture);
+
+            dynamic dyn = new JsonObject
+            {
+                { "Byte", byteValue },
+                { "SByte", sbyteValue },
+                { "Int16", shortValue },
+                { "UInt16", ushortValue },
+                { "Int32", intValue },
+                { "UInt32", uintValue },
+                { "Int64", longValue },
+                { "UInt64", ulongValue },
+                { "Double", doubleValue },
+                { "Single", floatValue },
+                { "Decimal", decimalValue },
+                { "String", stringValue },
+                { "True", "true" },
+                { "False", "false" },
+            };
+
+            Log.Info("dyn: {0}", dyn);
+
+            Log.Info("Casts to Byte");
+
+            byte byteFromByte = dyn.Byte;
+            byte byteFromSByte = dyn.SByte;
+            byte byteFromShort = dyn.Int16;
+            byte byteFromUShort = dyn.UInt16;
+            byte byteFromInt = dyn.Int32;
+            byte byteFromUInt = dyn.UInt32;
+            byte byteFromLong = dyn.Int64;
+            byte byteFromULong = dyn.UInt64;
+            byte byteFromDouble = dyn.Double;
+            byte byteFromFloat = dyn.Single;
+            byte byteFromDecimal = dyn.Decimal;
+            byte byteFromString = dyn.String;
+
+            Assert.AreEqual<byte>(byteValue, byteFromByte);
+            Assert.AreEqual<byte>(byteValue, byteFromSByte);
+            Assert.AreEqual<byte>(byteValue, byteFromShort);
+            Assert.AreEqual<byte>(byteValue, byteFromUShort);
+            Assert.AreEqual<byte>(byteValue, byteFromInt);
+            Assert.AreEqual<byte>(byteValue, byteFromUInt);
+            Assert.AreEqual<byte>(byteValue, byteFromLong);
+            Assert.AreEqual<byte>(byteValue, byteFromULong);
+            Assert.AreEqual<byte>(byteValue, byteFromDouble);
+            Assert.AreEqual<byte>(byteValue, byteFromFloat);
+            Assert.AreEqual<byte>(byteValue, byteFromDecimal);
+            Assert.AreEqual<byte>(byteValue, byteFromString);
+
+            Log.Info("Casts to SByte");
+
+            sbyte sbyteFromByte = dyn.Byte;
+            sbyte sbyteFromSByte = dyn.SByte;
+            sbyte sbyteFromShort = dyn.Int16;
+            sbyte sbyteFromUShort = dyn.UInt16;
+            sbyte sbyteFromInt = dyn.Int32;
+            sbyte sbyteFromUInt = dyn.UInt32;
+            sbyte sbyteFromLong = dyn.Int64;
+            sbyte sbyteFromULong = dyn.UInt64;
+            sbyte sbyteFromDouble = dyn.Double;
+            sbyte sbyteFromFloat = dyn.Single;
+            sbyte sbyteFromDecimal = dyn.Decimal;
+            sbyte sbyteFromString = dyn.String;
+
+            Assert.AreEqual<sbyte>(sbyteValue, sbyteFromByte);
+            Assert.AreEqual<sbyte>(sbyteValue, sbyteFromSByte);
+            Assert.AreEqual<sbyte>(sbyteValue, sbyteFromShort);
+            Assert.AreEqual<sbyte>(sbyteValue, sbyteFromUShort);
+            Assert.AreEqual<sbyte>(sbyteValue, sbyteFromInt);
+            Assert.AreEqual<sbyte>(sbyteValue, sbyteFromUInt);
+            Assert.AreEqual<sbyte>(sbyteValue, sbyteFromLong);
+            Assert.AreEqual<sbyte>(sbyteValue, sbyteFromULong);
+            Assert.AreEqual<sbyte>(sbyteValue, sbyteFromDouble);
+            Assert.AreEqual<sbyte>(sbyteValue, sbyteFromFloat);
+            Assert.AreEqual<sbyte>(sbyteValue, sbyteFromDecimal);
+            Assert.AreEqual<sbyte>(sbyteValue, sbyteFromString);
+
+            Log.Info("Casts to Short");
+
+            short shortFromByte = dyn.Byte;
+            short shortFromSByte = dyn.SByte;
+            short shortFromShort = dyn.Int16;
+            short shortFromUShort = dyn.UInt16;
+            short shortFromInt = dyn.Int32;
+            short shortFromUInt = dyn.UInt32;
+            short shortFromLong = dyn.Int64;
+            short shortFromULong = dyn.UInt64;
+            short shortFromDouble = dyn.Double;
+            short shortFromFloat = dyn.Single;
+            short shortFromDecimal = dyn.Decimal;
+            short shortFromString = dyn.String;
+
+            Assert.AreEqual<short>(shortValue, shortFromByte);
+            Assert.AreEqual<short>(shortValue, shortFromSByte);
+            Assert.AreEqual<short>(shortValue, shortFromShort);
+            Assert.AreEqual<short>(shortValue, shortFromUShort);
+            Assert.AreEqual<short>(shortValue, shortFromInt);
+            Assert.AreEqual<short>(shortValue, shortFromUInt);
+            Assert.AreEqual<short>(shortValue, shortFromLong);
+            Assert.AreEqual<short>(shortValue, shortFromULong);
+            Assert.AreEqual<short>(shortValue, shortFromDouble);
+            Assert.AreEqual<short>(shortValue, shortFromFloat);
+            Assert.AreEqual<short>(shortValue, shortFromDecimal);
+            Assert.AreEqual<short>(shortValue, shortFromString);
+
+            Log.Info("Casts to UShort");
+
+            ushort ushortFromByte = dyn.Byte;
+            ushort ushortFromSByte = dyn.SByte;
+            ushort ushortFromShort = dyn.Int16;
+            ushort ushortFromUShort = dyn.UInt16;
+            ushort ushortFromInt = dyn.Int32;
+            ushort ushortFromUInt = dyn.UInt32;
+            ushort ushortFromLong = dyn.Int64;
+            ushort ushortFromULong = dyn.UInt64;
+            ushort ushortFromDouble = dyn.Double;
+            ushort ushortFromFloat = dyn.Single;
+            ushort ushortFromDecimal = dyn.Decimal;
+            ushort ushortFromString = dyn.String;
+
+            Assert.AreEqual<ushort>(ushortValue, ushortFromByte);
+            Assert.AreEqual<ushort>(ushortValue, ushortFromSByte);
+            Assert.AreEqual<ushort>(ushortValue, ushortFromShort);
+            Assert.AreEqual<ushort>(ushortValue, ushortFromUShort);
+            Assert.AreEqual<ushort>(ushortValue, ushortFromInt);
+            Assert.AreEqual<ushort>(ushortValue, ushortFromUInt);
+            Assert.AreEqual<ushort>(ushortValue, ushortFromLong);
+            Assert.AreEqual<ushort>(ushortValue, ushortFromULong);
+            Assert.AreEqual<ushort>(ushortValue, ushortFromDouble);
+            Assert.AreEqual<ushort>(ushortValue, ushortFromFloat);
+            Assert.AreEqual<ushort>(ushortValue, ushortFromDecimal);
+            Assert.AreEqual<ushort>(ushortValue, ushortFromString);
+
+            Log.Info("Casts to Int");
+
+            int intFromByte = dyn.Byte;
+            int intFromSByte = dyn.SByte;
+            int intFromShort = dyn.Int16;
+            int intFromUShort = dyn.UInt16;
+            int intFromInt = dyn.Int32;
+            int intFromUInt = dyn.UInt32;
+            int intFromLong = dyn.Int64;
+            int intFromULong = dyn.UInt64;
+            int intFromDouble = dyn.Double;
+            int intFromFloat = dyn.Single;
+            int intFromDecimal = dyn.Decimal;
+            int intFromString = dyn.String;
+
+            Assert.AreEqual<int>(intValue, intFromByte);
+            Assert.AreEqual<int>(intValue, intFromSByte);
+            Assert.AreEqual<int>(intValue, intFromShort);
+            Assert.AreEqual<int>(intValue, intFromUShort);
+            Assert.AreEqual<int>(intValue, intFromInt);
+            Assert.AreEqual<int>(intValue, intFromUInt);
+            Assert.AreEqual<int>(intValue, intFromLong);
+            Assert.AreEqual<int>(intValue, intFromULong);
+            Assert.AreEqual<int>(intValue, intFromDouble);
+            Assert.AreEqual<int>(intValue, intFromFloat);
+            Assert.AreEqual<int>(intValue, intFromDecimal);
+            Assert.AreEqual<int>(intValue, intFromString);
+
+            Log.Info("Casts to UInt");
+
+            uint uintFromByte = dyn.Byte;
+            uint uintFromSByte = dyn.SByte;
+            uint uintFromShort = dyn.Int16;
+            uint uintFromUShort = dyn.UInt16;
+            uint uintFromInt = dyn.Int32;
+            uint uintFromUInt = dyn.UInt32;
+            uint uintFromLong = dyn.Int64;
+            uint uintFromULong = dyn.UInt64;
+            uint uintFromDouble = dyn.Double;
+            uint uintFromFloat = dyn.Single;
+            uint uintFromDecimal = dyn.Decimal;
+            uint uintFromString = dyn.String;
+
+            Assert.AreEqual<uint>(uintValue, uintFromByte);
+            Assert.AreEqual<uint>(uintValue, uintFromSByte);
+            Assert.AreEqual<uint>(uintValue, uintFromShort);
+            Assert.AreEqual<uint>(uintValue, uintFromUShort);
+            Assert.AreEqual<uint>(uintValue, uintFromInt);
+            Assert.AreEqual<uint>(uintValue, uintFromUInt);
+            Assert.AreEqual<uint>(uintValue, uintFromLong);
+            Assert.AreEqual<uint>(uintValue, uintFromULong);
+            Assert.AreEqual<uint>(uintValue, uintFromDouble);
+            Assert.AreEqual<uint>(uintValue, uintFromFloat);
+            Assert.AreEqual<uint>(uintValue, uintFromDecimal);
+            Assert.AreEqual<uint>(uintValue, uintFromString);
+
+            Log.Info("Casts to Long");
+
+            long longFromByte = dyn.Byte;
+            long longFromSByte = dyn.SByte;
+            long longFromShort = dyn.Int16;
+            long longFromUShort = dyn.UInt16;
+            long longFromInt = dyn.Int32;
+            long longFromUInt = dyn.UInt32;
+            long longFromLong = dyn.Int64;
+            long longFromULong = dyn.UInt64;
+            long longFromDouble = dyn.Double;
+            long longFromFloat = dyn.Single;
+            long longFromDecimal = dyn.Decimal;
+            long longFromString = dyn.String;
+
+            Assert.AreEqual<long>(longValue, longFromByte);
+            Assert.AreEqual<long>(longValue, longFromSByte);
+            Assert.AreEqual<long>(longValue, longFromShort);
+            Assert.AreEqual<long>(longValue, longFromUShort);
+            Assert.AreEqual<long>(longValue, longFromInt);
+            Assert.AreEqual<long>(longValue, longFromUInt);
+            Assert.AreEqual<long>(longValue, longFromLong);
+            Assert.AreEqual<long>(longValue, longFromULong);
+            Assert.AreEqual<long>(longValue, longFromDouble);
+            Assert.AreEqual<long>(longValue, longFromFloat);
+            Assert.AreEqual<long>(longValue, longFromDecimal);
+            Assert.AreEqual<long>(longValue, longFromString);
+
+            Log.Info("Casts to ULong");
+
+            ulong ulongFromByte = dyn.Byte;
+            ulong ulongFromSByte = dyn.SByte;
+            ulong ulongFromShort = dyn.Int16;
+            ulong ulongFromUShort = dyn.UInt16;
+            ulong ulongFromInt = dyn.Int32;
+            ulong ulongFromUInt = dyn.UInt32;
+            ulong ulongFromLong = dyn.Int64;
+            ulong ulongFromULong = dyn.UInt64;
+            ulong ulongFromDouble = dyn.Double;
+            ulong ulongFromFloat = dyn.Single;
+            ulong ulongFromDecimal = dyn.Decimal;
+            ulong ulongFromString = dyn.String;
+
+            Assert.AreEqual<ulong>(ulongValue, ulongFromByte);
+            Assert.AreEqual<ulong>(ulongValue, ulongFromSByte);
+            Assert.AreEqual<ulong>(ulongValue, ulongFromShort);
+            Assert.AreEqual<ulong>(ulongValue, ulongFromUShort);
+            Assert.AreEqual<ulong>(ulongValue, ulongFromInt);
+            Assert.AreEqual<ulong>(ulongValue, ulongFromUInt);
+            Assert.AreEqual<ulong>(ulongValue, ulongFromLong);
+            Assert.AreEqual<ulong>(ulongValue, ulongFromULong);
+            Assert.AreEqual<ulong>(ulongValue, ulongFromDouble);
+            Assert.AreEqual<ulong>(ulongValue, ulongFromFloat);
+            Assert.AreEqual<ulong>(ulongValue, ulongFromDecimal);
+            Assert.AreEqual<ulong>(ulongValue, ulongFromString);
+
+            Log.Info("Casts to Float");
+
+            float floatFromByte = dyn.Byte;
+            float floatFromSByte = dyn.SByte;
+            float floatFromShort = dyn.Int16;
+            float floatFromUShort = dyn.UInt16;
+            float floatFromInt = dyn.Int32;
+            float floatFromUInt = dyn.UInt32;
+            float floatFromLong = dyn.Int64;
+            float floatFromULong = dyn.UInt64;
+            float floatFromDouble = dyn.Double;
+            float floatFromFloat = dyn.Single;
+            float floatFromDecimal = dyn.Decimal;
+            float floatFromString = dyn.String;
+
+            Assert.AreEqual<float>(floatValue, floatFromByte);
+            Assert.AreEqual<float>(floatValue, floatFromSByte);
+            Assert.AreEqual<float>(floatValue, floatFromShort);
+            Assert.AreEqual<float>(floatValue, floatFromUShort);
+            Assert.AreEqual<float>(floatValue, floatFromInt);
+            Assert.AreEqual<float>(floatValue, floatFromUInt);
+            Assert.AreEqual<float>(floatValue, floatFromLong);
+            Assert.AreEqual<float>(floatValue, floatFromULong);
+            Assert.AreEqual<float>(floatValue, floatFromDouble);
+            Assert.AreEqual<float>(floatValue, floatFromFloat);
+            Assert.AreEqual<float>(floatValue, floatFromDecimal);
+            Assert.AreEqual<float>(floatValue, floatFromString);
+
+            Log.Info("Casts to Double");
+
+            double doubleFromByte = dyn.Byte;
+            double doubleFromSByte = dyn.SByte;
+            double doubleFromShort = dyn.Int16;
+            double doubleFromUShort = dyn.UInt16;
+            double doubleFromInt = dyn.Int32;
+            double doubleFromUInt = dyn.UInt32;
+            double doubleFromLong = dyn.Int64;
+            double doubleFromULong = dyn.UInt64;
+            double doubleFromDouble = dyn.Double;
+            double doubleFromFloat = dyn.Single;
+            double doubleFromDecimal = dyn.Decimal;
+            double doubleFromString = dyn.String;
+
+            Assert.AreEqual<double>(doubleValue, doubleFromByte);
+            Assert.AreEqual<double>(doubleValue, doubleFromSByte);
+            Assert.AreEqual<double>(doubleValue, doubleFromShort);
+            Assert.AreEqual<double>(doubleValue, doubleFromUShort);
+            Assert.AreEqual<double>(doubleValue, doubleFromInt);
+            Assert.AreEqual<double>(doubleValue, doubleFromUInt);
+            Assert.AreEqual<double>(doubleValue, doubleFromLong);
+            Assert.AreEqual<double>(doubleValue, doubleFromULong);
+            Assert.AreEqual<double>(doubleValue, doubleFromDouble);
+            Assert.AreEqual<double>(doubleValue, doubleFromFloat);
+            Assert.AreEqual<double>(doubleValue, doubleFromDecimal);
+            Assert.AreEqual<double>(doubleValue, doubleFromString);
+
+            Log.Info("Casts to Decimal");
+
+            decimal decimalFromByte = dyn.Byte;
+            decimal decimalFromSByte = dyn.SByte;
+            decimal decimalFromShort = dyn.Int16;
+            decimal decimalFromUShort = dyn.UInt16;
+            decimal decimalFromInt = dyn.Int32;
+            decimal decimalFromUInt = dyn.UInt32;
+            decimal decimalFromLong = dyn.Int64;
+            decimal decimalFromULong = dyn.UInt64;
+            decimal decimalFromDouble = dyn.Double;
+            decimal decimalFromFloat = dyn.Single;
+            decimal decimalFromDecimal = dyn.Decimal;
+            decimal decimalFromString = dyn.String;
+
+            Assert.AreEqual<decimal>(decimalValue, decimalFromByte);
+            Assert.AreEqual<decimal>(decimalValue, decimalFromSByte);
+            Assert.AreEqual<decimal>(decimalValue, decimalFromShort);
+            Assert.AreEqual<decimal>(decimalValue, decimalFromUShort);
+            Assert.AreEqual<decimal>(decimalValue, decimalFromInt);
+            Assert.AreEqual<decimal>(decimalValue, decimalFromUInt);
+            Assert.AreEqual<decimal>(decimalValue, decimalFromLong);
+            Assert.AreEqual<decimal>(decimalValue, decimalFromULong);
+            Assert.AreEqual<decimal>(decimalValue, decimalFromDouble);
+            Assert.AreEqual<decimal>(decimalValue, decimalFromFloat);
+            Assert.AreEqual<decimal>(decimalValue, decimalFromDecimal);
+            Assert.AreEqual<decimal>(decimalValue, decimalFromString);
+
+            Log.Info("Casts to String");
+
+            string stringFromByte = dyn.Byte;
+            string stringFromSByte = dyn.SByte;
+            string stringFromShort = dyn.Int16;
+            string stringFromUShort = dyn.UInt16;
+            string stringFromInt = dyn.Int32;
+            string stringFromUInt = dyn.UInt32;
+            string stringFromLong = dyn.Int64;
+            string stringFromULong = dyn.UInt64;
+            string stringFromDouble = dyn.Double;
+            string stringFromFloat = dyn.Single;
+            string stringFromDecimal = dyn.Decimal;
+            string stringFromString = dyn.String;
+
+            Assert.AreEqual<string>(stringValue, stringFromByte);
+            Assert.AreEqual<string>(stringValue, stringFromSByte);
+            Assert.AreEqual<string>(stringValue, stringFromShort);
+            Assert.AreEqual<string>(stringValue, stringFromUShort);
+            Assert.AreEqual<string>(stringValue, stringFromInt);
+            Assert.AreEqual<string>(stringValue, stringFromUInt);
+            Assert.AreEqual<string>(stringValue, stringFromLong);
+            Assert.AreEqual<string>(stringValue, stringFromULong);
+            Assert.AreEqual<string>(stringValue, stringFromDouble);
+            Assert.AreEqual<string>(stringValue, stringFromFloat);
+            Assert.AreEqual<string>(stringValue, stringFromDecimal);
+            Assert.AreEqual<string>(stringValue, stringFromString);
+
+            Log.Info("Casts to Boolean");
+
+            bool bTrue = dyn.True;
+            bool bFalse = dyn.False;
+            Assert.IsTrue(bTrue);
+            Assert.IsFalse(bFalse);
+        }
+
+        /// <summary>
         /// Test for creating a JsonValue from a deep-nested dynamic object.
         /// </summary>
         [TestMethod]

@@ -283,6 +283,7 @@
             foreach (JsonValue value in invalidArrays)
             {
                 success = value.TryReadAsType<object[]>(out array);
+                Console.WriteLine("Try reading {0} as object[]; success = {1}", value.ToString(), success);
                 Assert.IsFalse(success);
                 Assert.IsNull(array);
             }
@@ -290,6 +291,7 @@
             foreach (JsonValue value in invalidDictionaries)
             {
                 success = value.TryReadAsType<Dictionary<string, object>>(out dictionary);
+                Console.WriteLine("Try reading {0} as Dictionary<string, object>; success = {1}", value.ToString(), success);
                 Assert.IsFalse(success);
                 Assert.IsNull(dictionary);
             }
