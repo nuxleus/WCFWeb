@@ -1,6 +1,8 @@
 ﻿namespace System.Json.Test
 {
     using System;
+    using System.Collections.Generic;
+    using System.Dynamic;
     using System.IO;
     using System.Json;
     using System.Runtime.Serialization.Json;
@@ -8,8 +10,6 @@
     using Microsoft.ServiceModel.Web.Test.Common;
     using Microsoft.Silverlight.Cdf.Test.Common.Utility;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Dynamic;
-using System.Collections.Generic;
 
     /// <summary>
     /// Tests for the methods to convert between <see cref="JsonValue"/> instances and complex types.
