@@ -54,8 +54,8 @@ namespace Microsoft.ServiceModel.Http
             request.Headers.Accept.AddString("application/json");
 
             var reader = new StreamReader(stream);
-            var json = reader.ReadToEnd();
-            var jsonObject = FormUrlEncodedExtensions.ParseFormUrlEncoded(json);
+            var jsonContent = reader.ReadToEnd();
+            var jsonObject = FormUrlEncodedExtensions.ParseFormUrlEncoded(jsonContent);
 
             if (this.isJsonValueParameter)
             {

@@ -32,7 +32,7 @@ namespace Microsoft.ServiceModel.Http
 
             ContractDescription contract = ContractDescription.GetContract(serviceType);
             Description.Behaviors.Remove<AspNetCompatibilityRequirementsAttribute>();
-            this.Description.Behaviors.Add(new AspNetCompatibilityRequirementsAttribute { RequirementsMode = AspNetCompatibilityRequirementsMode.Allowed});
+            this.Description.Behaviors.Add(new AspNetCompatibilityRequirementsAttribute { RequirementsMode = AspNetCompatibilityRequirementsMode.Allowed });
 
             foreach (Uri baseAddress in baseAddresses)
             {
