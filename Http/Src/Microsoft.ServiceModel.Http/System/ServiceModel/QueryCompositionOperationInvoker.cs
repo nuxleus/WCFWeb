@@ -60,19 +60,8 @@ namespace System.ServiceModel
                 queryCompositionMessageProperty = messageProperties[QueryCompositionMessageProperty.Name] as QueryCompositionMessageProperty;
                 return queryCompositionMessageProperty.RequestUri;
             }
-            else
-            {
-                return httpRequest.RequestUri.AbsoluteUri;
- /*
-                UriTemplateMatch uriTemplateMatch = WebOperationContext.Current.IncomingRequest.UriTemplateMatch;
-                if (uriTemplateMatch != null && uriTemplateMatch.RequestUri != null && uriTemplateMatch.RequestUri.AbsoluteUri != null)
-                {
-                    return WebOperationContext.Current.IncomingRequest.UriTemplateMatch.RequestUri.AbsoluteUri;
-                }
-*/ 
-           }
 
-            return null;
+            return httpRequest.RequestUri.AbsoluteUri;
         }
 
         private object TryApplyQuery(object result)

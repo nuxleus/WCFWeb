@@ -138,16 +138,13 @@ namespace System.ServiceModel.Channels
 
             httpRequestMessage.RequestUri = uri;
             httpRequestMessage.Method = new HttpMethod(requestProperty.Method);
-            //httpRequestMessage.Headers.Clear();
-            //if (httpRequestMessage.Content != null)
-                //httpRequestMessage.Content.Headers.Clear();
  
             foreach (var headerName in requestProperty.Headers.AllKeys)
             {
-                if (headerName.StartsWith("content-", StringComparison.InvariantCultureIgnoreCase) ||
-                    headerName.Equals("Allow", StringComparison.InvariantCultureIgnoreCase) ||
+                if (headerName.StartsWith("content-", StringComparison.OrdinalIgnoreCase) ||
+                    headerName.Equals("Allow", StringComparison.OrdinalIgnoreCase) ||
                     headerName.Equals("Expires") ||
-                    headerName.Equals("Expires", StringComparison.InvariantCulture))
+                    headerName.Equals("Expires", StringComparison.OrdinalIgnoreCase))
                 {
                     httpRequestMessage.Content.Headers.Remove(headerName);
                     httpRequestMessage.Content.Headers.Add(headerName, requestProperty.Headers[headerName]);
