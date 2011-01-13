@@ -58,9 +58,9 @@
             Assert.AreEqual(AnyInstance.AnyGuid, (Guid)jo["guid"]);
             Assert.AreEqual(AnyInstance.AnyDateTime, (DateTime)jo["dateTime"]);
             Assert.AreEqual(AnyInstance.AnyDateTimeOffset, (DateTimeOffset)jo["dateTimeOffset"]);
-            Assert.AreEqual(AnyInstance.AnyJsonArray, jo["JsonArray"]);
+            Assert.AreSame(AnyInstance.AnyJsonArray, jo["JsonArray"]);
             Assert.AreEqual(AnyInstance.AnyJsonPrimitive, jo["JsonPrimitive"]);
-            Assert.AreEqual(AnyInstance.AnyJsonObject, jo["JsonObject"]);
+            Assert.AreSame(AnyInstance.AnyJsonObject, jo["JsonObject"]);
 
             Assert.AreEqual(AnyInstance.AnyBool, (bool)dyn.boolean);
             Assert.AreEqual(AnyInstance.AnyShort, (short)dyn.int16);
@@ -80,9 +80,9 @@
             Assert.AreEqual(AnyInstance.AnyGuid, (Guid)dyn.guid);
             Assert.AreEqual(AnyInstance.AnyDateTime, (DateTime)dyn.dateTime);
             Assert.AreEqual(AnyInstance.AnyDateTimeOffset, (DateTimeOffset)dyn.dateTimeOffset);
-            Assert.AreEqual(AnyInstance.AnyJsonArray, dyn.JsonArray);
+            Assert.AreSame(AnyInstance.AnyJsonArray, dyn.JsonArray);
             Assert.AreEqual(AnyInstance.AnyJsonPrimitive, dyn.JsonPrimitive);
-            Assert.AreEqual(AnyInstance.AnyJsonObject, dyn.JsonObject);
+            Assert.AreSame(AnyInstance.AnyJsonObject, dyn.JsonObject);
 
             ExceptionTestHelper.ExpectException<ArgumentException>(delegate { dyn.other = Console.Out; });
             ExceptionTestHelper.ExpectException<ArgumentException>(delegate { dyn.other = dyn.NonExistentProp; });

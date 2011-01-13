@@ -256,6 +256,7 @@
                 count++;
                 Assert.AreSame(AnyInstance.AnyJsonObject[pair.Key], pair.Value);
             }
+
             Assert.AreEqual<int>(AnyInstance.AnyJsonObject.Count, count);
         }
 

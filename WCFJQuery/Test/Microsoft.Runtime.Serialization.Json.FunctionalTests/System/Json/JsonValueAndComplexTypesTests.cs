@@ -1,6 +1,8 @@
 ﻿namespace System.Json.Test
 {
     using System;
+    using System.Collections.Generic;
+    using System.Dynamic;
     using System.IO;
     using System.Json;
     using System.Runtime.Serialization.Json;
@@ -190,6 +192,26 @@
             Assert.AreEqual(jvDto1.ToString(), jvDto2.ToString());
         }
 
+        /// <summary>
+        /// Tests for creating <see cref="JsonValue"/> instances from dynamic objects.
+        /// </summary>
+        [TestMethod]
+        public void CreateFromDynamic()
+        {
+            string expectedJson = "{\"int\":12,\"str\":\"hello\",\"jv\":[1,{\"a\":true}],\"dyn\":{\"char\":\"c\",\"null\":null}}";
+            MyDynamicObject obj = new MyDynamicObject();
+            obj.fields.Add("int", 12);
+            obj.fields.Add("str", "hello");
+            obj.fields.Add("jv", new JsonArray(1, new JsonObject { { "a", true } }));
+            MyDynamicObject dyn = new MyDynamicObject();
+            obj.fields.Add("dyn", dyn);
+            dyn.fields.Add("char", 'c');
+            dyn.fields.Add("null", null);
+
+            JsonValue jv = JsonValueExtensions.CreateFrom(obj);
+            Assert.AreEqual(expectedJson, jv.ToString());
+        }
+
         void ReadAsTest<T>(Random rndGen)
         {
             T instance = InstanceCreator.CreateInstanceOf<T>(rndGen);
@@ -212,6 +234,60 @@
             {
                 T newInstance = jv.ReadAsType<T>();
                 Assert.AreEqual(instance, newInstance);
+            }
+        }
+
+        /// <summary>
+        /// Test class.
+        /// </summary>
+        public class MyDynamicObject : DynamicObject
+        {
+            /// <summary>
+            /// Test member
+            /// </summary>
+            public Dictionary<string, object> fields = new Dictionary<string, object>();
+
+            /// <summary>
+            /// Returnes the member names in this dynamic object.
+            /// </summary>
+            /// <returns>The member names in this dynamic object.</returns>
+            public override IEnumerable<string> GetDynamicMemberNames()
+            {
+                return fields.Keys;
+            }
+
+            /// <summary>
+            /// Attempts to get a named member from this dynamic object.
+            /// </summary>
+            /// <param name="binder">The dynamic binder which contains the member name.</param>
+            /// <param name="result">The value of the member, if it exists in this dynamic object.</param>
+            /// <returns><code>true</code> if the member can be returned; <code>false</code> otherwise.</returns>
+            public override bool TryGetMember(GetMemberBinder binder, out object result)
+            {
+                if (binder != null && binder.Name != null && this.fields.ContainsKey(binder.Name))
+                {
+                    result = this.fields[binder.Name];
+                    return true;
+                }
+
+                return base.TryGetMember(binder, out result);
+            }
+
+            /// <summary>
+            /// Attempts to set a named member from this dynamic object.
+            /// </summary>
+            /// <param name="binder">The dynamic binder which contains the member name.</param>
+            /// <param name="value">The value of the member to be set.</param>
+            /// <returns><code>true</code> if the member can be set; <code>false</code> otherwise.</returns>
+            public override bool TrySetMember(SetMemberBinder binder, object value)
+            {
+                if (binder != null && binder.Name != null)
+                {
+                    this.fields[binder.Name] = value;
+                    return true;
+                }
+
+                return base.TrySetMember(binder, value);
             }
         }
 
