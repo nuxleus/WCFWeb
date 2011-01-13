@@ -12,7 +12,7 @@ namespace Microsoft.ServiceModel.Description
     using System.Linq;
     using System.Text;
 
-    public class InstanceFactoryProvider
+    public class InstanceFactoryProvider : IInstanceProvider
     {
         private readonly Type serviceType;
 
