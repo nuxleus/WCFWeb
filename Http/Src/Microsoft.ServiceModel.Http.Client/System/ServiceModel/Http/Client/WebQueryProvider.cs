@@ -5,7 +5,6 @@
 namespace System.ServiceModel.Http.Client
 {
     using System.Collections.Generic;
-    using System.IO;
     using System.Linq;
     using System.Linq.Expressions;
     using System.Net;
@@ -13,13 +12,9 @@ namespace System.ServiceModel.Http.Client
     using System.Reflection;
     using System.Runtime.Serialization;
     using System.Runtime.Serialization.Json;
-    using System.Threading.Tasks;
-
-    using System.Net.Http;
-
-    using HttpException = System.Web.HttpException;
     using System.ServiceModel.Web.Client;
-
+    using System.Threading.Tasks;
+      
     internal class WebQueryProvider : IQueryProvider
     {
         private string resourceBaseAddress;
@@ -168,11 +163,26 @@ namespace System.ServiceModel.Http.Client
                 {
                     tcs.TrySetException(e);
                 }
-
             });
-
             return tcs.Task;
+        }
 
+        private static T ReadAsDataContract<T>(HttpContent content)
+        {
+            DataContractSerializer serializer = new DataContractSerializer(typeof(T));
+            using (var stream = content.ContentReadStream)
+            {
+                return (T)serializer.ReadObject(stream);
+            }
+        }
+
+        private static T ReadAsJsonDataContract<T>(HttpContent content)
+        {
+            DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(T));
+            using (var r = content.ContentReadStream)
+            {
+                return (T)serializer.ReadObject(r);
+            }
         }
 
         private IEnumerable<T> Deserialize<T>(HttpResponseMessage response)
@@ -195,7 +205,9 @@ namespace System.ServiceModel.Http.Client
             IEnumerable<T> results = null;
 
             if (response.Content.Headers.ContentType.MediaType == null)
+            {
                 throw new ArgumentException(SR.WebQueryResponseMessageMissingMediaType);
+            }
 
             if (response.Content.Headers.ContentType.MediaType.IsXmlContent())
             {
@@ -212,24 +224,6 @@ namespace System.ServiceModel.Http.Client
             }
 
             return results;
-        }
-
-        static T ReadAsDataContract<T>(HttpContent content)
-        {
-            DataContractSerializer serializer = new DataContractSerializer(typeof(T));
-            using (var stream = content.ContentReadStream)
-            {
-                return (T)serializer.ReadObject(stream);
-            }
-        }
-
-        static T ReadAsJsonDataContract<T>(HttpContent content)
-        {
-            DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(T));
-            using (var r = content.ContentReadStream)
-            {
-                return (T)serializer.ReadObject(r);
-            }
         }
 
         private static class TypeHelper
@@ -291,7 +285,5 @@ namespace System.ServiceModel.Http.Client
                 return null;
             }
         }
-
-
     }
 }

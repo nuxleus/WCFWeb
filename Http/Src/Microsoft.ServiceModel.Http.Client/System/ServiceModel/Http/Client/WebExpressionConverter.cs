@@ -55,7 +55,6 @@ namespace System.ServiceModel.Http.Client
             UriWriter.Translate(false, e, out uri);
 
             return uri;
-            
         }
     }
 }

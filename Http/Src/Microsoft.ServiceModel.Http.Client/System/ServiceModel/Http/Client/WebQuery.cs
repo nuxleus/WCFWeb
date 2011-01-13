@@ -85,6 +85,7 @@ namespace System.ServiceModel.Http.Client
                 {
                     this.requestUri = this.provider.GetRequestUri(this.expression);
                 }
+
                 return this.requestUri;
             }
         }
