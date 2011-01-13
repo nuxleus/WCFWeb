@@ -7,7 +7,7 @@ namespace Microsoft.ServiceModel.Http.Test.UnitTests
     using System;
     using System.ServiceModel.Channels;
     using System.ServiceModel.Http.Test.Utilities;
-    using Microsoft.Http;
+    using System.Net.Http;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [TestClass]

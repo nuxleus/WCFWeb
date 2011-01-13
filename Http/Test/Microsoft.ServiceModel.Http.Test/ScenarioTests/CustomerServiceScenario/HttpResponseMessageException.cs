@@ -5,7 +5,7 @@
 namespace System.ServiceModel.Http.Test.ScenarioTests
 {
     using System;
-    using Microsoft.Http;
+    using System.Net.Http;
 
     public class HttpResponseMessageException : Exception
     {

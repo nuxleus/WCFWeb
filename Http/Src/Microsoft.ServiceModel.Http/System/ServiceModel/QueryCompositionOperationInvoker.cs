@@ -52,6 +52,8 @@ namespace System.ServiceModel
         {
             QueryCompositionMessageProperty queryCompositionMessageProperty = null;
             MessageProperties messageProperties = OperationContext.Current.IncomingMessageProperties;
+            var message = OperationContext.Current.RequestContext.RequestMessage;
+            var httpRequest = message.ToHttpRequestMessage();
 
             if (messageProperties.ContainsKey(QueryCompositionMessageProperty.Name))
             {
@@ -60,12 +62,15 @@ namespace System.ServiceModel
             }
             else
             {
+                return httpRequest.RequestUri.AbsoluteUri;
+ /*
                 UriTemplateMatch uriTemplateMatch = WebOperationContext.Current.IncomingRequest.UriTemplateMatch;
                 if (uriTemplateMatch != null && uriTemplateMatch.RequestUri != null && uriTemplateMatch.RequestUri.AbsoluteUri != null)
                 {
                     return WebOperationContext.Current.IncomingRequest.UriTemplateMatch.RequestUri.AbsoluteUri;
                 }
-            }
+*/ 
+           }
 
             return null;
         }

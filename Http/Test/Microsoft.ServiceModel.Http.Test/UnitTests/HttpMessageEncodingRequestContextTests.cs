@@ -10,8 +10,9 @@ namespace Microsoft.ServiceModel.Http.Test.UnitTests
     using System.ServiceModel.Channels;
     using System.ServiceModel.Http.Test.Mocks;
     using System.ServiceModel.Http.Test.Utilities;
-    using Microsoft.Http;
+    using System.Net.Http;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using System.Net.Http.Headers;
 
     [TestClass]
     public class HttpMessageEncodingRequestContextTests
@@ -141,7 +142,7 @@ namespace Microsoft.ServiceModel.Http.Test.UnitTests
         public void RequestMessage_Uri_Determined_By_To_Header()
         {
             HttpRequestMessage innerRequest = new HttpRequestMessage();
-            innerRequest.Uri = new Uri("http://notThisUri.org");
+            innerRequest.RequestUri = new Uri("http://notThisUri.org");
             Message innerMessage = new HttpMessage(innerRequest);
             HttpRequestMessageProperty property = new HttpRequestMessageProperty();
             innerMessage.Properties.Add(HttpRequestMessageProperty.Name, property);
@@ -154,7 +155,7 @@ namespace Microsoft.ServiceModel.Http.Test.UnitTests
             Message message = requestContext.RequestMessage;
 
             HttpRequestMessage request = message.ToHttpRequestMessage();
-            Assert.AreEqual(new Uri("http://thisUri.org").ToString(), request.Uri.ToString(), "HttpRequestMessage.Uri should have been set to the 'To' header value of the inner RequestContext message.");
+            Assert.AreEqual(new Uri("http://thisUri.org").ToString(), request.RequestUri.ToString(), "HttpRequestMessage.Uri should have been set to the 'To' header value of the inner RequestContext message.");
         }
 
         [TestMethod]
@@ -162,7 +163,7 @@ namespace Microsoft.ServiceModel.Http.Test.UnitTests
         public void RequestMessage_Method_Determined_By_HttpRequestMessageProperty()
         {
             HttpRequestMessage innerRequest = new HttpRequestMessage();
-            innerRequest.Method = "GET";
+            innerRequest.Method = HttpMethod.Get;
             Message innerMessage = new HttpMessage(innerRequest);
             HttpRequestMessageProperty property = new HttpRequestMessageProperty();
             property.Method = "PUT";
@@ -176,7 +177,7 @@ namespace Microsoft.ServiceModel.Http.Test.UnitTests
             Message message = requestContext.RequestMessage;
 
             HttpRequestMessage request = message.ToHttpRequestMessage();
-            Assert.AreEqual("PUT", request.Method, "HttpRequestMessage.Method should have been set to the the value of the HttpRequestMessageProperty.Method.");
+            Assert.AreEqual("PUT", request.Method.Method, "HttpRequestMessage.Method should have been set to the the value of the HttpRequestMessageProperty.Method.");
         }
 
         [TestMethod]
@@ -195,7 +196,7 @@ namespace Microsoft.ServiceModel.Http.Test.UnitTests
             HttpRequestMessage request = message.ToHttpRequestMessage();
 
             Assert.IsNotNull(request.Content, "HttpRequestMessage.Content should not have been null.");
-            Assert.AreEqual(0, request.Headers.ContentLength, "HttpRequestMessage.Content length should have been zero.");
+            Assert.AreEqual(0, request.Content.Headers.ContentLength, "HttpRequestMessage.Content length should have been zero.");
         }
 
         [TestMethod]
@@ -203,7 +204,7 @@ namespace Microsoft.ServiceModel.Http.Test.UnitTests
         public void RequestMessage_Returns_Same_HttpContent_Instance_When_Inner_Request_Is_HttpMessage()
         {
             HttpRequestMessage innerRequest = new HttpRequestMessage();
-            innerRequest.Content = HttpContent.Create(new byte[5] { 1, 2, 3, 4, 5 });
+            innerRequest.Content = new ByteArrayContent(new byte[5] { 1, 2, 3, 4, 5 });
             Message innerMessage = new HttpMessage(innerRequest);
             innerMessage.Headers.To = new Uri("http://someHost.org/someService");
             innerMessage.Properties.Add(HttpRequestMessageProperty.Name, new HttpRequestMessageProperty());
@@ -277,7 +278,7 @@ namespace Microsoft.ServiceModel.Http.Test.UnitTests
         public void RequestMessage_Returns_HttpMessage_With_HttpRequestHeaders_From_The_HttpRequestMessageProperty()
         {
             HttpRequestMessage innerRequest = new HttpRequestMessage();
-            innerRequest.Content = HttpContent.Create(new byte[] { 0, 1, 2, 3, 4 });
+            innerRequest.Content = new ByteArrayContent(new byte[] { 0, 1, 2, 3, 4 });
             Message innerMessage = new HttpMessage(innerRequest);
             innerMessage.Headers.To = new Uri("http://someHost.org/someService");
             HttpRequestMessageProperty property = new HttpRequestMessageProperty();
@@ -296,11 +297,12 @@ namespace Microsoft.ServiceModel.Http.Test.UnitTests
             Message message = requestContext.RequestMessage;
             HttpRequestMessage request = message.ToHttpRequestMessage();
 
-            Assert.AreEqual(4, request.Headers.Count(), "HttpRequestMessage.Headers.Count should have been two.");
-            Assert.AreEqual("someHost.org", request.Headers.Host.HostName, "The host name header should have been 'someHost.org'.");
+            Assert.AreEqual(2, request.Headers.Count(), "HttpRequestMessage.Headers.Count should have been two.");
+            Assert.AreEqual(2, request.Content.Headers.Count(), "Content.Headers.Count should have been two");
+            Assert.AreEqual("someHost.org", request.Headers.Host, "The host name header should have been 'someHost.org'.");
             Assert.AreEqual("SomeUserAgent", request.Headers.UserAgent.First().Product.ToString(), "The user agent header should have been 'SomeUserAgent'.");
-            Assert.AreEqual("someType/someSubType", request.Headers.ContentType, "The content type header should have been 'someType/someSubType'.");
-            Assert.AreEqual(5, request.Headers.ContentLength, "The content length header should have been five.");
+            Assert.AreEqual("someType/someSubType", request.Content.Headers.ContentType.MediaType, "The content type header should have been 'someType/someSubType'.");
+            Assert.AreEqual(5, request.Content.Headers.ContentLength, "The content length header should have been five.");
         }
 
         [TestMethod]
@@ -308,8 +310,8 @@ namespace Microsoft.ServiceModel.Http.Test.UnitTests
         public void RequestMessage_Returns_HttpMessage_With_HttpRequestHeaders_Only_From_The_HttpRequestMessageProperty()
         {
             HttpRequestMessage innerRequest = new HttpRequestMessage();
-            innerRequest.Content = HttpContent.Create(new byte[] { 0, 1, 2, 3, 4 });
-            innerRequest.Headers.ContentType = "notThisType/notThisSubType";
+            innerRequest.Content = new ByteArrayContent(new byte[] { 0, 1, 2, 3, 4 });
+            innerRequest.Content.Headers.ContentType = new MediaTypeHeaderValue("notThisType/notThisSubType");
             Message innerMessage = new HttpMessage(innerRequest);
             innerMessage.Headers.To = new Uri("http://someHost.org/someService");
             HttpRequestMessageProperty property = new HttpRequestMessageProperty();
@@ -326,9 +328,10 @@ namespace Microsoft.ServiceModel.Http.Test.UnitTests
             Message message = requestContext.RequestMessage;
             HttpRequestMessage request = message.ToHttpRequestMessage();
 
-            Assert.AreEqual(2, request.Headers.Count(), "HttpRequestMessage.Headers.Count should have been one.");
+            Assert.AreEqual(1, request.Headers.Count(), "HttpRequestMessage.Headers.Count should have been one.");
+            Assert.AreEqual(1, request.Content.Headers.Count(), "Content.Headers.Count should have been one");
             Assert.AreEqual("SomeUserAgent", request.Headers.UserAgent.First().Product.ToString(), "The user agent header should have been 'SomeUserAgent'.");
-            Assert.AreEqual("someType/someSubType", request.Headers.ContentType, "The content type header should have been 'someType/someSubType'.");
+            Assert.AreEqual("someType/someSubType", request.Content.Headers.ContentType.MediaType, "The content type header should have been 'someType/someSubType'.");
         }
 
         [TestMethod]
@@ -336,7 +339,7 @@ namespace Microsoft.ServiceModel.Http.Test.UnitTests
         public void RequestMessage_Returns_HttpMessage_With_Only_To_Header()
         {
             HttpRequestMessage innerRequest = new HttpRequestMessage();
-            innerRequest.Content = HttpContent.Create(new byte[] { 0, 1, 2, 3, 4 });
+            innerRequest.Content = new ByteArrayContent(new byte[] { 0, 1, 2, 3, 4 });
             Message innerMessage = new HttpMessage(innerRequest);
             innerMessage.Headers.To = new Uri("http://someHost.org/someService");
             HttpRequestMessageProperty property = new HttpRequestMessageProperty();
@@ -549,7 +552,7 @@ namespace Microsoft.ServiceModel.Http.Test.UnitTests
         public void Reply_Replaces_HttpResponseMessageProperty_When_Response_Is_HttpMessage()
         {
             HttpResponseMessage response = new HttpResponseMessage();
-            response.Content = HttpContent.Create(new byte[5] { 1, 2, 3, 4, 5 });
+            response.Content = new ByteArrayContent(new byte[5] { 1, 2, 3, 4, 5 });
             response.StatusCode = HttpStatusCode.Moved;
             response.Headers.Add("SomeHeader", "SomeHeaderValue");
             HttpMessage message = new HttpMessage(response);
@@ -562,7 +565,7 @@ namespace Microsoft.ServiceModel.Http.Test.UnitTests
 
                 Assert.AreEqual(HttpStatusCode.Moved, innerProperty.StatusCode, "HttpResponseMessageProperty.StatusCode should have been HttpStatusCode.Moved.");
                 Assert.IsFalse(innerProperty.SuppressEntityBody, "HttpResponseMessageProperty.SuppressEntityBody should have been 'false'.");
-                Assert.AreEqual(1, innerProperty.Headers.Count, "HttpResponseMessageProperty.Header.Count should have been 1.");
+                Assert.AreEqual(2, innerProperty.Headers.Count, "HttpResponseMessageProperty.Header.Count should have been 2.");
                 Assert.AreEqual("SomeHeaderValue", innerProperty.Headers["SomeHeader"], "HttpResponseMessageProperty.Header 'SomeHeader' value should have been 'SomeHeaderValue'.");
             };
 
@@ -746,7 +749,7 @@ namespace Microsoft.ServiceModel.Http.Test.UnitTests
         public void BeginReply_Replaces_HttpResponseMessageProperty_When_Response_Is_HttpMessage()
         {
             HttpResponseMessage response = new HttpResponseMessage();
-            response.Content = HttpContent.Create(new byte[5] { 1, 2, 3, 4, 5 });
+            response.Content = new ByteArrayContent(new byte[5] { 1, 2, 3, 4, 5 });
             response.StatusCode = HttpStatusCode.Moved;
             response.Headers.Add("SomeHeader", "SomeHeaderValue");
             HttpMessage message = new HttpMessage(response);
@@ -759,7 +762,7 @@ namespace Microsoft.ServiceModel.Http.Test.UnitTests
 
                 Assert.AreEqual(HttpStatusCode.Moved, innerProperty.StatusCode, "HttpResponseMessageProperty.StatusCode should have been HttpStatusCode.Moved.");
                 Assert.IsFalse(innerProperty.SuppressEntityBody, "HttpResponseMessageProperty.SuppressEntityBody should have been 'false'.");
-                Assert.AreEqual(1, innerProperty.Headers.Count, "HttpResponseMessageProperty.Header.Count should have been 1.");
+                Assert.AreEqual(2, innerProperty.Headers.Count, "HttpResponseMessageProperty.Header.Count should have been 2.");
                 Assert.AreEqual("SomeHeaderValue", innerProperty.Headers["SomeHeader"], "HttpResponseMessageProperty.Header 'SomeHeader' value should have been 'SomeHeaderValue'.");
             };
 

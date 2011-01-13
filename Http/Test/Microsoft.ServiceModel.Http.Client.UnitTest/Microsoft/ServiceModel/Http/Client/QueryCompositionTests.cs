@@ -8,8 +8,8 @@ namespace Microsoft.ServiceModel.Http.Client.Test
 {
     using System;
     using System.Linq;
+    using System.Net.Http;
     using System.ServiceModel.Http.Client;
-    using Microsoft.Http;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     public class Customer

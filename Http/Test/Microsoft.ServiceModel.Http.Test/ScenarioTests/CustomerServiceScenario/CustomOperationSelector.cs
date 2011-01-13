@@ -7,7 +7,7 @@ namespace System.ServiceModel.Http.Test.ScenarioTests
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Microsoft.Http;
+    using System.Net.Http;
     using System.ServiceModel.Description;
     using System.ServiceModel.Dispatcher;
 
@@ -56,7 +56,7 @@ namespace System.ServiceModel.Http.Test.ScenarioTests
                 throw new ArgumentNullException("message");
             }
 
-            if (message.Uri == null)
+            if (message.RequestUri == null)
             {
                 throw new InvalidOperationException("The message must have a URI.");
             }
@@ -66,7 +66,7 @@ namespace System.ServiceModel.Http.Test.ScenarioTests
                 throw new InvalidOperationException("The message must have a method.");
             }
 
-            Tuple<string, string> methodPathTuple = new Tuple<string, string>(message.Method.ToString(), message.Uri.AbsolutePath);
+            Tuple<string, string> methodPathTuple = new Tuple<string, string>(message.Method.ToString(), message.RequestUri.AbsolutePath);
 
             string operationName = null;
             if (!this.uriPathAndMethodToOperationMapping.TryGetValue(methodPathTuple, out operationName))

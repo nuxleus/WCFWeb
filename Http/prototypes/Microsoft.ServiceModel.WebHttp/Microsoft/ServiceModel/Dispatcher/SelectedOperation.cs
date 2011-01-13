@@ -7,8 +7,9 @@ namespace Microsoft.ServiceModel.Dispatcher
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.ServiceModel.Channels;
     using System.Text;
-    using Microsoft.Http;
+    using System.Net.Http;
 
     public class SelectedOperation
     {
@@ -21,7 +22,7 @@ namespace Microsoft.ServiceModel.Dispatcher
                 throw new ArgumentNullException("request");
             }
 
-            object property = request.Properties.FirstOrDefault(o => o is SelectedOperation);
+            object property = request.GetProperties().FirstOrDefault(o => o is SelectedOperation);
             if (property != null)
             {
                 SelectedOperation selectedOperation = property as SelectedOperation;
@@ -38,7 +39,7 @@ namespace Microsoft.ServiceModel.Dispatcher
                 throw new ArgumentNullException("request");
             }
 
-            request.Properties.Add(new SelectedOperation() { Name = operationName });
+            request.GetProperties().Add(new SelectedOperation() { Name = operationName });
         }
     }
 }

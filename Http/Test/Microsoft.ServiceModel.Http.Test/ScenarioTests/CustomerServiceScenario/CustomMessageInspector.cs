@@ -7,7 +7,7 @@ namespace System.ServiceModel.Http.Test.ScenarioTests
     using System;
     using System.Linq;
     using System.Collections.Generic;
-    using Microsoft.Http;
+    using System.Net.Http;
     using System.ServiceModel.Dispatcher;
     using System.Text;
 
@@ -15,7 +15,7 @@ namespace System.ServiceModel.Http.Test.ScenarioTests
     {
         protected override object AfterReceiveRequest(HttpRequestMessage request)
         {
-            return request.Headers.GetValues("NamesOnly").Any();
+            return request.Headers.Contains("NamesOnly");
         }
 
         protected override void BeforeSendReply(HttpResponseMessage response, object correlationState)
@@ -37,7 +37,7 @@ namespace System.ServiceModel.Http.Test.ScenarioTests
                     builder.Length -= 2;
                 }
 
-                response.Content = HttpContent.Create(builder.ToString());
+                response.Content = new StringContent(builder.ToString());
             }
         }
     }

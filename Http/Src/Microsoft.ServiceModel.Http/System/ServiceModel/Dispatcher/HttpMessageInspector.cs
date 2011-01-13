@@ -5,8 +5,8 @@
 namespace System.ServiceModel.Dispatcher
 {
     using System.Globalization;
+    using System.Net.Http;
     using System.ServiceModel.Channels;
-    using Microsoft.Http;
 
     /// <summary>
     /// Defines the methods that enable custom inspection or modification of inbound and 

@@ -144,4 +144,7 @@
   <data name="WebQueryResponseMessageInUnsupportedFormat" xml:space="preserve">
     <value>The content of the HTTP message is not in XML or JSON format, which is required in order to deserialize the message into objects.</value>
   </data>
+  <data name="WebQueryResponseMessageMissingMediaType" xml:space="preserve">
+    <value>The media type of the response cannot be null where there is a ContentType header</value>
+  </data>
 </root>

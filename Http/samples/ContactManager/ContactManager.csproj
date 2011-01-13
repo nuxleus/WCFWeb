@@ -44,13 +44,12 @@
     <WCFjQueryAssemblyPath>$(ProgramFiles(x86))\$(RelativeInstallPath)</WCFjQueryAssemblyPath>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Http">
-      <HintPath>..\..\..\Lib\HttpClient\Microsoft.Http.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Http.Extensions">
-      <HintPath>..\..\..\Lib\HttpClient\Microsoft.Http.Extensions.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Net.Http, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Lib\HttpClient\Microsoft.Net.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.Entity" />
     <Reference Include="System.Data.Linq" />

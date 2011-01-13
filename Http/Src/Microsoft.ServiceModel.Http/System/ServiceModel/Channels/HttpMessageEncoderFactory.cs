@@ -7,7 +7,7 @@ namespace System.ServiceModel.Channels
     using System;
     using System.Globalization;
     using System.IO;
-    using Microsoft.Http;
+    using System.Net.Http;
 
     internal class HttpMessageEncoderFactory : MessageEncoderFactory
     {
@@ -86,7 +86,13 @@ namespace System.ServiceModel.Channels
                 bufferManager.ReturnBuffer(buffer.Array);
 
                 HttpRequestMessage request = new HttpRequestMessage();
-                request.Content = HttpContent.Create(content, contentType);
+                var httpContent = new ByteArrayContent(content);
+                httpContent.Headers.Clear();
+
+                if (contentType != null)
+                    httpContent.Headers.Add("content-type", contentType);
+                
+                request.Content = httpContent;
 
                 Message message = request.ToMessage();
                 message.Properties.Encoder = this;
@@ -103,7 +109,8 @@ namespace System.ServiceModel.Channels
                 }
 
                 HttpRequestMessage request = new HttpRequestMessage();
-                request.Content = HttpContent.Create(stream, contentType, null);
+                request.Content = new StreamContent(stream);
+                request.Content.Headers.Clear();
              
                 Message message = request.ToMessage();
                 message.Properties.Encoder = this;
@@ -183,7 +190,7 @@ namespace System.ServiceModel.Channels
 
                 if (response.Content != null)
                 {
-                    response.Content.WriteTo(stream);
+                    response.Content.CopyTo(stream);
                 }
             }
 

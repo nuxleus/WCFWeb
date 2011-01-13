@@ -8,19 +8,21 @@ namespace Microsoft.ServiceModel.Http
     using System.Diagnostics.CodeAnalysis;
     using System.ServiceModel.Activation;
 
+    using Microsoft.ServiceModel.Description;
+
     public class WebHttpServiceHostFactory : ServiceHostFactory
     {
-        private HostConfiguration processorFactory;
+        private HttpHostConfiguration configuration;
 
         [SuppressMessage("Microsoft.Design", "CA1026", Justification = "Uses optional params")]
-        public WebHttpServiceHostFactory(HostConfiguration processorFactory = null)
+        public WebHttpServiceHostFactory(HttpHostConfiguration configuration = null)
         {
-            this.processorFactory = processorFactory;
+            this.configuration = configuration;
         }
 
         protected override System.ServiceModel.ServiceHost CreateServiceHost(Type serviceType, Uri[] baseAddresses)
         {
-            return new WebHttpServiceHost(serviceType, this.processorFactory, baseAddresses);
+            return new WebHttpServiceHost(serviceType, this.configuration, baseAddresses);
         }
     }
 }

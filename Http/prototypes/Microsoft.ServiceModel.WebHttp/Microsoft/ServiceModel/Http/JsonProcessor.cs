@@ -9,16 +9,19 @@ namespace Microsoft.ServiceModel.Http
     using System.IO;
     using System.Json;
     using System.Runtime.Serialization.Json;
+    using System.ServiceModel;
     using System.ServiceModel.Description;
     using System.Threading;
 
-    using Microsoft.Http;
+    using System.Net.Http;
     using Microsoft.ServiceModel.Http;
 
     public class JsonProcessor : MediaTypeProcessor
     {
         private bool isJsonValueParameter;
         private Type parameterType;
+        private bool usesQueryComposition;
+        private Type queryCompositionType;
 
         public JsonProcessor(HttpOperationDescription operation, MediaTypeProcessorMode mode)
             : base(operation, mode)
@@ -27,6 +30,14 @@ namespace Microsoft.ServiceModel.Http
             {
                 this.parameterType = this.Parameter.ParameterType;
                 this.isJsonValueParameter = typeof(JsonValue).IsAssignableFrom(this.parameterType);
+            }
+
+            //IQueryable support
+            if (operation.Behaviors.Contains(typeof(QueryCompositionAttribute)))
+            {
+                usesQueryComposition = true;
+                var queryCompositionItemType = operation.ReturnValue.ParameterType.GetGenericArguments()[0];
+                queryCompositionType = typeof(List<>).MakeGenericType(queryCompositionItemType);
             }
         }
 
@@ -42,15 +53,24 @@ namespace Microsoft.ServiceModel.Http
         {
             JsonValue value = null;
 
-            if (this.isJsonValueParameter)
+            if (this.usesQueryComposition)
             {
-                value = (JsonValue)instance;
-                value.Save(stream);
+                instance = Activator.CreateInstance(this.queryCompositionType, instance);
+                var serializer = new DataContractJsonSerializer(this.queryCompositionType);
+                serializer.WriteObject(stream, instance);
             }
             else
             {
-                var serializer = new DataContractJsonSerializer(Parameter.ParameterType);
-                serializer.WriteObject(stream, instance);
+                if (this.isJsonValueParameter)
+                {
+                    value = (JsonValue)instance;
+                    value.Save(stream);
+                }
+                else
+                {
+                    var serializer = new DataContractJsonSerializer(Parameter.ParameterType);
+                    serializer.WriteObject(stream, instance);
+                }
             }
         }
 
@@ -65,6 +85,7 @@ namespace Microsoft.ServiceModel.Http
             }
 
             var serializer = new DataContractJsonSerializer(Parameter.ParameterType);
+            stream.Position = 0;
             return serializer.ReadObject(stream);
         }
     }

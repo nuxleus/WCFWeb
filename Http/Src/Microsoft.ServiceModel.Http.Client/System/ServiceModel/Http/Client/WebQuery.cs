@@ -9,9 +9,11 @@ namespace System.ServiceModel.Http.Client
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Linq.Expressions;
+    using System.Net.Http;
+    using System.Net.Http.Headers;
     using System.Text;
-    using Microsoft.Http;
-    using Microsoft.Http.Headers;
+    using System.Threading.Tasks;
+
     using Microsoft.QueryComposition.Client;
 
     /// <summary>
@@ -23,7 +25,7 @@ namespace System.ServiceModel.Http.Client
     {
         private Expression expression;
         private WebQueryProvider provider;
-        private HttpRequestMessage requestMessage;
+        private Uri requestUri;
 
         internal WebQuery(HttpClient client, Uri relativeAddress, IExpressionToUriConverter converter)
         {           
@@ -78,25 +80,12 @@ namespace System.ServiceModel.Http.Client
         {
             get
             {
-                return this.RequestMessageTemplate.Uri;
-            }
-        }
-
-        internal HttpRequestMessage RequestMessageTemplate
-        {
-            get
-            {
-                // we can cache the request message because a WebQuery is immutable
-                if (this.requestMessage == null)
+                // we can cache the request uri because a WebQuery is immutable
+                if (this.requestUri == null)
                 {
-                    this.requestMessage = new HttpRequestMessage
-                    {
-                        Uri = this.provider.GetRequestUri(this.expression),
-                        Method = Utility.GET
-                    };
+                    this.requestUri = this.provider.GetRequestUri(this.expression);
                 }
-
-                return this.requestMessage;
+                return this.requestUri;
             }
         }
 
@@ -124,49 +113,21 @@ namespace System.ServiceModel.Http.Client
         }
 
         /// <summary>
-        /// The begin part of async implementation of execute method
-        /// </summary>
-        /// <param name="callback">The async callback</param>
-        /// <param name="state">The async state</param>
-        /// <returns>The async result</returns>
-        public IAsyncResult BeginExecute(AsyncCallback callback, object state)
-        {
-            return this.provider.BeginExecute<T>(this.CreateRequestMessage(), callback, state);
-        }
-
-        /// <summary>
         /// The end part of async implementation of execute method
         /// </summary>
-        /// <param name="asyncResult">The async result</param>
-        /// <returns>A list of the objects</returns>
-        public IEnumerable<T> EndExecute(IAsyncResult asyncResult)
+        /// <returns>A task which contains the result</returns>
+        public Task<IEnumerable<T>> ExecuteAsync()
         {
-            return this.provider.EndExecute<T>(asyncResult);
+            return this.provider.ExecuteInternalAsync<T>(this.CreateRequestMessage());
         }
 
         internal HttpRequestMessage CreateRequestMessage()
         {
-            if (this.RequestMessageTemplate.Method != Utility.GET)
-            {
-                throw new InvalidOperationException(SR.WebQueryRequestMessageCanOnlyBeHttpGet);
-            }
-
             HttpRequestMessage requestMessage = new HttpRequestMessage
             {
-                Uri = this.RequestMessageTemplate.Uri,
-                Method = this.RequestMessageTemplate.Method
+                RequestUri = this.RequestUri,
+                Method = HttpMethod.Get
             };
-
-            // copy the headers
-            if (this.RequestMessageTemplate.Headers != null)
-            {
-                requestMessage.Headers = new RequestHeaders();
-                foreach (var header in this.RequestMessageTemplate.Headers)
-                {
-                    requestMessage.Headers.Add(header.Key, header.Value);
-                }
-            }
-
             return requestMessage;
         }
 

@@ -6,7 +6,7 @@ namespace System.ServiceModel.Http.Test.ScenarioTests
 {
     using System;
     using System.Net;
-    using Microsoft.Http;
+    using System.Net.Http;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [TestClass]
@@ -25,7 +25,7 @@ namespace System.ServiceModel.Http.Test.ScenarioTests
                 host.Open();
 
                 HttpClient client = new HttpClient(baseAddress);
-                HttpRequestMessage request = new HttpRequestMessage("GET", "Customers");
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, "Customers");
                 HttpResponseMessage response = client.Send(request);
                 using (response)
                 {
@@ -50,7 +50,7 @@ namespace System.ServiceModel.Http.Test.ScenarioTests
                 host.Open();
 
                 HttpClient client = new HttpClient(baseAddress);
-                HttpRequestMessage request = new HttpRequestMessage("GET", "Customers?id=1");
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, "Customers?id=1");
                 HttpResponseMessage response = client.Send(request);
                 using (response)
                 {
@@ -72,7 +72,7 @@ namespace System.ServiceModel.Http.Test.ScenarioTests
                 host.Open();
 
                 HttpClient client = new HttpClient(baseAddress);
-                HttpRequestMessage request = new HttpRequestMessage("GET", "Customers?id=5");
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, "Customers?id=5");
                 HttpResponseMessage response = client.Send(request);
                 using (response)
                 {
@@ -94,7 +94,7 @@ namespace System.ServiceModel.Http.Test.ScenarioTests
                 host.Open();
 
                 HttpClient client = new HttpClient(baseAddress);
-                HttpRequestMessage request = new HttpRequestMessage("GET", "Customers?id=foo");
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, "Customers?id=foo");
                 HttpResponseMessage response = client.Send(request);
                 using (response)
                 {
@@ -120,8 +120,8 @@ namespace System.ServiceModel.Http.Test.ScenarioTests
                 host.Open();
 
                 HttpClient client = new HttpClient(baseAddress);
-                HttpRequestMessage request = new HttpRequestMessage("PUT", "Customers?id=1");
-                request.Content = HttpContent.Create("Id = 1; Name = NewCustomerName1");
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, "Customers?id=1");
+                request.Content = new StringContent("Id = 1; Name = NewCustomerName1");
                 HttpResponseMessage response = client.Send(request);
                 using (response)
                 {
@@ -131,8 +131,8 @@ namespace System.ServiceModel.Http.Test.ScenarioTests
                 }
 
                 // Put server back in original state
-                request = new HttpRequestMessage("PUT", "Customers?id=1");
-                request.Content = HttpContent.Create("Id = 1; Name = Customer1");
+                request = new HttpRequestMessage(HttpMethod.Put, "Customers?id=1");
+                request.Content = new StringContent("Id = 1; Name = Customer1");
                 client.Send(request);
             }
         }
@@ -148,8 +148,8 @@ namespace System.ServiceModel.Http.Test.ScenarioTests
                 host.Open();
 
                 HttpClient client = new HttpClient(baseAddress);
-                HttpRequestMessage request = new HttpRequestMessage("PUT", "Customers?id=5");
-                request.Content = HttpContent.Create("Id = 5; Name = NewCustomerName1");
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, "Customers?id=5");
+                request.Content = new StringContent("Id = 5; Name = NewCustomerName1");
                 HttpResponseMessage response = client.Send(request);
                 using (response)
                 {
@@ -175,8 +175,8 @@ namespace System.ServiceModel.Http.Test.ScenarioTests
                 host.Open();
 
                 HttpClient client = new HttpClient(baseAddress);
-                HttpRequestMessage request = new HttpRequestMessage("POST", "Customers");
-                request.Content = HttpContent.Create("Id = 7; Name = NewCustomer7");
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "Customers");
+                request.Content = new StringContent("Id = 7; Name = NewCustomer7");
                 HttpResponseMessage response = client.Send(request);
                 using (response)
                 {
@@ -188,7 +188,7 @@ namespace System.ServiceModel.Http.Test.ScenarioTests
                 }
 
                 // Put server back in original state
-                request = new HttpRequestMessage("DELETE", "Customers?id=7");
+                request = new HttpRequestMessage(HttpMethod.Delete, "Customers?id=7");
                 client.Send(request);
             }
         }
@@ -204,8 +204,8 @@ namespace System.ServiceModel.Http.Test.ScenarioTests
                 host.Open();
 
                 HttpClient client = new HttpClient(baseAddress);
-                HttpRequestMessage request = new HttpRequestMessage("POST", "Customers?id=2");
-                request.Content = HttpContent.Create("Id = 2; Name = AlreadyCustomer2");
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "Customers?id=2");
+                request.Content = new StringContent("Id = 2; Name = AlreadyCustomer2");
                 HttpResponseMessage response = client.Send(request);
                 using (response)
                 {
@@ -231,7 +231,7 @@ namespace System.ServiceModel.Http.Test.ScenarioTests
                 host.Open();
 
                 HttpClient client = new HttpClient(baseAddress);
-                HttpRequestMessage request = new HttpRequestMessage("DELETE", "Customers?id=3");
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Delete, "Customers?id=3");
                 HttpResponseMessage response = client.Send(request);
                 using (response)
                 {
@@ -241,8 +241,8 @@ namespace System.ServiceModel.Http.Test.ScenarioTests
                 }
 
                 // Put server back in the original state
-                request = new HttpRequestMessage("POST", "Customers");
-                request.Content = HttpContent.Create("Id = 3; Name = Customer3");
+                request = new HttpRequestMessage(HttpMethod.Post, "Customers");
+                request.Content = new StringContent("Id = 3; Name = Customer3");
                 client.Send(request);
             }
         }
@@ -258,7 +258,7 @@ namespace System.ServiceModel.Http.Test.ScenarioTests
                 host.Open();
 
                 HttpClient client = new HttpClient(baseAddress);
-                HttpRequestMessage request = new HttpRequestMessage("DELETE", "Customers?id=4");
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Delete, "Customers?id=4");
                 HttpResponseMessage response = client.Send(request);
                 using (response)
                 {
@@ -284,7 +284,7 @@ namespace System.ServiceModel.Http.Test.ScenarioTests
                 host.Open();
 
                 HttpClient client = new HttpClient(baseAddress);
-                HttpRequestMessage request = new HttpRequestMessage("UNKNOWN", "Customers");
+                HttpRequestMessage request = new HttpRequestMessage(new HttpMethod("UNKNOWN"), "Customers");
                 HttpResponseMessage response = client.Send(request);
                 using (response)
                 {
@@ -306,7 +306,7 @@ namespace System.ServiceModel.Http.Test.ScenarioTests
                 host.Open();
 
                 HttpClient client = new HttpClient(baseAddress);
-                HttpRequestMessage request = new HttpRequestMessage("GET", "UnknownUri");
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, "UnknownUri");
                 HttpResponseMessage response = client.Send(request);
                 using (response)
                 {
@@ -332,7 +332,7 @@ namespace System.ServiceModel.Http.Test.ScenarioTests
                 host.Open();
 
                 HttpClient client = new HttpClient(baseAddress);
-                HttpRequestMessage request = new HttpRequestMessage("GET", "Customers");
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, "Customers");
                 request.Headers.Add("NamesOnly", "Ok");
                 HttpResponseMessage response = client.Send(request);
                 using (response)

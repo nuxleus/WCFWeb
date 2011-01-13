@@ -5,25 +5,24 @@
 namespace ContactManager
 {
     using System.Collections.Generic;
+    using System.ComponentModel.Composition;
     using System.Globalization;
     using System.Net;
     using System.ServiceModel;
     using System.ServiceModel.Web;
 
-    using Microsoft.Http;
+    using System.Net.Http;
 
     [ServiceContract]
+    [Export]
     public class ContactResource
     {
         private readonly IContactRepository repository;
 
+        [ImportingConstructor]
         public ContactResource(IContactRepository repository)
         {
             this.repository = repository;
-        }
-
-        public ContactResource() : this(new ContactRepository())
-        {
         }
 
         [WebGet(UriTemplate = "{id}")]
@@ -33,7 +32,7 @@ namespace ContactManager
             if (contact == null)
             {
                 response.StatusCode = HttpStatusCode.NotFound;
-                response.Content = HttpContent.Create("Contact not found");
+                response.Content = new StringContent("Contact not found");
             }
 
             return contact;

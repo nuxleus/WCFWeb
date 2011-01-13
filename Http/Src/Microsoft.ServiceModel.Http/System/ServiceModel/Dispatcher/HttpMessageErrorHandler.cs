@@ -5,8 +5,8 @@
 namespace System.ServiceModel.Dispatcher
 {
     using System.Globalization;
+    using System.Net.Http;
     using System.ServiceModel.Channels;
-    using Microsoft.Http;
 
     /// <summary>
     /// Abstract base class to provide an <see cref="IErrorHandler"/> for the

@@ -7,8 +7,8 @@ namespace System.ServiceModel.Channels
     using System;
     using System.Diagnostics;
     using System.Globalization;
+    using System.Net.Http;
     using System.Xml;
-    using Microsoft.Http;
 
     internal class HttpMessage : Message
     {
@@ -218,12 +218,7 @@ namespace System.ServiceModel.Channels
                 return 0;
             }
 
-            if (!content.HasLength())
-            {
-                return null;
-            }
-
-            return content.GetLength();
+            return content.Headers.ContentLength;
         }
     }
 }

@@ -5,25 +5,23 @@
 namespace ContactManager
 {
     using System.Collections.Generic;
+    using System.ComponentModel.Composition;
     using System.Net;
     using System.ServiceModel;
     using System.ServiceModel.Web;
 
-    using Microsoft.Http;
+    using System.Net.Http;
 
     [ServiceContract]
+    [Export]
     public class ContactsResource
     {
         private readonly IContactRepository repository;
 
+        [ImportingConstructor]
         public ContactsResource(IContactRepository repository)
         {
             this.repository = repository;
-        }
-
-        public ContactsResource()
-            : this(new ContactRepository())
-        {
         }
 
         [WebGet(UriTemplate = "")]

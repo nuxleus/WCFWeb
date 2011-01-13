@@ -7,9 +7,10 @@ namespace System.ServiceModel.Channels
     using System;
     using System.Diagnostics;
     using System.Globalization;
+    using System.IO;
     using System.Net;
-    using Microsoft.Http;
-    using Microsoft.Http.Headers;
+    using System.Net.Http;
+    using System.Net.Http.Headers;
 
     internal class HttpMessageEncodingRequestContext : RequestContext
     {
@@ -120,8 +121,8 @@ namespace System.ServiceModel.Channels
             if (httpRequestMessage == null)
             {
                 httpRequestMessage = new HttpRequestMessage();
-                httpRequestMessage.Content = HttpContent.CreateEmpty();
-                httpRequestMessage.Headers.ContentLength = 0;
+                httpRequestMessage.Content = new StringContent(String.Empty);
+                httpRequestMessage.Content.Headers.ContentLength = 0;
                 message.Close();
                 message = httpRequestMessage.ToMessage();
             }
@@ -130,15 +131,29 @@ namespace System.ServiceModel.Channels
                 message.Headers.Clear();
                 message.Properties.Clear();
                 httpRequestMessage.Headers.Clear();
-                httpRequestMessage.Properties.Clear();
+                httpRequestMessage.GetProperties().Clear();
             }
 
             message.Headers.To = uri;
 
-            httpRequestMessage.Uri = uri;
-            httpRequestMessage.Method = requestProperty.Method;
+            httpRequestMessage.RequestUri = uri;
+            httpRequestMessage.Method = new HttpMethod(requestProperty.Method);
+            //httpRequestMessage.Headers.Clear();
+            //if (httpRequestMessage.Content != null)
+                //httpRequestMessage.Content.Headers.Clear();
+ 
             foreach (var headerName in requestProperty.Headers.AllKeys)
             {
+                if (headerName.StartsWith("content-", StringComparison.InvariantCultureIgnoreCase) ||
+                    headerName.Equals("Allow", StringComparison.InvariantCultureIgnoreCase) ||
+                    headerName.Equals("Expires") ||
+                    headerName.Equals("Expires", StringComparison.InvariantCulture))
+                {
+                    httpRequestMessage.Content.Headers.Remove(headerName);
+                    httpRequestMessage.Content.Headers.Add(headerName, requestProperty.Headers[headerName]);
+                    continue;
+                }
+                httpRequestMessage.Headers.Remove(headerName);
                 httpRequestMessage.Headers.Add(headerName, requestProperty.Headers[headerName]);
             }
 
@@ -163,22 +178,32 @@ namespace System.ServiceModel.Channels
             else
             {
                 responseProperty.StatusCode = httpResponseMessage.StatusCode;
-                ResponseHeaders responseHeaders = httpResponseMessage.Headers;
+                HttpResponseHeaders responseHeaders = httpResponseMessage.Headers;
                 if (responseHeaders != null)
                 {
-                    foreach (string header in responseHeaders.Keys)
+                    foreach (var entry in responseHeaders)
                     {
-                        responseProperty.Headers.Add(header, responseHeaders[header]);
+                        foreach (var value in entry.Value)
+                        {
+                            responseProperty.Headers.Add(entry.Key, value);
+                        }
                     }
                 }
 
-                if (httpResponseMessage.Content == null)
+
+                if (httpResponseMessage.Content==null || httpResponseMessage.Content.Headers.ContentLength==0)
                 {
                     responseProperty.SuppressEntityBody = true;
                 }
-                else if (httpResponseMessage.Content.HasLength() && httpResponseMessage.Content.GetLength() == 0)
+                else 
                 {
-                    responseProperty.SuppressEntityBody = true;
+                    foreach (var entry in httpResponseMessage.Content.Headers)
+                    {
+                        foreach (var value in entry.Value)
+                        {
+                            responseProperty.Headers.Add(entry.Key, value);
+                        }
+                    }
                 }
             }
 

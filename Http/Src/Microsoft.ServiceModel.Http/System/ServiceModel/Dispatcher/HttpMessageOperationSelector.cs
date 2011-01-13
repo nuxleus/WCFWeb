@@ -5,8 +5,8 @@
 namespace System.ServiceModel.Dispatcher
 {
     using System.Globalization;
+    using System.Net.Http;
     using System.ServiceModel.Channels;
-    using Microsoft.Http;
 
     /// <summary>
     /// Defines the contract that associates incoming messages with a local operation 

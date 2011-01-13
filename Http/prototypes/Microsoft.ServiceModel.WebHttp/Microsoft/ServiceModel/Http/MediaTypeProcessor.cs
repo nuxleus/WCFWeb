@@ -8,10 +8,14 @@ namespace Microsoft.ServiceModel.Http
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Net.Http.Headers;
+    using System.ServiceModel;
     using System.ServiceModel.Description;
     using System.ServiceModel.Dispatcher;
+    using System.ServiceModel.Web;
+
     using Dispatcher;
-    using Microsoft.Http;
+    using System.Net.Http;
 
     public enum MediaTypeProcessorMode
     {
@@ -123,9 +127,9 @@ namespace Microsoft.ServiceModel.Http
             var request = (HttpRequestMessage)input[0];
             ProcessorResult result = null;
 
-            if (request.Headers.ContentType != null && this.SupportedMediaTypes.Contains(request.Headers.ContentType))
+            if (request.Content != null && request.Content.Headers.ContentType != null && this.SupportedMediaTypes.Contains(request.Content.Headers.ContentType.MediaType.ToString()))
             {
-                result = new ProcessorResult<object> { Output = this.ReadFromStream(request.Content.ReadAsStream(), request) };
+                result = new ProcessorResult<object> { Output = this.ReadFromStream(request.Content.ContentReadStream, request) };
             }
 
             return result;
@@ -149,8 +153,12 @@ namespace Microsoft.ServiceModel.Http
             {
                 if (this.SupportedMediaTypes.Contains(contentType))
                 {
-                    response.Content = HttpContent.Create(s => this.WriteToStream(instance, s, request));
-                    response.Headers.ContentType = contentType;
+                    var s = new MemoryStream();
+                    response.Content = new StreamContent(s);
+                    this.WriteToStream(instance, s, request);
+                    s.Position = 0;
+                    response.Content.Headers.Remove("Content-type");
+                    response.Content.Headers.Add("Content-type",contentType);
                 }
             }
         }

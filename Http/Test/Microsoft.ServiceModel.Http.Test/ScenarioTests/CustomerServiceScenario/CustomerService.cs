@@ -7,7 +7,7 @@ namespace System.ServiceModel.Http.Test.ScenarioTests
     using System;
     using System.Collections.Concurrent;
     using System.Net;
-    using Microsoft.Http;
+    using System.Net.Http;
     using System.ServiceModel;
     using System.Text;
 
@@ -70,20 +70,20 @@ namespace System.ServiceModel.Http.Test.ScenarioTests
         {
             HttpResponseMessage response = new HttpResponseMessage();
             response.StatusCode = HttpStatusCode.NotFound;
-            response.Content = HttpContent.Create("The uri and/or method is not valid for any customer resource.");
+            response.Content = new StringContent("The uri and/or method is not valid for any customer resource.");
             return response;
         }
 
         private static int GetIdFromQueryString(HttpRequestMessage request)
         {
-            var queryString = request.Uri.Query.ParseAsQueryString();
+            var queryString = request.RequestUri.Query.ParseAsQueryString();
 
             int id;
             if (!int.TryParse(queryString["id"], out id))
             {
                 HttpResponseMessage response = new HttpResponseMessage();
                 response.StatusCode = HttpStatusCode.BadRequest;
-                response.Content = HttpContent.Create("An 'id' with a integer value must be provided in the query string.");
+                response.Content = new StringContent("An 'id' with a integer value must be provided in the query string.");
                 throw new HttpResponseMessageException(response);
             }
 
@@ -92,7 +92,7 @@ namespace System.ServiceModel.Http.Test.ScenarioTests
 
         private static bool HasIdInQueryString(HttpRequestMessage request)
         {
-            var queryString = request.Uri.Query.ParseAsQueryString();
+            var queryString = request.RequestUri.Query.ParseAsQueryString();
 
             return queryString["id"] != null;
         }
@@ -104,7 +104,7 @@ namespace System.ServiceModel.Http.Test.ScenarioTests
             {
                 HttpResponseMessage response = new HttpResponseMessage();
                 response.StatusCode = HttpStatusCode.NotFound;
-                response.Content = HttpContent.Create(string.Format("There is no customer with id '{0}'.", id));
+                response.Content = new StringContent(string.Format("There is no customer with id '{0}'.", id));
                 throw new HttpResponseMessageException(response);
             }
 
@@ -118,7 +118,7 @@ namespace System.ServiceModel.Http.Test.ScenarioTests
             {
                 HttpResponseMessage response = new HttpResponseMessage();
                 response.StatusCode = HttpStatusCode.NotFound;
-                response.Content = HttpContent.Create(string.Format("There is no customer with id '{0}'.", id));
+                response.Content = new StringContent(string.Format("There is no customer with id '{0}'.", id));
                 throw new HttpResponseMessageException(response);
             }
         }
@@ -128,7 +128,7 @@ namespace System.ServiceModel.Http.Test.ScenarioTests
             return new HttpResponseMessage()
             {
                 StatusCode = HttpStatusCode.OK,
-                Content = HttpContent.Create(SerializeCustomer(customer))
+                Content = new StringContent(SerializeCustomer(customer))
             };
         }
 
@@ -143,7 +143,7 @@ namespace System.ServiceModel.Http.Test.ScenarioTests
             return new HttpResponseMessage()
             {
                 StatusCode = HttpStatusCode.OK,
-                Content = HttpContent.Create(builder.ToString())
+                Content = new StringContent(builder.ToString())
             };
         }
 
@@ -158,7 +158,7 @@ namespace System.ServiceModel.Http.Test.ScenarioTests
             {
                 HttpResponseMessage noContentResponse = new HttpResponseMessage();
                 noContentResponse.StatusCode = HttpStatusCode.BadRequest;
-                noContentResponse.Content = HttpContent.Create("Expected an entity body with customer data but no content was found.");
+                noContentResponse.Content = new StringContent("Expected an entity body with customer data but no content was found.");
                 throw new HttpResponseMessageException(noContentResponse);
             }
 
@@ -183,7 +183,7 @@ namespace System.ServiceModel.Http.Test.ScenarioTests
 
             HttpResponseMessage faileParseResponse = new HttpResponseMessage();
             faileParseResponse.StatusCode = HttpStatusCode.BadRequest;
-            faileParseResponse.Content = HttpContent.Create("Parsing the entity body as a customer failed.");
+            faileParseResponse.Content = new StringContent("Parsing the entity body as a customer failed.");
             throw new HttpResponseMessageException(faileParseResponse);
         }
 
@@ -193,7 +193,7 @@ namespace System.ServiceModel.Http.Test.ScenarioTests
             {
                 HttpResponseMessage response = new HttpResponseMessage();
                 response.StatusCode = HttpStatusCode.Conflict;
-                response.Content = HttpContent.Create(string.Format("There already a customer with id '{0}'.", customer.Id));
+                response.Content = new StringContent(string.Format("There already a customer with id '{0}'.", customer.Id));
                 throw new HttpResponseMessageException(response);
             }
         }
@@ -202,9 +202,9 @@ namespace System.ServiceModel.Http.Test.ScenarioTests
         {
             return new Uri(
                 string.Format("{0}://{1}{2}?id={3}",
-                    request.Uri.Scheme,
-                    request.Uri.Authority,
-                    request.Uri.AbsolutePath,
+                    request.RequestUri.Scheme,
+                    request.RequestUri.Authority,
+                    request.RequestUri.AbsolutePath,
                     id));
         }
     }

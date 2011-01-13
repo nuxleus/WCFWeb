@@ -29,10 +29,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Runtime.Serializa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonValueSample", "samples\JsonValueSample\JsonValueSample.csproj", "{C1A8D60A-2937-46A3-837C-AFDD6F2FF53B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Net.Http.Extensions.Test", "Test\Microsoft.Net.Http.Extensions.Test\Microsoft.Net.Http.Extensions.Test.csproj", "{F1375041-6919-4707-903E-6E9032A3EE0D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Net.Http.Extensions", "prototypes\Microsoft.Net.Http.Extensions\Microsoft.Net.Http.Extensions.csproj", "{7E302511-BAA7-4E75-BEA7-9FB0F490047F}"
+EndProject
 Global
-	GlobalSection(TestCaseManagementSettings) = postSolution
-		CategoryFile = Http.vsmdi
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -142,6 +143,26 @@ Global
 		{C1A8D60A-2937-46A3-837C-AFDD6F2FF53B}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{C1A8D60A-2937-46A3-837C-AFDD6F2FF53B}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{C1A8D60A-2937-46A3-837C-AFDD6F2FF53B}.Release|x86.ActiveCfg = Release|Any CPU
+		{F1375041-6919-4707-903E-6E9032A3EE0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1375041-6919-4707-903E-6E9032A3EE0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1375041-6919-4707-903E-6E9032A3EE0D}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{F1375041-6919-4707-903E-6E9032A3EE0D}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{F1375041-6919-4707-903E-6E9032A3EE0D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F1375041-6919-4707-903E-6E9032A3EE0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1375041-6919-4707-903E-6E9032A3EE0D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1375041-6919-4707-903E-6E9032A3EE0D}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{F1375041-6919-4707-903E-6E9032A3EE0D}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{F1375041-6919-4707-903E-6E9032A3EE0D}.Release|x86.ActiveCfg = Release|Any CPU
+		{7E302511-BAA7-4E75-BEA7-9FB0F490047F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E302511-BAA7-4E75-BEA7-9FB0F490047F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E302511-BAA7-4E75-BEA7-9FB0F490047F}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{7E302511-BAA7-4E75-BEA7-9FB0F490047F}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{7E302511-BAA7-4E75-BEA7-9FB0F490047F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7E302511-BAA7-4E75-BEA7-9FB0F490047F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E302511-BAA7-4E75-BEA7-9FB0F490047F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E302511-BAA7-4E75-BEA7-9FB0F490047F}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{7E302511-BAA7-4E75-BEA7-9FB0F490047F}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{7E302511-BAA7-4E75-BEA7-9FB0F490047F}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -153,9 +174,11 @@ Global
 		{A5879BE4-F1F5-4C39-88B9-372ABDEFF843} = {63725A4A-0307-4FA2-8229-93EAC7AB6AFE}
 		{EBD5A1F2-AB9D-4949-B77A-74E1FA2B0AE0} = {239E9776-F66B-475C-B04C-5BFD2D5EFE55}
 		{F1C292DD-6726-4808-A781-45C115C0DC88} = {239E9776-F66B-475C-B04C-5BFD2D5EFE55}
+		{F1375041-6919-4707-903E-6E9032A3EE0D} = {239E9776-F66B-475C-B04C-5BFD2D5EFE55}
 		{4E26ADC1-6AA4-4F25-9238-12C3393DB4C0} = {5635EBF3-6C0E-4996-B9BB-1A74677D8CAA}
 		{696A7E32-E9D2-49D2-A52A-4B4DD0741B6F} = {5635EBF3-6C0E-4996-B9BB-1A74677D8CAA}
 		{C1A8D60A-2937-46A3-837C-AFDD6F2FF53B} = {5635EBF3-6C0E-4996-B9BB-1A74677D8CAA}
 		{8C5CA420-BDC2-4B92-A20E-4EC1FBEEA27D} = {FDAE6A81-4295-42D5-A264-42FAD1A8223A}
+		{7E302511-BAA7-4E75-BEA7-9FB0F490047F} = {FDAE6A81-4295-42D5-A264-42FAD1A8223A}
 	EndGlobalSection
 EndGlobal

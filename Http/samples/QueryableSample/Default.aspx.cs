@@ -9,21 +9,54 @@ namespace QueryableSample
     using System.Globalization;
     using System.IO;
     using System.Linq;
+    using System.Net.Http.Headers;
     using System.Runtime.Serialization;
     using System.ServiceModel.Http.Client;
-    using Microsoft.Http;
+    using System.Net.Http;
+    using System.Threading.Tasks;
+    using System.Web.UI.WebControls;
+    using System.Xml.Serialization;
+
+    using Microsoft.Net.Http;
 
     public partial class Default : System.Web.UI.Page
     {
+        private bool useJson;
+
         protected void Page_Load(object sender, EventArgs e)
         {
+            this.Buffer = true;
+            this.ResponseBody.PreRender += new EventHandler(ResponseBody_PreRender);
+
+            if (this.Format.Text=="Json")
+            {
+                this.useJson = true;
+            }
+        }
+
+        void ResponseBody_PreRender(object sender, EventArgs e)
+        {
+            Response.Write("<B>Response Body</B><br>" + Server.HtmlEncode(this.body));
+        }
+
+        private HttpClient GetClient(string uri)
+        {
+            var client = new HttpClient(new Uri(uri));
+            client.Channel = new TracingResponseChannel(TraceResponse);
+          
+            if (this.useJson)
+            {
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            }
+ 
+            return client;
         }
 
         // Get all the contacts
         protected void GetAllContacts_Click(object sender, EventArgs e)
         {
             string address = "http://localhost:8081/contacts/";
-            HttpClient client = new HttpClient(address);
+            HttpClient client = GetClient(address);
             var contacts = client.CreateQuery<Contact>();
 
             string result = "Received contacts:";
@@ -40,9 +73,8 @@ namespace QueryableSample
         protected void GetTop3_Click(object sender, EventArgs e)
         {
             string address = "http://localhost:8081/contacts/";
-            HttpClient client = new HttpClient(address);
+            HttpClient client = GetClient(address);
             WebQuery<Contact> contacts = client.CreateQuery<Contact>();
-
             var top3 = contacts.Take<Contact>(3);
 
             string result = "Received top 3 contacts:";
@@ -58,27 +90,26 @@ namespace QueryableSample
 
         protected void PostNewContact_Click(object sender, EventArgs e)
         {
-            string address = "http://localhost:8081/contacts/";
-            HttpClient client = new HttpClient(address);
+            string address = "http://localhost:8081/contacts";
+            HttpClient client = GetClient(address);
             var contact = new Contact { Name = this.TextBox3.Text, Id = 5 };
-            var serializer = new DataContractSerializer(typeof(Contact));
+            var serializer = new XmlSerializer(typeof(Contact));
             var stream = new MemoryStream();
-            serializer.WriteObject(stream, contact);
+            serializer.Serialize(stream, contact);
             stream.Position = 0;
 
-            var request = new HttpRequestMessage("Post", new Uri("http://localhost:8081/contacts/"));
-            request.Content = HttpContent.Create(stream);
-            request.Headers.ContentType = "application/xml";
+            var request = new HttpRequestMessage(HttpMethod.Post,address);
+            request.Content = new StreamContent(stream);
+            request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/xml");
             var response = client.Send(request);
-            var receivedContact = serializer.ReadObject(response.Content.ReadAsStream()) as Contact;
-
+            var receivedContact = response.Content.ReadAsObject<Contact>();
             this.Result.Text = string.Format(CultureInfo.InvariantCulture, "\r\n Contact Name: {0}, Contact Id: {1}", receivedContact.Name, receivedContact.Id);
         }
 
         protected void GetId5_Click(object sender, EventArgs e)
         {
             string address = "http://localhost:8081/contacts/";
-            HttpClient client = new HttpClient(address);
+            HttpClient client = GetClient(address);
             WebQuery<Contact> contacts = client.CreateQuery<Contact>();
 
             var contact = contacts.Skip<Contact>(4).Take<Contact>(1);
@@ -104,7 +135,7 @@ namespace QueryableSample
         protected void GetId6_Click(object sender, EventArgs e)
         {
             string address = "http://localhost:8081/contacts/";
-            HttpClient client = new HttpClient(address);
+            HttpClient client = GetClient(address);
             WebQuery<Contact> contacts = client.CreateQuery<Contact>();
 
             int input = 0;
@@ -137,5 +168,13 @@ namespace QueryableSample
 
             this.Result.Text = result;
         }
+
+        private string body;
+        private void TraceResponse(HttpResponseMessage response)
+        {
+            this.body = response.Content.ReadAsString();
+        }
+
+        
     }
 }

@@ -45,11 +45,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.Http">
-      <HintPath>..\..\..\Lib\HttpClient\Microsoft.Http.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Http.Extensions">
-      <HintPath>..\..\..\Lib\HttpClient\Microsoft.Http.Extensions.dll</HintPath>
+    <Reference Include="Microsoft.Net.Http, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Lib\HttpClient\Microsoft.Net.Http.dll</HintPath>
     </Reference>
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceModel.Web" />

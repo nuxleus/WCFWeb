@@ -9,7 +9,7 @@ namespace Microsoft.ServiceModel.Http.Test.UnitTests
     using System.ServiceModel.Channels;
     using System.ServiceModel.Http.Test.Mocks;
     using System.ServiceModel.Http.Test.Utilities;
-    using Microsoft.Http;
+    using System.Net.Http;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [TestClass]
@@ -94,7 +94,7 @@ namespace Microsoft.ServiceModel.Http.Test.UnitTests
         public void IsEmpty_Is_True_When_HttpContent_Length_Is_Zero()
         {
             HttpRequestMessage request = new HttpRequestMessage();
-            request.Content = HttpContent.Create(new byte[0]);
+            request.Content = new ByteArrayContent(new byte[0]);
             HttpMessage message = new HttpMessage(request);
             Assert.IsTrue(message.IsEmpty, "HttpMessage.IsEmpty should always be 'true' since the byte array was of zero length.");
         }
@@ -104,7 +104,7 @@ namespace Microsoft.ServiceModel.Http.Test.UnitTests
         public void IsEmpty_Is_False_When_HttpContent_Length_Is_Not_Zero()
         {
             HttpRequestMessage request = new HttpRequestMessage();
-            request.Content = HttpContent.Create(new byte[1] { 0 });
+            request.Content = new ByteArrayContent(new byte[1] { 0 });
             HttpMessage message = new HttpMessage(request);
             Assert.IsFalse(message.IsEmpty, "HttpMessage.IsEmpty should always be 'false' since the byte array was of length '1'.");
         }
@@ -114,7 +114,7 @@ namespace Microsoft.ServiceModel.Http.Test.UnitTests
         public void IsEmpty_Is_False_When_HttpContent_Length_Is_Unknown()
         {
             HttpRequestMessage request = new HttpRequestMessage();
-            request.Content =  HttpContent.Create(new MockUnseekableStream(new MemoryStream()));
+            request.Content =  new StreamContent(new MockUnseekableStream(new MemoryStream()));
             HttpMessage message = new HttpMessage(request);
             Assert.IsFalse(message.IsEmpty, "HttpMessage.IsEmpty should always be 'false' since the content length is unknown.");
         }
@@ -211,8 +211,8 @@ namespace Microsoft.ServiceModel.Http.Test.UnitTests
         [Description("HttpMessage.ToString() indicates that it is a request message with a content length of zero bytes.")]
         public void ToString_With_A_Request_Indicates_Zero_Content_Length()
         {
-            HttpRequestMessage request = new HttpRequestMessage("GET", "http://localhost");
-            request.Content = HttpContent.Create(new byte[0]);
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, "http://localhost");
+            request.Content = new ByteArrayContent(new byte[0]);
             HttpMessage message = new HttpMessage(request);
             Assert.AreEqual("HTTP request message body with a content length of '0' bytes.", message.ToString(), "HttpMessage.ToString() should have returned 'HTTP request message body with a content length of '0' bytes.'.");
         }
@@ -221,8 +221,8 @@ namespace Microsoft.ServiceModel.Http.Test.UnitTests
         [Description("HttpMessage.ToString() indicates that it is a request message with the content length.")]
         public void ToString_With_A_Request_Indicates_Content_Length()
         {
-            HttpRequestMessage request = new HttpRequestMessage("GET", "http://localhost");
-            request.Content = HttpContent.Create(new byte[3] { 0, 1, 2});
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, "http://localhost");
+            request.Content = new ByteArrayContent(new byte[3] { 0, 1, 2});
             HttpMessage message = new HttpMessage(request);
             Assert.AreEqual("HTTP request message body with a content length of '3' bytes.", message.ToString(), "HttpMessage.ToString() should have returned 'HTTP request message body with a content length of '3' bytes.'.");
         }
@@ -231,7 +231,7 @@ namespace Microsoft.ServiceModel.Http.Test.UnitTests
         [Description("HttpMessage.ToString() indicates that it is a request message with a content length of zero if the HttpContent is null.")]
         public void ToString_With_A_Request_And_Null_HttpContent_Indicates_Zero_Content_Length()
         {
-            HttpRequestMessage request = new HttpRequestMessage("GET", "http://localhost");
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, "http://localhost");
             HttpMessage message = new HttpMessage(request);
             Assert.AreEqual("HTTP request message body with a content length of '0' bytes.", message.ToString(), "HttpMessage.ToString() should have returned 'HTTP request message body with a content length of '0' bytes.'.");
         }
@@ -240,8 +240,8 @@ namespace Microsoft.ServiceModel.Http.Test.UnitTests
         [Description("HttpMessage.ToString() indicates that it is a request message with an unknown content length if the HttpContent is not seekable.")]
         public void ToString_With_A_Request_And_UnSeekable_HttpContent_Indicates_Unknown_Content_Length()
         {
-            HttpRequestMessage request = new HttpRequestMessage("GET", "http://localhost");
-            request.Content = HttpContent.Create(new MockUnseekableStream(new MemoryStream()));
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, "http://localhost");
+            request.Content = new StreamContent(new MockUnseekableStream(new MemoryStream()));
             HttpMessage message = new HttpMessage(request);
             Assert.AreEqual("HTTP request message body with an undetermined content length.", message.ToString(), "HttpMessage.ToString() should have returned 'HTTP request message body with an undetermined content length.'.");
         }
@@ -251,7 +251,7 @@ namespace Microsoft.ServiceModel.Http.Test.UnitTests
         public void ToString_With_A_Response_Indicates_Zero_Content_Length()
         {
             HttpResponseMessage response = new HttpResponseMessage();
-            response.Content = HttpContent.Create(new byte[0]);
+            response.Content = new ByteArrayContent(new byte[0]);
             HttpMessage message = new HttpMessage(response);
             Assert.AreEqual("HTTP response message body with a content length of '0' bytes.", message.ToString(), "HttpMessage.ToString() should have returned 'HTTP response message body with a content length of '0' bytes.'.");
         }
@@ -261,7 +261,7 @@ namespace Microsoft.ServiceModel.Http.Test.UnitTests
         public void ToString_With_A_Response_Indicates_Content_Length()
         {
             HttpResponseMessage response = new HttpResponseMessage();
-            response.Content = HttpContent.Create(new byte[3] { 0, 1, 2 });
+            response.Content = new ByteArrayContent(new byte[3] { 0, 1, 2 });
             HttpMessage message = new HttpMessage(response);
             Assert.AreEqual("HTTP response message body with a content length of '3' bytes.", message.ToString(), "HttpMessage.ToString() should have returned 'HTTP response message body with a content length of '3' bytes.'.");
         }
@@ -280,7 +280,7 @@ namespace Microsoft.ServiceModel.Http.Test.UnitTests
         public void ToString_With_A_Response_And_UnSeekable_HttpContent_Indicates_Unknown_Content_Length()
         {
             HttpResponseMessage response = new HttpResponseMessage();
-            response.Content = HttpContent.Create(new MockUnseekableStream(new MemoryStream()));
+            response.Content = new StreamContent(new MockUnseekableStream(new MemoryStream()));
             HttpMessage message = new HttpMessage(response);
             Assert.AreEqual("HTTP response message body with an undetermined content length.", message.ToString(), "HttpMessage.ToString() should have returned 'HTTP response message body with an undetermined content length.'.");
         }
@@ -293,8 +293,8 @@ namespace Microsoft.ServiceModel.Http.Test.UnitTests
         [Description("HttpMessage.Close disposes of the HttpRequestMessage.")]
         public void Closing_Disposes_Of_The_HttpRequestMessage()
         {
-            HttpRequestMessage request = new HttpRequestMessage("GET", "http://localhost");
-            request.Content = HttpContent.Create(new byte[0]);
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, "http://localhost");
+            request.Content = new ByteArrayContent(new byte[0]);
             HttpMessage message = new HttpMessage(request);
             message.Close();
             Assert.AreEqual(MessageState.Closed, message.State, "HttpMessage.State should be closed.");
@@ -313,7 +313,7 @@ namespace Microsoft.ServiceModel.Http.Test.UnitTests
         public void Closing_Disposes_Of_The_HttpResponseMessage()
         {
             HttpResponseMessage response = new HttpResponseMessage();
-            response.Content = HttpContent.Create(new byte[0]);
+            response.Content = new ByteArrayContent(new byte[0]);
             HttpMessage message = new HttpMessage(response);
             message.Close();
             Assert.AreEqual(MessageState.Closed, message.State, "HttpMessage.State should be closed.");
@@ -352,7 +352,7 @@ namespace Microsoft.ServiceModel.Http.Test.UnitTests
         public void GetReaderAtBodyContents_Throws()
         {
             HttpRequestMessage request = new HttpRequestMessage();
-            request.Content = HttpContent.Create(new byte[1] { 0 });
+            request.Content = new ByteArrayContent(new byte[1] { 0 });
             HttpMessage message = new HttpMessage(request);
 
             ExceptionAssert.Throws(

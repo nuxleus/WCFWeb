@@ -9,7 +9,7 @@ namespace Microsoft.ServiceModel.Http
     using System.IO;
     using System.ServiceModel.Description;
 
-    using Microsoft.Http;
+    using System.Net.Http;
 
     public class PlainTextProcessor : MediaTypeProcessor 
     {

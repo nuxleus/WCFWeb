@@ -13,8 +13,8 @@ namespace Microsoft.ServiceModel.Dispatcher
     using System.ServiceModel.Channels;
     using System.ServiceModel.Description;
     using System.ServiceModel.Dispatcher;
-    using Microsoft.Http;
-    using Microsoft.Http.Headers;
+    using System.Net.Http;
+    using System.Net.Http.Headers;
 
     public class HttpPipelineFormatter : HttpMessageFormatter
     {
@@ -133,8 +133,8 @@ namespace Microsoft.ServiceModel.Dispatcher
             args.Add(new ProcessorArgument(ArgumentHttpRequestMessage, typeof(HttpRequestMessage)));
             args.Add(new ProcessorArgument(ArgumentHttpResponseMessage, typeof(HttpResponseMessage)));
             args.Add(new ProcessorArgument(ArgumentUri, typeof(Uri)));
-            args.Add(new ProcessorArgument(ArgumentRequestHeaders, typeof(RequestHeaders)));
-            args.Add(new ProcessorArgument(ArgumentResponseHeaders, typeof(ResponseHeaders)));
+            args.Add(new ProcessorArgument(ArgumentRequestHeaders, typeof(HttpRequestHeaders)));
+            args.Add(new ProcessorArgument(ArgumentResponseHeaders, typeof(HttpResponseHeaders)));
             return args;
         }
 
@@ -143,7 +143,7 @@ namespace Microsoft.ServiceModel.Dispatcher
             var args = new List<object>();
             args.Add(request);
             args.Add(response);
-            args.Add(request.Uri);
+            args.Add(request.RequestUri);
             args.Add(request.Headers);
             args.Add(response.Headers);
             return args;

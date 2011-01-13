@@ -9,11 +9,13 @@ namespace Microsoft.ServiceModel.Http
     using System.ServiceModel.Activation;
     using System.Web.Routing;
 
+    using Microsoft.ServiceModel.Description;
+
     public static class RouteCollectionExtensions
     {
         [SuppressMessage("Microsoft.Design", "CA1004", Justification = "By design for usability")]
         [SuppressMessage("Microsoft.Design", "CA1026", Justification = "Not applicable")]
-        public static void AddServiceRoute<TService>(this RouteCollection routes, string routePrefix, HostConfiguration configuration = null)
+        public static void AddServiceRoute<TService>(this RouteCollection routes, string routePrefix, HttpHostConfiguration configuration = null)
         {
             if (routes == null)
             {

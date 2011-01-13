@@ -8,7 +8,7 @@ namespace Microsoft.ServiceModel.Dispatcher
     using System.Collections.Generic;
     using System.Linq;
     using System.ServiceModel.Description;
-    using Microsoft.Http;
+    using System.Net.Http;
     
     public class MethodAndUriTemplateOperationSelector : ComposableHttpOperationSelector
     {
@@ -34,6 +34,7 @@ namespace Microsoft.ServiceModel.Dispatcher
                     UriTemplate template = new UriTemplate(operation.GetUriTemplateString());
                     table.KeyValuePairs.Add(
                         new KeyValuePair<UriTemplate, object>(template, operation.Name));
+
                 }
 
                 table.MakeReadOnly(false);
@@ -62,7 +63,7 @@ namespace Microsoft.ServiceModel.Dispatcher
                 throw new ArgumentNullException("message");
             }
 
-            string method = message.Method;
+            string method = message.Method.Method;
 
             UriTemplateOperationSelector selector = null;
             if (method != null)

@@ -6,6 +6,8 @@ namespace Microsoft.ServiceModel.Http
 {
     using System;
 
+    using Microsoft.ServiceModel.Description;
+
     public class WebHttpServiceHost<TService> : WebHttpServiceHost
     {
         public WebHttpServiceHost(params Uri[] baseAddresses)
@@ -13,7 +15,7 @@ namespace Microsoft.ServiceModel.Http
         {
         }
 
-        public WebHttpServiceHost(HostConfiguration configuration, params Uri[] baseAddresses)
+        public WebHttpServiceHost(HttpHostConfiguration configuration, params Uri[] baseAddresses)
             : base(typeof(TService), configuration,  baseAddresses)
         {
         }

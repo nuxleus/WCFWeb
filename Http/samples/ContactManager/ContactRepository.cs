@@ -4,8 +4,10 @@
 namespace ContactManager
 {
     using System.Collections.Generic;
+    using System.ComponentModel.Composition;
     using System.Linq;
 
+    [Export(typeof(IContactRepository))]
     public class ContactRepository : IContactRepository
     {
         private static IList<Contact> contacts;

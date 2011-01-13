@@ -9,11 +9,16 @@ namespace System.ServiceModel.Http.Client
     using System.Linq;
     using System.Linq.Expressions;
     using System.Net;
+    using System.Net.Http;
     using System.Reflection;
     using System.Runtime.Serialization;
     using System.Runtime.Serialization.Json;
-    using System.Web;
-    using Microsoft.Http;
+    using System.Threading.Tasks;
+
+    using System.Net.Http;
+
+    using HttpException = System.Web.HttpException;
+    using System.ServiceModel.Web.Client;
 
     internal class WebQueryProvider : IQueryProvider
     {
@@ -130,16 +135,44 @@ namespace System.ServiceModel.Http.Client
             return Deserialize<T>(response);
         }
 
-        internal IAsyncResult BeginExecute<T>(HttpRequestMessage requestMessage, AsyncCallback callback, object state)
+        internal Task<IEnumerable<T>> ExecuteInternalAsync<T>(HttpRequestMessage requestMessage)
         {
-            return new WebQueryAsyncResult(requestMessage, this.client, callback, state);
-        }
+            TaskCompletionSource<IEnumerable<T>> tcs = new TaskCompletionSource<IEnumerable<T>>();
+            this.client.SendAsync(requestMessage).ContinueWith(task =>
+            {
+                try
+                {
+                    if (task.IsFaulted)
+                    {
+                        tcs.TrySetException(task.Exception.GetBaseException());
+                        return;
+                    }
 
-        internal IEnumerable<T> EndExecute<T>(IAsyncResult asyncResult)
-        {
-            WebQueryAsyncResult result = (WebQueryAsyncResult)asyncResult;
-            WebQueryAsyncResult.End(result);
-            return Deserialize<T>(result.Response);
+                    if (task.IsCanceled)
+                    {
+                        tcs.TrySetCanceled();
+                        return;
+                    }
+
+                    HttpResponseMessage response = task.Result;
+                    if (response == null)
+                    {
+                        tcs.TrySetResult(null);
+                        return;
+                    }
+
+                    IEnumerable<T> results = Deserialize<T>(response);
+                    tcs.TrySetResult(results);
+                }
+                catch (Exception e)
+                {
+                    tcs.TrySetException(e);
+                }
+
+            });
+
+            return tcs.Task;
+
         }
 
         private IEnumerable<T> Deserialize<T>(HttpResponseMessage response)
@@ -149,10 +182,10 @@ namespace System.ServiceModel.Http.Client
                 HttpStatusCode statusCode = response.StatusCode;
                 response.Dispose();
 
-                throw new HttpException((int)statusCode, SR.WebQueryResponseDidNotReturnStatusOK);
+                throw new System.Web.HttpException((int)statusCode, SR.WebQueryResponseDidNotReturnStatusOK);
             }
 
-            if (response.Content == null || response.Content.GetLength() == 0)
+            if (response.Content == null || response.Content.Headers.ContentLength == 0 || response.Content.Headers.ContentType == null)
             {
                 // return a empty IEnumerable rather than null so that
                 // the result of a query operation is never null, similar to other LINQ frameworks
@@ -161,13 +194,16 @@ namespace System.ServiceModel.Http.Client
 
             IEnumerable<T> results = null;
 
-            if (response.Headers.ContentType.IsXmlContent())
+            if (response.Content.Headers.ContentType.MediaType == null)
+                throw new ArgumentException(SR.WebQueryResponseMessageMissingMediaType);
+
+            if (response.Content.Headers.ContentType.MediaType.IsXmlContent())
             {
-                results = response.Content.ReadAsDataContract<IEnumerable<T>>();
+                results = ReadAsDataContract<IEnumerable<T>>(response.Content);
             }
-            else if (response.Headers.ContentType.IsJsonContent())
+            else if (response.Content.Headers.ContentType.MediaType.IsJsonContent())
             {
-                results = response.Content.ReadAsJsonDataContract<IEnumerable<T>>();
+                results = ReadAsJsonDataContract<IEnumerable<T>>(response.Content);
             }
             else
             {
@@ -176,6 +212,24 @@ namespace System.ServiceModel.Http.Client
             }
 
             return results;
+        }
+
+        static T ReadAsDataContract<T>(HttpContent content)
+        {
+            DataContractSerializer serializer = new DataContractSerializer(typeof(T));
+            using (var stream = content.ContentReadStream)
+            {
+                return (T)serializer.ReadObject(stream);
+            }
+        }
+
+        static T ReadAsJsonDataContract<T>(HttpContent content)
+        {
+            DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(T));
+            using (var r = content.ContentReadStream)
+            {
+                return (T)serializer.ReadObject(r);
+            }
         }
 
         private static class TypeHelper
@@ -238,110 +292,6 @@ namespace System.ServiceModel.Http.Client
             }
         }
 
-        private class WebQueryAsyncResult : AsyncResult
-        {
-            // 1 kb buffer size for reading from a network stream
-            private const int BufferSize = 1024;
 
-            private HttpClient client;
-            private Stream networkStream;
-            private MemoryStream memoryStream;
-            private HttpResponseMessage response;
-
-            private byte[] buffer;
-
-            public WebQueryAsyncResult(HttpRequestMessage request, HttpClient client, AsyncCallback callback, object state)
-                : base(callback, state)
-            {
-                this.client = client;
-                this.buffer = new byte[BufferSize];
-            
-                // this buffer can grow
-                this.memoryStream = new MemoryStream(BufferSize);
-
-                // call HttpClient asynchronous send
-                IAsyncResult result = client.BeginSend(request, this.PrepareAsyncCompletion(this.CompleteSend), this);
-                if (this.SyncContinue(result))
-                {
-                    Complete(true);
-                }
-            }
-
-            public HttpResponseMessage Response
-            {
-                get
-                {
-                    return this.response;
-                }
-            }
-
-            public static void End(IAsyncResult result)
-            {
-                AsyncResult.End<WebQueryAsyncResult>(result);
-            }
-
-            private bool CompleteSend(IAsyncResult result)
-            {
-                this.response = this.client.EndSend(result);
-
-                if (this.response.Content == null)
-                {
-                    return true;
-                }
-                else
-                {
-                    this.networkStream = this.response.Content.ReadAsStream();
-
-                    // asynchronously receive the content from the network stream
-                    return this.ReceiveLoop();
-                }
-            }
-
-            private bool ReceiveLoop()
-            {
-                while (true)
-                {
-                    IAsyncResult result = this.networkStream.BeginRead(this.buffer, 0, BufferSize, this.PrepareAsyncCompletion(this.ReceiveComplete), this);
-                    if (!result.CompletedSynchronously)
-                    {
-                        return false;
-                    }
-
-                    if (this.CompleteReceive(result))
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            private bool ReceiveComplete(IAsyncResult result)
-            {
-                if (this.CompleteReceive(result))
-                {
-                    return true;
-                }
-
-                return this.ReceiveLoop();
-            }
-
-            private bool CompleteReceive(IAsyncResult result)
-            {
-                int numBytes = this.networkStream.EndRead(result);
-                if (numBytes > 0)
-                {
-                    this.memoryStream.Write(this.buffer, 0, numBytes);
-                }
-
-                bool done = numBytes == 0;
-
-                if (done)
-                {
-                    this.memoryStream.Seek(0, SeekOrigin.Begin);
-                    this.response.Content = HttpContent.Create(this.memoryStream);
-                }
-
-                return done;
-            }
-        }
     }
 }

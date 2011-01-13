@@ -2,10 +2,11 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Runtime.CompilerServices;
 namespace System.ServiceModel.Channels
 {
-    using Microsoft.Http;
-
     /// <summary>
     /// Provides extension methods for getting an <see cref="Microsoft.Http.HttpRequestMessage">HttpRequestMessage</see> instance or
     /// an <see cref="Microsoft.Http.HttpResponseMessage">HttpResponseMessage</see> instance from a <see cref="Message"/> instance and
@@ -144,5 +145,18 @@ namespace System.ServiceModel.Channels
 
             return null;
         }
+
+        private static ConditionalWeakTable<HttpRequestMessage, List<object>> _requestProperties = new ConditionalWeakTable<HttpRequestMessage, List<object>>();
+        public static IList<object> GetProperties(this HttpRequestMessage message)
+        {
+            return _requestProperties.GetOrCreateValue(message);
+        }
+
+        private static ConditionalWeakTable<HttpResponseMessage, List<object>> _responseProperties = new ConditionalWeakTable<HttpResponseMessage, List<object>>();
+        public static IList<object> GetProperties(this HttpResponseMessage message)
+        {
+            return _responseProperties.GetOrCreateValue(message);
+        }
+
     }
 }

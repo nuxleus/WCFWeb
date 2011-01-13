@@ -36,11 +36,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.Http">
-      <HintPath>..\..\..\Lib\HttpClient\Microsoft.Http.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Http.Extensions">
-      <HintPath>..\..\..\Lib\HttpClient\Microsoft.Http.Extensions.dll</HintPath>
+    <Reference Include="Microsoft.Net.Http">
+      <HintPath>..\..\..\Lib\HttpClient\Microsoft.Net.Http.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -88,8 +85,18 @@
     </Compile>
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="QueryableSampleConfiguration.cs" />
+    <Compile Include="TracingResponseChannel.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\prototypes\Microsoft.Net.Http.Extensions\Microsoft.Net.Http.Extensions.csproj">
+      <Project>{7E302511-BAA7-4E75-BEA7-9FB0F490047F}</Project>
+      <Name>Microsoft.Net.Http.Extensions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\prototypes\Microsoft.ServiceModel.WebHttp\Microsoft.ServiceModel.WebHttp.csproj">
+      <Project>{8C5CA420-BDC2-4B92-A20E-4EC1FBEEA27D}</Project>
+      <Name>Microsoft.ServiceModel.WebHttp</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Src\Microsoft.ServiceModel.Http.Client\Microsoft.ServiceModel.Http.Client.csproj">
       <Project>{1211E235-0440-44E5-8102-01D3FB333DEB}</Project>
       <Name>Microsoft.ServiceModel.Http.Client</Name>

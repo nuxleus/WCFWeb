@@ -40,6 +40,15 @@ namespace QueryableSample {
         protected global::System.Web.UI.WebControls.Label Label1;
         
         /// <summary>
+        /// Format control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RadioButtonList Format;
+        
+        /// <summary>
         /// GetAllContacts control.
         /// </summary>
         /// <remarks>
@@ -137,5 +146,14 @@ namespace QueryableSample {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox Result;
+        
+        /// <summary>
+        /// ResponseBody control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.PlaceHolder ResponseBody;
     }
 }

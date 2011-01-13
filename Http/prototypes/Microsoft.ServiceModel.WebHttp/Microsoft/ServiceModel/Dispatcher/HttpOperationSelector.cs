@@ -7,7 +7,7 @@ namespace Microsoft.ServiceModel.Dispatcher
     using System;
     using System.ServiceModel.Channels;
     using System.ServiceModel.Dispatcher;
-    using Microsoft.Http;
+    using System.Net.Http;
 
     public abstract class HttpOperationSelector : IDispatchOperationSelector
     {

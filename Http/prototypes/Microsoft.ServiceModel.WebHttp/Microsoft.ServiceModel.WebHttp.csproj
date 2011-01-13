@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <StyleCopOverrideSettingsFile>..\..\..\Common\CodeAnalysis\Settings.Samples.StyleCop</StyleCopOverrideSettingsFile>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
@@ -25,6 +24,7 @@
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <CodeAnalysisRuleSet>..\..\..\Common\CodeAnalysis\FxCopRules.Src.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>false</RunCodeAnalysis>
+    <OutputPath>..\..\..\build\Debug\Http\bin\</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -34,11 +34,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Http">
-      <HintPath>..\..\..\Lib\HttpClient\Microsoft.Http.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Http.Extensions">
-      <HintPath>..\..\..\Lib\HttpClient\Microsoft.Http.Extensions.dll</HintPath>
+    <Reference Include="Microsoft.Net.Http">
+      <HintPath>..\..\..\Lib\HttpClient\Microsoft.Net.Http.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -56,6 +53,8 @@
   <ItemGroup>
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Microsoft\ServiceModel\Description\HttpEndpointBehavior.cs" />
+    <Compile Include="Microsoft\ServiceModel\Description\InstanceFactoryProvider.cs" />
+    <Compile Include="Microsoft\ServiceModel\Description\IServiceDescriptionFactory.cs" />
     <Compile Include="Microsoft\ServiceModel\Dispatcher\ComposableHttpOperationSelector.cs" />
     <Compile Include="Microsoft\ServiceModel\Dispatcher\HttpMessageProperty.cs" />
     <Compile Include="Microsoft\ServiceModel\Dispatcher\HttpOperationSelector.cs" />
@@ -64,6 +63,12 @@
     <Compile Include="Microsoft\ServiceModel\Http\ContentNegotiationHelper.cs" />
     <Compile Include="Microsoft\ServiceModel\Http\FormUrlEncodedProcessor.cs" />
     <Compile Include="Microsoft\ServiceModel\Http\HtmlProcessor.cs" />
+    <Compile Include="Microsoft\ServiceModel\Description\IContractConfiguration.cs" />
+    <Compile Include="Microsoft\ServiceModel\Description\IEndpointConfiguration.cs" />
+    <Compile Include="Microsoft\ServiceModel\Description\IInstanceFactory.cs" />
+    <Compile Include="Microsoft\ServiceModel\Description\IOperationConfiguration.cs" />
+    <Compile Include="Microsoft\ServiceModel\Description\IProcessorProvider.cs" />
+    <Compile Include="Microsoft\ServiceModel\Description\IServiceConfiguration.cs" />
     <Compile Include="Microsoft\ServiceModel\Http\JsonProcessor.cs" />
     <Compile Include="Microsoft\ServiceModel\Http\MediaTypeProcessor.cs" />
     <Compile Include="Microsoft\ServiceModel\Dispatcher\MethodAndUriTemplateOperationSelector.cs" />
@@ -71,7 +76,7 @@
     <Compile Include="Microsoft\ServiceModel\Dispatcher\UriTemplateOperationSelector.cs" />
     <Compile Include="Microsoft\ServiceModel\Dispatcher\WebProgrammingModelExtensionMethods.cs" />
     <Compile Include="Microsoft\ServiceModel\Http\RouteColectionExtensions.cs" />
-    <Compile Include="Microsoft\ServiceModel\Http\HostConfiguration.cs" />
+    <Compile Include="Microsoft\ServiceModel\Description\HttpHostConfiguration.cs" />
     <Compile Include="Microsoft\ServiceModel\Http\PlainTextProcessor.cs" />
     <Compile Include="Microsoft\ServiceModel\Http\WebHttpServiceHostFactory.cs" />
     <Compile Include="Microsoft\ServiceModel\Http\WebHttpServiceHostOfT.cs" />

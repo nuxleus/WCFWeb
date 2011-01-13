@@ -6,8 +6,8 @@ namespace System.ServiceModel.Dispatcher
 {
     using System;
     using System.Globalization;
+    using System.Net.Http;
     using System.ServiceModel.Channels;
-    using Microsoft.Http;
 
     /// <summary>
     /// Declares methods that provide a service object or recycle a service object for a service

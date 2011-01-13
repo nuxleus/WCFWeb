@@ -4,7 +4,7 @@
 
 namespace Microsoft.ServiceModel.Dispatcher
 {
-    using Microsoft.Http;
+    using System.Net.Http;
 
     public class HttpMessageProperty
     {

@@ -5,7 +5,8 @@
 namespace System.ServiceModel.Http.Client
 {
     using System;
-    using Microsoft.Http;
+    using System.Net.Http;
+    using System.ServiceModel.Web.Client;
 
     /// <summary>
     /// This class is used to extend the existing HttpClient class so that user can start

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace System.ServiceModel.Http.Client {
+namespace System.ServiceModel.Web.Client {
     using System;
     
     
@@ -138,6 +138,15 @@ namespace System.ServiceModel.Http.Client {
         internal static string WebQueryResponseMessageInUnsupportedFormat {
             get {
                 return ResourceManager.GetString("WebQueryResponseMessageInUnsupportedFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The media type of the response cannot be null where there is a ContentType header.
+        /// </summary>
+        internal static string WebQueryResponseMessageMissingMediaType {
+            get {
+                return ResourceManager.GetString("WebQueryResponseMessageMissingMediaType", resourceCulture);
             }
         }
     }

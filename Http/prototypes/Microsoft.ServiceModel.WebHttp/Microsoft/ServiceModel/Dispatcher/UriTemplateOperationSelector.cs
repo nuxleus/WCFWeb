@@ -8,7 +8,8 @@ namespace Microsoft.ServiceModel.Dispatcher
     using System.Collections.ObjectModel;
     using System.Globalization;
     using System.Linq;
-    using Microsoft.Http;
+    using System.Net.Http;
+    using System.ServiceModel.Channels;
 
     public class UriTemplateOperationSelector : HttpOperationSelector
     {
@@ -38,7 +39,8 @@ namespace Microsoft.ServiceModel.Dispatcher
                 throw new ArgumentNullException("message");
             }
 
-            Uri uri = message.Uri;
+            Uri uri = message.RequestUri;
+            
             if (uri == null)
             {
                 return this.OnMatchNotFound(message);
@@ -48,6 +50,11 @@ namespace Microsoft.ServiceModel.Dispatcher
             if (this.UseMatchSingle)
             {
                 match = this.uriTemplateTable.MatchSingle(uri);
+                if (match == null)
+                {
+                    uri = new Uri(uri.OriginalString+"/");
+                    match = this.uriTemplateTable.MatchSingle(uri);
+                }
             }
             else
             {
@@ -99,7 +106,7 @@ namespace Microsoft.ServiceModel.Dispatcher
                         stringTypeFullName));
             }
 
-            message.Properties.Add(match);
+            message.GetProperties().Add(match);
 
             return operationName;
         }

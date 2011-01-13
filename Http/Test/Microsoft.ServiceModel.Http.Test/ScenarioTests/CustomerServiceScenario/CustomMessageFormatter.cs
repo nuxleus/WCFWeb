@@ -6,7 +6,7 @@ namespace System.ServiceModel.Http.Test.ScenarioTests
 {
     using System;
     using System.Net;
-    using Microsoft.Http;
+    using System.Net.Http;
     using System.ServiceModel.Description;
     using System.ServiceModel.Dispatcher;
 
@@ -73,7 +73,7 @@ namespace System.ServiceModel.Http.Test.ScenarioTests
             else
             {
                 response.StatusCode = HttpStatusCode.OK;
-                response.Content = HttpContent.Create(new byte[0]);
+                response.Content = new ByteArrayContent(new byte[0]);
             }
         }
     }

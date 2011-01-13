@@ -11,8 +11,8 @@ namespace Microsoft.ServiceModel.Http
     using System.Runtime.Serialization.Json;
     using System.ServiceModel.Description;
 
-    using Microsoft.Http;
-    using Microsoft.Http.Headers;
+    using System.Net.Http;
+    using System.Net.Http.Headers;
     using Microsoft.ServiceModel.Http;
     using Microsoft.ServiceModel.Web;
 
@@ -51,7 +51,7 @@ namespace Microsoft.ServiceModel.Http
 
         public override object ReadFromStream(Stream stream, HttpRequestMessage request)
         {
-            request.Headers.Accept.AddString("application/json");
+            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
             var reader = new StreamReader(stream);
             var jsonContent = reader.ReadToEnd();

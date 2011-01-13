@@ -10,7 +10,7 @@ namespace ContactManager
     using System.IO;
     using System.ServiceModel.Description;
 
-    using Microsoft.Http;
+    using System.Net.Http;
     using Microsoft.ServiceModel.Http;
 
     public class PngProcessor : MediaTypeProcessor

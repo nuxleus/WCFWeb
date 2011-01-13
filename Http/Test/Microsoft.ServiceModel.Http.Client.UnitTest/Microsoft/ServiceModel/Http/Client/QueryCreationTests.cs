@@ -6,8 +6,8 @@ namespace Microsoft.ServiceModel.Http.Client.Test
 {
     using System;
     using System.Collections.Generic;
+    using System.Net.Http;
     using System.ServiceModel.Http.Client;
-    using Microsoft.Http;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [TestClass]
@@ -52,11 +52,15 @@ namespace Microsoft.ServiceModel.Http.Client.Test
             foreach (var baseAddress in baseAddresses)
             {
                 HttpClient client = new HttpClient(baseAddress);
+                client.Channel = new WebRequestChannel();
+
                 HttpClient client2 = new HttpClient(new Uri(baseAddress));
+                client2.Channel = new WebRequestChannel();
+
                 foreach (var relativeAddress in resourceAddresses)
                 {
-                    System.ServiceModel.Http.Client.WebQuery<Customer> q = client.CreateQuery<Customer>(relativeAddress);
-                    System.ServiceModel.Http.Client.WebQuery<Customer> q2 = client2.CreateQuery<Customer>(new Uri(relativeAddress, UriKind.Relative));
+                    WebQuery<Customer> q = client.CreateQuery<Customer>(relativeAddress);
+                    WebQuery<Customer> q2 = client2.CreateQuery<Customer>(new Uri(relativeAddress, UriKind.Relative));
                     string s = q.RequestUri.AbsoluteUri;
                     string s2 = q2.RequestUri.AbsoluteUri;
 

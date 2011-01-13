@@ -10,7 +10,7 @@ namespace Microsoft.ServiceModel.Http.Test.UnitTests
     using System.ServiceModel.Channels;
     using System.ServiceModel.Http.Test.Mocks;
     using System.ServiceModel.Http.Test.Utilities;
-    using Microsoft.Http;
+    using System.Net.Http;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [TestClass]
@@ -176,7 +176,7 @@ namespace Microsoft.ServiceModel.Http.Test.UnitTests
 
             HttpMessage message = encoder.ReadMessage(buffer, new MockBufferManager(), null) as HttpMessage;
             HttpRequestMessage request = message.ToHttpRequestMessage();
-            Assert.IsNull(request.Content.ContentType, "HttpMessageEncoder.ReadMessage should have returned an HttpMessage with a null content type.");
+            Assert.IsNull(request.Content.Headers.ContentType, "HttpMessageEncoder.ReadMessage should have returned an HttpMessage with a null content type.");
         }
 
         [TestMethod]
@@ -191,7 +191,7 @@ namespace Microsoft.ServiceModel.Http.Test.UnitTests
 
             HttpMessage message = encoder.ReadMessage(buffer, new MockBufferManager(), "someType/someSubType") as HttpMessage;
             HttpRequestMessage request = message.ToHttpRequestMessage();
-            Assert.AreEqual("someType/someSubType", request.Content.ContentType.ToString(), "HttpMessageEncoder.ReadMessage should have returned an HttpMessage with a content type of 'someType/someSubType'.");
+            Assert.AreEqual("someType/someSubType", request.Content.Headers.ContentType.MediaType, "HttpMessageEncoder.ReadMessage should have returned an HttpMessage with a content type of 'someType/someSubType'.");
         }
 
         [TestMethod]
@@ -315,7 +315,7 @@ namespace Microsoft.ServiceModel.Http.Test.UnitTests
 
             HttpResponseMessage response = new HttpResponseMessage();
             byte[] bytes = new byte[5] { 0, 1, 2, 3, 4 };
-            response.Content = HttpContent.Create(bytes);
+            response.Content = new ByteArrayContent(bytes);
             HttpMessage message = new HttpMessage(response);
 
             ArraySegment<byte> buffer = encoder.WriteMessage(message, int.MaxValue, new MockBufferManager());
@@ -346,7 +346,7 @@ namespace Microsoft.ServiceModel.Http.Test.UnitTests
 
             HttpResponseMessage response = new HttpResponseMessage();
             byte[] bytes = new byte[5] { 0, 1, 2, 3, 4 };
-            response.Content = HttpContent.Create(bytes);
+            response.Content = new ByteArrayContent(bytes);
             response.Content.LoadIntoBuffer();
             HttpMessage message = new HttpMessage(response);
 
@@ -363,7 +363,7 @@ namespace Microsoft.ServiceModel.Http.Test.UnitTests
 
             HttpResponseMessage response = new HttpResponseMessage();
             byte[] bytes = new byte[5] { 0, 1, 2, 3, 4 };
-            response.Content = HttpContent.Create(bytes);
+            response.Content = new ByteArrayContent(bytes);
             response.Content.LoadIntoBuffer();
             HttpMessage message = new HttpMessage(response);
 
@@ -384,7 +384,7 @@ namespace Microsoft.ServiceModel.Http.Test.UnitTests
             MessageEncoder encoder = factory.Encoder;
 
             HttpResponseMessage response = new HttpResponseMessage();
-            response.Content = HttpContent.Create(new byte[5] { 0, 1, 2, 3, 4 });
+            response.Content = new ByteArrayContent(new byte[5] { 0, 1, 2, 3, 4 });
             HttpMessage message = new HttpMessage(response);
 
             MockBufferManager bufferManager = new MockBufferManager();
@@ -401,7 +401,7 @@ namespace Microsoft.ServiceModel.Http.Test.UnitTests
             MessageEncoder encoder = factory.Encoder;
 
             HttpResponseMessage response = new HttpResponseMessage();
-            response.Content = HttpContent.Create(new byte[5] { 0, 1, 2, 3, 4 });
+            response.Content = new ByteArrayContent(new byte[5] { 0, 1, 2, 3, 4 });
             HttpMessage message = new HttpMessage(response);
 
             ExceptionAssert.Throws(
@@ -421,7 +421,7 @@ namespace Microsoft.ServiceModel.Http.Test.UnitTests
             MessageEncoder encoder = factory.Encoder;
 
             HttpResponseMessage response = new HttpResponseMessage();
-            response.Content = HttpContent.Create(new byte[5] { 0, 1, 2, 3, 4 });
+            response.Content = new ByteArrayContent(new byte[5] { 0, 1, 2, 3, 4 });
             HttpMessage message = new HttpMessage(response);
 
             ExceptionAssert.Throws(
@@ -441,7 +441,7 @@ namespace Microsoft.ServiceModel.Http.Test.UnitTests
             MessageEncoder encoder = factory.Encoder;
 
             HttpResponseMessage response = new HttpResponseMessage();
-            response.Content = HttpContent.Create(new byte[5] { 0, 1, 2, 3, 4 });
+            response.Content = new ByteArrayContent(new byte[5] { 0, 1, 2, 3, 4 });
             HttpMessage message = new HttpMessage(response);
 
             ExceptionAssert.Throws(
@@ -461,7 +461,7 @@ namespace Microsoft.ServiceModel.Http.Test.UnitTests
             MessageEncoder encoder = factory.Encoder;
 
             HttpResponseMessage response = new HttpResponseMessage();
-            response.Content = HttpContent.Create(new byte[5] { 0, 1, 2, 3, 4 });
+            response.Content = new ByteArrayContent(new byte[5] { 0, 1, 2, 3, 4 });
             HttpMessage message = new HttpMessage(response);
 
             ExceptionAssert.ThrowsArgumentNull(
@@ -496,8 +496,8 @@ namespace Microsoft.ServiceModel.Http.Test.UnitTests
             HttpMessageEncoderFactory factory = new HttpMessageEncoderFactory();
             MessageEncoder encoder = factory.Encoder;
 
-            HttpRequestMessage request = new HttpRequestMessage("GET", "http://localhost");
-            request.Content = HttpContent.Create(new byte[5] { 0, 1, 2, 3, 4 });
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, "http://localhost");
+            request.Content = new ByteArrayContent(new byte[5] { 0, 1, 2, 3, 4 });
             HttpMessage message = new HttpMessage(request);
 
             ExceptionAssert.Throws(
@@ -517,7 +517,7 @@ namespace Microsoft.ServiceModel.Http.Test.UnitTests
             MessageEncoder encoder = factory.Encoder;
 
             HttpResponseMessage response = new HttpResponseMessage();
-            response.Content = HttpContent.Create(new byte[5] { 0, 1, 2, 3, 4 });
+            response.Content = new ByteArrayContent(new byte[5] { 0, 1, 2, 3, 4 });
             HttpMessage message = new HttpMessage(response);
             message.Close();
 
@@ -539,7 +539,7 @@ namespace Microsoft.ServiceModel.Http.Test.UnitTests
 
             HttpResponseMessage response = new HttpResponseMessage();
             byte[] bytes = new byte[5] { 0, 1, 2, 3, 4 };
-            response.Content = HttpContent.Create(bytes);
+            response.Content = new ByteArrayContent(bytes);
             HttpMessage message = new HttpMessage(response);
 
             using (MemoryStream stream = new MemoryStream())
@@ -599,7 +599,7 @@ namespace Microsoft.ServiceModel.Http.Test.UnitTests
             MessageEncoder encoder = factory.Encoder;
 
             HttpResponseMessage response = new HttpResponseMessage();
-            response.Content = HttpContent.Create(new byte[5] { 0, 1, 2, 3, 4 });
+            response.Content = new ByteArrayContent(new byte[5] { 0, 1, 2, 3, 4 });
             HttpMessage message = new HttpMessage(response);
 
             ExceptionAssert.ThrowsArgumentNull(

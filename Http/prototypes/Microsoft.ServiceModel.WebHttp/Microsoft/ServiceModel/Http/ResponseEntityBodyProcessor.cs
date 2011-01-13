@@ -9,7 +9,7 @@ namespace Microsoft.ServiceModel.Http
     using System.Linq;
     using System.ServiceModel.Dispatcher;
     using Dispatcher;
-    using Microsoft.Http;
+    using System.Net.Http;
 
     public class ResponseEntityBodyProcessor : Processor
     {
@@ -54,9 +54,18 @@ namespace Microsoft.ServiceModel.Http
 
             var request = (HttpRequestMessage)input[0];
             var response = (HttpResponseMessage)input[1];
-            string accept = request.Headers.Accept.ToString();
-            string contentType = response.Headers.ContentType;
-            if (contentType == null || contentType == String.Empty)
+            string accept = String.Join(",", request.Headers.Accept.Select(a => a.ToString()));
+            var content = response.Content;
+            string contentType = null;
+
+            if (content != null)
+            {
+                contentType = content.Headers.ContentType != null
+                                  ? content.Headers.ContentType.ToString()
+                                  : null;
+            }
+            
+            if (String.IsNullOrEmpty(contentType))
             {
                 contentType = ContentNegotiationHelper.GetBestMatch(accept, this.contentTypes).MediaType;
             }

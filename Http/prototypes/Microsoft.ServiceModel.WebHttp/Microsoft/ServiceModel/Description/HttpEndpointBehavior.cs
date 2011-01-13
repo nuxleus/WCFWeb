@@ -25,11 +25,13 @@ namespace Microsoft.ServiceModel.Description
             };
 
         private Uri baseAddress;
-        private HostConfiguration configuration;
+        private IProcessorProvider processorProvider;
+        private HttpHostConfiguration configuration;
 
-        public HttpEndpointBehavior(HostConfiguration configuration)
+        public HttpEndpointBehavior(HttpHostConfiguration configuration)
         {
             this.configuration = configuration;
+            this.processorProvider = configuration.ProcessorProvider;
         }
 
         public Processor[] GetRequestProcessors(HttpOperationDescription operation)
@@ -37,9 +39,9 @@ namespace Microsoft.ServiceModel.Description
             var processors = new List<Processor>();
             processors.Add(new UriTemplateProcessor(this.baseAddress, new UriTemplate(operation.GetUriTemplateString())));
             processors.Add(new XmlProcessor(operation, MediaTypeProcessorMode.Request));
-            if (this.configuration != null)
+            if (this.processorProvider != null)
             {
-                this.configuration.RegisterRequestProcessorsForOperation(operation, processors, MediaTypeProcessorMode.Request);
+                this.processorProvider.RegisterRequestProcessorsForOperation(operation, processors, MediaTypeProcessorMode.Request);
             }
 
             return processors.ToArray();
@@ -55,9 +57,9 @@ namespace Microsoft.ServiceModel.Description
             var processors = new List<Processor>();
             processors.Add(new ResponseEntityBodyProcessor());
             processors.Add(new XmlProcessor(operation, MediaTypeProcessorMode.Response));
-            if (this.configuration != null)
+            if (this.processorProvider != null)
             {
-                this.configuration.RegisterResponseProcessorsForOperation(operation, processors, MediaTypeProcessorMode.Response);
+                this.processorProvider.RegisterResponseProcessorsForOperation(operation, processors, MediaTypeProcessorMode.Response);
             }
 
             return processors.ToArray();
@@ -107,6 +109,11 @@ namespace Microsoft.ServiceModel.Description
             var contract = endpoint.Contract;
             IEnumerable<IOperationBehavior> defaultOperationBehaviors =
                 GetDefaultOperationBehaviors(contract);
+
+            if (this.configuration.InstanceFactory != null)
+            {
+                dispatchRuntime.InstanceProvider = new InstanceFactoryProvider(contract.ContractType, this.configuration.InstanceFactory);
+            }
 
             var instanceProvider = this.OnGetInstanceProvider(endpoint, dispatchRuntime);
             if (instanceProvider != null)

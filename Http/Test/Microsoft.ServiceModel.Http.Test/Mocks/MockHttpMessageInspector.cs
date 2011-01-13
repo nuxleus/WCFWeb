@@ -6,7 +6,7 @@ namespace System.ServiceModel.Http.Test.Mocks
 {
     using System;
     using System.ServiceModel.Dispatcher;
-    using Microsoft.Http;
+    using System.Net.Http;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     public class MockHttpMessageInspector : HttpMessageInspector

@@ -8,7 +8,7 @@ namespace Microsoft.ServiceModel.Http.Test.UnitTests
     using System.ServiceModel.Dispatcher;
     using System.ServiceModel.Http.Test.Mocks;
     using System.ServiceModel.Http.Test.Utilities;
-    using Microsoft.Http;
+    using System.Net.Http;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [TestClass]

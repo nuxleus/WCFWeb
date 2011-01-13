@@ -1,18 +1,18 @@
-﻿// <copyright>
+﻿// <copyright>using 
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 
 namespace System.ServiceModel.Http.Test.ScenarioTests
 {
-    using Microsoft.Http;
+    using System.Net.Http;
+    using System.ServiceModel.Channels;
 
     internal static class HttpMessageResponseExtensionMethods
     {
         public static void CopyTo(this HttpResponseMessage from, HttpResponseMessage to)
         {
-            to.Method = from.Method;
+            to.RequestMessage = from.RequestMessage;
             to.StatusCode = from.StatusCode;
-            to.Uri = from.Uri;
             to.Content = from.Content;
             to.Headers.Clear();
             foreach (var header in from.Headers)
@@ -20,10 +20,10 @@ namespace System.ServiceModel.Http.Test.ScenarioTests
                 to.Headers.Add(header.Key, header.Value);
             }
 
-            to.Properties.Clear();
-            foreach (var obj in from.Properties)
+            to.GetProperties().Clear();
+            foreach (var obj in from.GetProperties())
             {
-                to.Properties.Add(obj);
+                to.GetProperties().Add(obj);
             }
         }
 

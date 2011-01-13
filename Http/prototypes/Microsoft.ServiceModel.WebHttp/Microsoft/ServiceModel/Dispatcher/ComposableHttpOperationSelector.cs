@@ -5,7 +5,7 @@
 namespace Microsoft.ServiceModel.Dispatcher
 {
     using System;
-    using Microsoft.Http;
+    using System.Net.Http;
 
     public abstract class ComposableHttpOperationSelector : HttpOperationSelector
     {

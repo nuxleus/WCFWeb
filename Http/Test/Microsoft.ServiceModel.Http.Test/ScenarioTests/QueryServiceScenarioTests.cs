@@ -7,11 +7,12 @@ namespace Microsoft.ServiceModel.Http.Test
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Net.Http;
     using System.ServiceModel.Http.Client;
     using System.Threading;
-    using System.Web;
-    using Microsoft.Http;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+    using HttpException = System.Web.HttpException;
 
     [TestClass]
     public class QueryServiceScenarioTests
@@ -115,9 +116,8 @@ namespace Microsoft.ServiceModel.Http.Test
             var customers = client.CreateQuery<Customer>("Customers");
 
             // EndX method
-            IAsyncResult result = customers.BeginExecute(null, null);
-            Assert.AreEqual(5, customers.EndExecute(result).Count());
-
+            customers.ExecuteAsync().ContinueWith(t => Assert.AreEqual(5, t.Result.Count()));  
+            
             var q =
                 from customer in customers
                 where customer.Id > 4
@@ -125,7 +125,7 @@ namespace Microsoft.ServiceModel.Http.Test
 
             customers = ((WebQuery<Customer>)q);
             // Callback
-            customers.BeginExecute(Callback, customers);
+            customers.ExecuteAsync().ContinueWith(t=>Callback(t.Result));
             mre.WaitOne();
         }
 
@@ -205,9 +205,9 @@ namespace Microsoft.ServiceModel.Http.Test
             var customers = client.CreateQuery<Customer>("Customers");
 
             // EndX method
-            IAsyncResult result = customers.BeginExecute(null, null);
-            Assert.AreEqual(5, customers.EndExecute(result).Count());
 
+            customers.ExecuteAsync().ContinueWith(t => Assert.AreEqual(5, t.Result.Count()));
+            
             var q =
                 from customer in customers
                 where customer.Id > 4
@@ -215,7 +215,7 @@ namespace Microsoft.ServiceModel.Http.Test
 
             customers = ((WebQuery<Customer>)q);
             // Callback
-            customers.BeginExecute(Callback, customers);
+            customers.ExecuteAsync().ContinueWith(t => Callback(t.Result));
             mre.WaitOne();
         }
 
@@ -229,10 +229,9 @@ namespace Microsoft.ServiceModel.Http.Test
             }
         }
 
-        static void Callback(IAsyncResult result)
+        static void Callback(IEnumerable<Customer> result)
         {
-            var q = (WebQuery<Customer>)result.AsyncState;
-            Assert.AreEqual(1, q.EndExecute(result).Count());
+            Assert.AreEqual(1, result.Count());
             mre.Set();
         }
     }
