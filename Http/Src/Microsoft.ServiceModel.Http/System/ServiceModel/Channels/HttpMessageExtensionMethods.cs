@@ -125,11 +125,21 @@ namespace System.ServiceModel.Channels
             return new HttpMessage(response);
         }
 
+        /// <summary>
+        /// Returns request message properties
+        /// </summary>
+        /// <param name="message">The request</param>
+        /// <returns>A collection of request properties</returns>
         public static IList<object> GetProperties(this HttpRequestMessage message)
         {
             return requestProperties.GetOrCreateValue(message);
         }
 
+        /// <summary>
+        /// Returns response message properties
+        /// </summary>
+        /// <param name="message">The response</param>
+        /// <returns>A collection of response properties</returns>
         public static IList<object> GetProperties(this HttpResponseMessage message)
         {
             return responseProperties.GetOrCreateValue(message);
