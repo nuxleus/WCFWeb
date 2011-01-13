@@ -12,7 +12,6 @@ namespace Microsoft.ServiceModel.Http
     using System.ServiceModel.Channels;
     using System.ServiceModel.Description;
     using System.ServiceModel.Dispatcher;
-
     using Microsoft.ServiceModel.Description;
 
     public class HttpHostConfiguration

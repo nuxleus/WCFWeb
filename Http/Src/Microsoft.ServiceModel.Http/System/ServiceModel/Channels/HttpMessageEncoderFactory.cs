@@ -90,7 +90,9 @@ namespace System.ServiceModel.Channels
                 httpContent.Headers.Clear();
 
                 if (contentType != null)
+                {
                     httpContent.Headers.Add("content-type", contentType);
+                }
                 
                 request.Content = httpContent;
 

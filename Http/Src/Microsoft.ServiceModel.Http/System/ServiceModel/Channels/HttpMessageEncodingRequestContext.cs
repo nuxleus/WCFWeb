@@ -150,6 +150,7 @@ namespace System.ServiceModel.Channels
                     httpRequestMessage.Content.Headers.Add(headerName, requestProperty.Headers[headerName]);
                     continue;
                 }
+
                 httpRequestMessage.Headers.Remove(headerName);
                 httpRequestMessage.Headers.Add(headerName, requestProperty.Headers[headerName]);
             }
@@ -187,8 +188,7 @@ namespace System.ServiceModel.Channels
                     }
                 }
 
-
-                if (httpResponseMessage.Content==null || httpResponseMessage.Content.Headers.ContentLength==0)
+                if (httpResponseMessage.Content == null || httpResponseMessage.Content.Headers.ContentLength == 0)
                 {
                     responseProperty.SuppressEntityBody = true;
                 }

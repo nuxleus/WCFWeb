@@ -2,11 +2,12 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Runtime.CompilerServices;
 namespace System.ServiceModel.Channels
 {
+    using System.Collections.Generic;
+    using System.Net.Http;
+    using System.Runtime.CompilerServices;
+
     /// <summary>
     /// Provides extension methods for getting an <see cref="Microsoft.Http.HttpRequestMessage">HttpRequestMessage</see> instance or
     /// an <see cref="Microsoft.Http.HttpResponseMessage">HttpResponseMessage</see> instance from a <see cref="Message"/> instance and
@@ -19,6 +20,8 @@ namespace System.ServiceModel.Channels
         internal const string ToHttpRequestMessageMethodName = "ToHttpRequestMessage";
         internal const string ToHttpResponseMessageMethodName = "ToHttpResponseMessage";
         internal const string ToMessageMethodName = "ToMessage";
+        private static ConditionalWeakTable<HttpRequestMessage, List<object>> requestProperties = new ConditionalWeakTable<HttpRequestMessage, List<object>>();
+        private static ConditionalWeakTable<HttpResponseMessage, List<object>> responseProperties = new ConditionalWeakTable<HttpResponseMessage, List<object>>();
 
         /// <summary>
         /// Returns a reference to the <see cref="Microsoft.Http.HttpRequestMessage">HttpRequestMessage</see> 
@@ -122,6 +125,16 @@ namespace System.ServiceModel.Channels
             return new HttpMessage(response);
         }
 
+        public static IList<object> GetProperties(this HttpRequestMessage message)
+        {
+            return requestProperties.GetOrCreateValue(message);
+        }
+
+        public static IList<object> GetProperties(this HttpResponseMessage message)
+        {
+            return responseProperties.GetOrCreateValue(message);
+        }
+
         internal static HttpRequestMessageProperty GetHttpRequestMessageProperty(this Message message)
         {
             object requestProperty = null;
@@ -145,18 +158,5 @@ namespace System.ServiceModel.Channels
 
             return null;
         }
-
-        private static ConditionalWeakTable<HttpRequestMessage, List<object>> _requestProperties = new ConditionalWeakTable<HttpRequestMessage, List<object>>();
-        public static IList<object> GetProperties(this HttpRequestMessage message)
-        {
-            return _requestProperties.GetOrCreateValue(message);
-        }
-
-        private static ConditionalWeakTable<HttpResponseMessage, List<object>> _responseProperties = new ConditionalWeakTable<HttpResponseMessage, List<object>>();
-        public static IList<object> GetProperties(this HttpResponseMessage message)
-        {
-            return _responseProperties.GetOrCreateValue(message);
-        }
-
     }
 }

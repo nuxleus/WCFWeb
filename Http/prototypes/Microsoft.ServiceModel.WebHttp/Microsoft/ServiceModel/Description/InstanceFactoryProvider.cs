@@ -1,15 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿// <copyright>
+//   Copyright (c) Microsoft Corporation.  All rights reserved.
+// </copyright>
 
 namespace Microsoft.ServiceModel.Description
 {
     using System.ServiceModel;
     using System.ServiceModel.Channels;
     using System.ServiceModel.Dispatcher;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
 
-    public class InstanceFactoryProvider : IInstanceProvider
+    public class InstanceFactoryProvider
     {
         private readonly Type serviceType;
 
