@@ -10,19 +10,18 @@ namespace Microsoft.ServiceModel.Http
 
     using Microsoft.ServiceModel.Description;
 
-    public class WebHttpServiceHostFactory : ServiceHostFactory
+    public interface IConfigurableServiceHostFactory
     {
-        private HttpHostConfiguration configuration;
+        HttpHostConfiguration Configuration { get; set; }
+    }
 
-        [SuppressMessage("Microsoft.Design", "CA1026", Justification = "Uses optional params")]
-        public WebHttpServiceHostFactory(HttpHostConfiguration configuration = null)
-        {
-            this.configuration = configuration;
-        }
-
+    public class WebHttpServiceHostFactory : ServiceHostFactory , IConfigurableServiceHostFactory
+    {
         protected override System.ServiceModel.ServiceHost CreateServiceHost(Type serviceType, Uri[] baseAddresses)
         {
-            return new WebHttpServiceHost(serviceType, this.configuration, baseAddresses);
+            return new WebHttpServiceHost(serviceType, this.Configuration, baseAddresses);
         }
+
+        public HttpHostConfiguration Configuration { get; set; }
     }
 }

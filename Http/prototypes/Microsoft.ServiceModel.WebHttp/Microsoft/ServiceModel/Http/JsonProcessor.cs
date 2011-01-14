@@ -75,17 +75,14 @@ namespace Microsoft.ServiceModel.Http
         }
 
         public override object ReadFromStream(Stream stream, HttpRequestMessage request)
-        {
-            var reader = new StreamReader(stream);
-            var jsonObject = JsonValue.Load(stream);
-
+        { 
             if (this.isJsonValueParameter)
             {
+                var jsonObject = JsonValue.Load(stream);
                 return jsonObject;
             }
 
             var serializer = new DataContractJsonSerializer(Parameter.ParameterType);
-            stream.Position = 0;
             return serializer.ReadObject(stream);
         }
     }
