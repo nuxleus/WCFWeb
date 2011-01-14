@@ -109,7 +109,6 @@ namespace Microsoft.ServiceModel.Http.Test
             customers.Execute();
         }
 
-        [Ignore]
         [TestMethod]
         public void AsynchronousExecution()
         {

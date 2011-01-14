@@ -54,14 +54,34 @@ namespace System.ServiceModel
             MessageProperties messageProperties = OperationContext.Current.IncomingMessageProperties;
             var message = OperationContext.Current.RequestContext.RequestMessage;
             var httpRequest = message.ToHttpRequestMessage();
-
-            if (messageProperties.ContainsKey(QueryCompositionMessageProperty.Name))
+            if (httpRequest != null)
             {
-                queryCompositionMessageProperty = messageProperties[QueryCompositionMessageProperty.Name] as QueryCompositionMessageProperty;
-                return queryCompositionMessageProperty.RequestUri;
-            }
+                if (messageProperties.ContainsKey(QueryCompositionMessageProperty.Name))
+                {
+                    queryCompositionMessageProperty =
+                        messageProperties[QueryCompositionMessageProperty.Name] as QueryCompositionMessageProperty;
+                    return queryCompositionMessageProperty.RequestUri;
+                }
 
-            return httpRequest.RequestUri.AbsoluteUri;
+                return httpRequest.RequestUri.AbsoluteUri;
+            }
+            else
+            {
+                if (messageProperties.ContainsKey(QueryCompositionMessageProperty.Name))
+                {
+                    queryCompositionMessageProperty = messageProperties[QueryCompositionMessageProperty.Name] as QueryCompositionMessageProperty;
+                    return queryCompositionMessageProperty.RequestUri;
+                }
+                else
+                {
+                    UriTemplateMatch uriTemplateMatch = WebOperationContext.Current.IncomingRequest.UriTemplateMatch;
+                    if (uriTemplateMatch != null && uriTemplateMatch.RequestUri != null && uriTemplateMatch.RequestUri.AbsoluteUri != null)
+                    {
+                        return WebOperationContext.Current.IncomingRequest.UriTemplateMatch.RequestUri.AbsoluteUri;
+                    }
+                }    
+            }
+            return null;
         }
 
         private object TryApplyQuery(object result)
