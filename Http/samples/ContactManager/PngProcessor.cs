@@ -8,9 +8,8 @@ namespace ContactManager
     using System.Collections.Generic;
     using System.Globalization;
     using System.IO;
-    using System.ServiceModel.Description;
-
     using System.Net.Http;
+    using System.ServiceModel.Description;
     using Microsoft.ServiceModel.Http;
 
     public class PngProcessor : MediaTypeProcessor

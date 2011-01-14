@@ -4,14 +4,12 @@
 
 namespace ContactManager
 {
-    using System.Collections.Generic;
     using System.ComponentModel.Composition;
     using System.Globalization;
     using System.Net;
+    using System.Net.Http;
     using System.ServiceModel;
     using System.ServiceModel.Web;
-
-    using System.Net.Http;
 
     [ServiceContract]
     [Export]

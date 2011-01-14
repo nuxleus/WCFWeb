@@ -41,20 +41,20 @@ namespace ContactManager
             processors.Add(new PngProcessor(operation, mode));
         }
 
-        //Get the instance from MEF
+        // Get the instance from MEF
         public object GetInstance(Type serviceType, InstanceContext instanceContext, Message message)
         {
             var contract = AttributedModelServices.GetContractName(serviceType);
             var identity = AttributedModelServices.GetTypeIdentity(serviceType);
 
-            //force non-shared so that every service doesn't need to have a [PartCreationPolicy] attribute.
+            // force non-shared so that every service doesn't need to have a [PartCreationPolicy] attribute.
             var definition = new ContractBasedImportDefinition(contract, identity, null, ImportCardinality.ExactlyOne, false, false, CreationPolicy.NonShared);
             return this.container.GetExports(definition).First().Value;
         }
 
         public void ReleaseInstance(InstanceContext instanceContext, object service)
         {
-            //no op
+            // no op
         }
     }
 }

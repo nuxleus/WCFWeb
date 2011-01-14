@@ -1,10 +1,15 @@
-﻿namespace QueryableSample
+﻿// <copyright>
+//   Copyright (c) Microsoft Corporation.  All rights reserved.
+// </copyright>
+
+namespace QueryableSample
 {
     using System;
     using System.Net.Http;
     using System.Threading;
 
-    public class TracingResponseChannel : HttpClientChannel {
+    public class TracingResponseChannel : HttpClientChannel 
+    {
         private Action<HttpResponseMessage> trace;
 
         public TracingResponseChannel(Action<HttpResponseMessage> trace)

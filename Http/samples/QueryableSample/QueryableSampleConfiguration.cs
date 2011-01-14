@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using Microsoft.ServiceModel.Http;
+﻿// <copyright>
+//   Copyright (c) Microsoft Corporation.  All rights reserved.
+// </copyright>
 
 namespace QueryableSample
 {
+    using System.Collections.Generic;
     using System.ServiceModel.Description;
     using System.ServiceModel.Dispatcher;
-
     using Microsoft.ServiceModel.Description;
+    using Microsoft.ServiceModel.Http;
 
     public class QueryableSampleConfiguration : HttpHostConfiguration, IProcessorProvider
     {

@@ -15,7 +15,7 @@ namespace ContactManager
     {
         protected void Application_Start(object sender, EventArgs e)
         {
-            //use MEF for providing instances
+            // use MEF for providing instances
             var catalog = new AssemblyCatalog(typeof(Global).Assembly);
             var container = new CompositionContainer(catalog);
             var configuration = new ContactManagerConfiguration(container);
