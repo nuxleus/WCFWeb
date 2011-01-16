@@ -52,7 +52,7 @@ namespace Microsoft.ServiceModel.Dispatcher
                 match = this.uriTemplateTable.MatchSingle(uri);
                 if (match == null)
                 {
-                    uri = new Uri(uri.OriginalString+"/");
+                    uri = new Uri(string.Format(CultureInfo.InvariantCulture, "{0}://{1}{2}/{3}", uri.Scheme, uri.Authority, uri.LocalPath, uri.Query));
                     match = this.uriTemplateTable.MatchSingle(uri);
                 }
             }
