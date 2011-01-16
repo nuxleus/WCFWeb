@@ -15,7 +15,7 @@ namespace ContactManager
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            SetViewAsButtonCaption();
+            this.SetViewAsButtonCaption();
             var repository = new ContactRepository();
             this.Repeater1.DataSource = repository.GetAll().OrderBy(c => c.Name);
             this.Repeater1.DataBind();
