@@ -48,7 +48,7 @@
                 <p>${ Address }, ${ City } ${ State } ${ Zip }<br />
                     <a href="mailto:${ Email }">${ Email }</a><br/>
                     <a href="http://twitter.com/${ Twitter }">@${ Twitter }</a><br /><br />
-                    <p><a href="${ Self }" class="viewAsXml ui-state-default ui-corner-all" target='_blank'>View as <%=ViewAs%>Xml</a></p>
+                    <p><a href="${ Self }" class="viewAsXml ui-state-default ui-corner-all" target='_blank'>View as <%=this.ViewAsButtonCaption%></a></p>
                     <p><a href="${ Self }" class="removeContact ui-state-default ui-corner-all">Remove</a></p>
                 </p>
             </li>
@@ -70,7 +70,7 @@
                             <%#DataBinder.Eval(Container.DataItem, "Email")%></a><br />
                         <a href="http://twitter.com/<%#DataBinder.Eval(Container.DataItem, "Twitter")%>">@<%#DataBinder.Eval(Container.DataItem, "Twitter")%></a><br /><br />
                         <a href="<%#DataBinder.Eval(Container.DataItem, "Self")%>" class="viewAsXml" target='_blank'>
-                            View as <%=ViewAs%></a><br />
+                            View as <%=ViewAsButtonCaption%></a><br />
                         <p>
                             <a href="<%#DataBinder.Eval(Container.DataItem, "Self")%>" class="removeContact">Remove</a><br />
                         </p>

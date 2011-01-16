@@ -11,7 +11,7 @@ namespace ContactManager
 
     public partial class Default : System.Web.UI.Page
     {
-        protected string ViewAsButtonCaption;
+        protected string ViewAsButtonCaption { get; set; }
 
         protected void Page_Load(object sender, EventArgs e)
         {
