@@ -260,7 +260,7 @@
             DateTime anyUtcDateTime = AnyInstance.AnyDateTime.ToUniversalTime();
 
             Assert.AreEqual<DateTime>(anyUtcDateTime, (DateTime)(new JsonPrimitive(anyUtcDateTime.ToString(DateTimeFormat, CultureInfo.InvariantCulture))));
-            Assert.AreEqual<DateTime>(anyLocalDateTime.ToUniversalTime(), new JsonPrimitive(anyLocalDateTime.ToString(DateTimeWithOffsetFormat2, CultureInfo.InvariantCulture)).ReadAs<DateTime>());
+            Assert.AreEqual<DateTime>(anyLocalDateTime, new JsonPrimitive(anyLocalDateTime.ToString(DateTimeWithOffsetFormat2, CultureInfo.InvariantCulture)).ReadAs<DateTime>());
             Assert.AreEqual<DateTime>(anyUtcDateTime, new JsonPrimitive(anyUtcDateTime.ToString(DateTimeWithOffsetFormat2, CultureInfo.InvariantCulture)).ReadAs<DateTime>());
             Assert.AreEqual<DateTime>(anyLocalDateTime.Date, (DateTime)(new JsonPrimitive(anyLocalDateTime.ToString(DateTimeWithoutOffsetWithoutTimeFormat, CultureInfo.InvariantCulture))));
             Assert.AreEqual<DateTime>(anyLocalDateTime, new JsonPrimitive(anyLocalDateTime.ToString(DateTimeWithoutOffsetFormat, CultureInfo.InvariantCulture)).ReadAs<DateTime>());
@@ -295,6 +295,16 @@
             ExceptionTestHelper.ExpectException<InvalidCastException>(delegate { var c = (char)new JsonPrimitive(""); });
             ExceptionTestHelper.ExpectException<InvalidCastException>(delegate { var c = (char)new JsonPrimitive("cc"); });
             ExceptionTestHelper.ExpectException<FormatException>(delegate { var g = new JsonPrimitive("not a guid").ReadAs<Guid>(); });
+        }
+
+        [TestMethod]
+        public void AspNetDateTimeFormatConversionTest()
+        {
+            DateTime unixEpochUtc = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            DateTime unixEpochLocal = unixEpochUtc.ToLocalTime();
+            Assert.AreEqual(unixEpochUtc, new JsonPrimitive("/Date(0)/").ReadAs<DateTime>());
+            Assert.AreEqual(unixEpochLocal, new JsonPrimitive("/Date(0-0900)/").ReadAs<DateTime>());
+            Assert.AreEqual(unixEpochLocal, new JsonPrimitive("/Date(0+1000)/").ReadAs<DateTime>());
         }
 
         [TestMethod]

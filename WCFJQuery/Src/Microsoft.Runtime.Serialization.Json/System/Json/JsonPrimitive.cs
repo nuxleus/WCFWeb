@@ -19,9 +19,8 @@ namespace System.Json
     public sealed class JsonPrimitive : JsonValue
     {
         internal const string DateTimeIsoFormat = "yyyy-MM-ddTHH:mm:ss.fffK";
-        private static readonly string[] JSDateOrTimeLocalFormats = new string[] { "yyyy-MM-dd", "HH:mm:ss", "HH:mm", "yyyy-MM-ddTHH:mm:ss" };
-        private static readonly string[] JSDateUtcFormats = { @"ddd, d MMM yyyy HH:mm:ss \U\T\C", @"ddd, d MMM yyyy HH:mm:ss \G\M\T" };
-        private static readonly string[] JSDateWithTimezoneFormats = { "yyyy-MM-ddTHH:mm:ssK", DateTimeIsoFormat, "yyyy-MM-ddTHH:mm:sszzz", @"ddd, d MMM yyyy HH:mm:ss zzz" };
+        private const string UtcString = "UTC";
+        private const string GmtString = "GMT";
         private static readonly long UnixEpochTicks = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).Ticks;
         private static readonly char[] FloatingPointChars = new char[] { '.', 'e', 'E' };
         private static readonly Dictionary<Type, Func<string, ConvertResult>> stringConverters = new Dictionary<Type, Func<string, ConvertResult>>
@@ -237,7 +236,7 @@ namespace System.Json
             {
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("value");
             }
-            
+
             this.jsonType = JsonType.String;
             this.value = value;
         }
@@ -467,17 +466,7 @@ namespace System.Json
                                 SG.GetString(
                                     SR.InvalidDateFormat,
                                     valueStr,
-                                    typeOfTName,
-                                    JSDateUtcFormats[0],
-                                    JSDateUtcFormats[1],
-                                    JSDateWithTimezoneFormats[0],
-                                    JSDateWithTimezoneFormats[1],
-                                    JSDateWithTimezoneFormats[2],
-                                    JSDateWithTimezoneFormats[3],
-                                    JSDateOrTimeLocalFormats[0],
-                                    JSDateOrTimeLocalFormats[1],
-                                    JSDateOrTimeLocalFormats[2],
-                                    JSDateOrTimeLocalFormats[3])));
+                                    typeOfTName)));
                     case ReadAsFailureKind.InvalidUriFormat:
                         throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new UriFormatException(SG.GetString(SR.InvalidUriFormat, valueStr, typeOfTName)));
                     case ReadAsFailureKind.Overflow:
@@ -517,7 +506,7 @@ namespace System.Json
             {
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("jsonWriter");
             }
-            
+
             switch (this.JsonType)
             {
                 case JsonType.Boolean:
@@ -783,7 +772,7 @@ namespace System.Json
             {
                 valueNumber = default(T);
             }
-            
+
             return failureKind;
         }
 
@@ -801,22 +790,11 @@ namespace System.Json
             }
         }
 
-        // The returned DateTime object is adjusted to UTC timezone, if there is an offset in the value to be parsed.
-        // Otherwise it will be returned as local.
         private static bool TryParseDateTime(string valueString, out DateTime dateTime)
         {
-            if (DateTime.TryParseExact(valueString, JSDateUtcFormats, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out dateTime))
-            {
-                dateTime = dateTime.ToUniversalTime();
-                return true;
-            }
+            string filteredValue = valueString.EndsWith(UtcString, StringComparison.Ordinal) ? valueString.Replace(UtcString, GmtString) : valueString;
 
-            if (DateTime.TryParseExact(valueString, JSDateWithTimezoneFormats, CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal, out dateTime))
-            {
-                return true;
-            }
-
-            if (DateTime.TryParseExact(valueString, JSDateOrTimeLocalFormats, CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal, out dateTime))
+            if (DateTime.TryParse(filteredValue, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out dateTime))
             {
                 return true;
             }
@@ -829,13 +807,34 @@ namespace System.Json
             return false;
         }
 
+        private static bool TryParseDateTimeOffset(string valueString, out DateTimeOffset dateTimeOffset)
+        {
+            string filteredValue = valueString.EndsWith(UtcString, StringComparison.Ordinal) ? valueString.Replace(UtcString, GmtString) : valueString;
+
+            if (DateTimeOffset.TryParse(filteredValue, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out dateTimeOffset))
+            {
+                return true;
+            }
+
+            if (TryParseAspNetDateTimeFormat(valueString, out dateTimeOffset))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         private static bool TryParseAspNetDateTimeFormat(string valueString, out DateTime dateTime)
         {
-            //// The format for the value is given by the following regex:
-            //// \/Date\((?<milliseconds>\-?\d+)(?<offset>[\+\-]?\d{4})\)\/
-            //// where milliseconds is the number of milliseconds since 1970/01/01:00:00:00.000 UTC (the "unix baseline")
-            //// and offset is an optional which indicates whether the value is local or UTC.
+            // Reference to the format is available at these sources:
+            // http://msdn.microsoft.com/en-us/library/bb299886.aspx#intro_to_json_sidebarb
+            // http://msdn.microsoft.com/en-us/library/bb412170.aspx
 
+            // The format for the value is given by the following regex:
+            // \/Date\((?<milliseconds>\-?\d+)(?<offset>[\+\-]?\d{4})\)\/
+            // where milliseconds is the number of milliseconds since 1970/01/01:00:00:00.000 UTC (the "unix baseline")
+            // and offset is an optional which indicates whether the value is local or UTC.
+            // The actual value of the offset is ignored, since the ticks represent the UTC offset. The value is converted to local time based on that info.
             const string DateTimePrefix = "/Date(";
             const int DateTimePrefixLength = 6;
             const string DateTimeSuffix = ")/";
@@ -845,6 +844,7 @@ namespace System.Json
             {
                 string ticksValue = valueString.Substring(DateTimePrefixLength, valueString.Length - DateTimePrefixLength - DateTimeSuffixLength);
                 DateTimeKind dateTimeKind = DateTimeKind.Utc;
+
                 int indexOfTimeZoneOffset = ticksValue.IndexOf('+', 1);
 
                 if (indexOfTimeZoneOffset < 0)
@@ -852,10 +852,23 @@ namespace System.Json
                     indexOfTimeZoneOffset = ticksValue.IndexOf('-', 1);
                 }
 
+                // If an offset is present, verify it is properly formatted. Actual value is ignored (see spec).
                 if (indexOfTimeZoneOffset != -1)
                 {
-                    dateTimeKind = DateTimeKind.Local;
-                    ticksValue = ticksValue.Substring(0, indexOfTimeZoneOffset);
+                    if (indexOfTimeZoneOffset + 5 == ticksValue.Length
+                        && IsLatinDigit(ticksValue[indexOfTimeZoneOffset + 1])
+                        && IsLatinDigit(ticksValue[indexOfTimeZoneOffset + 2])
+                        && IsLatinDigit(ticksValue[indexOfTimeZoneOffset + 3])
+                        && IsLatinDigit(ticksValue[indexOfTimeZoneOffset + 4]))
+                    {
+                        ticksValue = ticksValue.Substring(0, indexOfTimeZoneOffset);
+                        dateTimeKind = DateTimeKind.Local;
+                    }
+                    else
+                    {
+                        dateTime = new DateTime();
+                        return false;
+                    }
                 }
 
                 long millisecondsSinceUnixEpoch;
@@ -864,7 +877,7 @@ namespace System.Json
                     long ticks = (millisecondsSinceUnixEpoch * 10000) + UnixEpochTicks;
                     if (ticks < DateTime.MaxValue.Ticks)
                     {
-                        dateTime = new DateTime(ticks);
+                        dateTime = new DateTime(ticks, DateTimeKind.Utc);
                         if (dateTimeKind == DateTimeKind.Local)
                         {
                             dateTime = dateTime.ToLocalTime();
@@ -879,26 +892,22 @@ namespace System.Json
             return false;
         }
 
-        private static bool TryParseDateTimeOffset(string valueString, out DateTimeOffset dateTime)
+        private static bool TryParseAspNetDateTimeFormat(string valueString, out DateTimeOffset dateTimeOffset)
         {
-            if (DateTimeOffset.TryParseExact(valueString, JSDateUtcFormats, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out dateTime))
+            DateTime dateTime;
+            if (TryParseAspNetDateTimeFormat(valueString, out dateTime))
             {
-                dateTime = dateTime.ToUniversalTime();
+                dateTimeOffset = new DateTimeOffset(dateTime);
                 return true;
             }
 
-            if (DateTimeOffset.TryParseExact(valueString, JSDateWithTimezoneFormats, CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal, out dateTime))
-            {
-                return true;
-            }
-
-            if (DateTimeOffset.TryParseExact(valueString, JSDateOrTimeLocalFormats, CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal, out dateTime))
-            {
-                return true;
-            }
-
-            dateTime = new DateTimeOffset();
+            dateTimeOffset = new DateTimeOffset();
             return false;
+        }
+
+        private static bool IsLatinDigit(char c)
+        {
+            return (c >= '0') && (c <= '9');
         }
 
         private static string UnescapeJsonString(string val)

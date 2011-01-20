@@ -139,7 +139,7 @@
     <value>Cannot convert null to '{0}' because it is a non-nullable value type</value>
   </data>
   <data name="InvalidDateFormat" xml:space="preserve">
-    <value>Cannot cast JsonPrimitive value '{0}' as '{1}'. It is not in a valid date format. Using .NET Custom Date format strings notation (http://msdn.microsoft.com/en-us/library/8kb3ddd4.aspx), accepted formats are '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10} and '{11}'.</value>
+    <value>Cannot cast JsonPrimitive value '{0}' as '{1}'. It is not in a valid date format.</value>
   </data>
   <data name="InvalidIndexType" xml:space="preserve">
     <value>Invalid '{0}' index type; only 'System.String' and non-negative 'System.Int32' types are supported.</value>

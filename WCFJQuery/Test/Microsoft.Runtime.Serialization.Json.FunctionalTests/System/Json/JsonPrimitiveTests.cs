@@ -464,17 +464,17 @@
             string[] localFormats = new string[]
             {
                 "ddd, d MMM yyyy HH:mm:ss zzz",
-                // DISABLED, 199676, "d MMM yyyy HH:mm:ss zzz",
+                "d MMM yyyy HH:mm:ss zzz",
                 "ddd, dd MMM yyyy HH:mm:ss zzz",
-                // DISABLED, 199676, "ddd, dd MMM yyyy HH:mm zzz",
+                "ddd, dd MMM yyyy HH:mm zzz",
             };
 
             string[] utcFormats = new string[]
             {
                 @"ddd, d MMM yyyy HH:mm:ss \U\T\C",
-                // DISABLED, 199676, "d MMM yyyy HH:mm:ssZ",
+                "d MMM yyyy HH:mm:ssZ",
                 @"ddd, dd MMM yyyy HH:mm:ss \U\T\C",
-                // DISABLED, 199676, "ddd, dd MMM yyyy HH:mmZ",
+                "ddd, dd MMM yyyy HH:mmZ",
             };
 
             DateTime today = DateTime.Today;
@@ -592,16 +592,33 @@
             DateTime dateTime = dateTimeOffset.UtcDateTime;
             TestReadAsFromStringRoundtrip<DateTime>(dateTime, dateTimeOffset.ToUniversalTime().ToString(@"ddd, d MMM yyyy HH:mm:ss \U\T\C"));
             TestReadAsFromStringRoundtrip<DateTime>(dateTime, dateTimeOffset.ToUniversalTime().ToString(@"ddd, d MMM yyyy HH:mm:ss \G\M\T"));
-            TestReadAsFromStringRoundtrip<DateTime>(dateTime, dateTimeOffset.ToUniversalTime().ToString(@"ddd, d MMM yyyy HH:mm:ss zzz"));
-            TestReadAsFromStringRoundtrip<DateTime>(dateTime, dateTimeOffset.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssK"));
-            TestReadAsFromStringRoundtrip<DateTime>(dateTime, dateTimeOffset.ToString(@"ddd, d MMM yyyy HH:mm:ss zzz"));
-            TestReadAsFromStringRoundtrip<DateTime>(dateTime, dateTimeOffset.ToString("yyyy-MM-ddTHH:mm:sszzz"));
+            TestReadAsFromStringRoundtrip<DateTime>(dateTime.ToLocalTime(), dateTimeOffset.ToString(@"ddd, d MMM yyyy HH:mm:ss zzz"));
+            TestReadAsFromStringRoundtrip<DateTime>(dateTime, dateTime.ToString("yyyy-MM-ddTHH:mm:ssK"));
+            TestReadAsFromStringRoundtrip<DateTime>(dateTime.ToLocalTime(), dateTimeOffset.ToString(@"ddd, d MMM yyyy HH:mm:ss zzz"));
+            TestReadAsFromStringRoundtrip<DateTime>(dateTime.ToLocalTime(), dateTimeOffset.ToString("yyyy-MM-ddTHH:mm:sszzz"));
             TestReadAsFromStringRoundtrip<DateTimeOffset>(dateTimeOffset.UtcDateTime, dateTimeOffset.ToUniversalTime().ToString(@"ddd, d MMM yyyy HH:mm:ss \U\T\C"));
             TestReadAsFromStringRoundtrip<DateTimeOffset>(dateTimeOffset.UtcDateTime, dateTimeOffset.ToUniversalTime().ToString(@"ddd, d MMM yyyy HH:mm:ss \G\M\T"));
             TestReadAsFromStringRoundtrip<DateTimeOffset>(dateTimeOffset, dateTimeOffset.ToUniversalTime().ToString(@"ddd, d MMM yyyy HH:mm:ss zzz"));
-            TestReadAsFromStringRoundtrip<DateTimeOffset>(dateTimeOffset, dateTimeOffset.ToString("yyyy-MM-ddTHH:mm:ssK"));
+            TestReadAsFromStringRoundtrip<DateTimeOffset>(dateTimeOffset, dateTime.ToString("yyyy-MM-ddTHH:mm:ssK"));
             TestReadAsFromStringRoundtrip<DateTimeOffset>(dateTimeOffset, dateTimeOffset.ToString("yyyy-MM-ddTHH:mm:sszzz"));
             TestReadAsFromStringRoundtrip<DateTimeOffset>(dateTimeOffset, dateTimeOffset.ToString(@"ddd, d MMM yyyy HH:mm:ss zzz"));
+
+            // Create ASPNetFormat DateTime
+            long unixEpochMilliseconds = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).Ticks / 10000;
+            long millisecondsFromUnixEpoch = dateTime.Ticks / 10000 - unixEpochMilliseconds;
+            string AspNetFormattedDateTime = String.Format("/Date({0})/", millisecondsFromUnixEpoch);
+            string AspNetFormattedDateTimeWithValidTZ = String.Format("/Date({0}+0700)/", millisecondsFromUnixEpoch);
+            string AspNetFormattedDateTimeInvalid1 = String.Format("/Date({0}+99999)/", millisecondsFromUnixEpoch);
+            string AspNetFormattedDateTimeInvalid2 = String.Format("/Date({0}+07z0)/", millisecondsFromUnixEpoch);
+            TestReadAsFromStringRoundtrip<DateTime>(dateTime, AspNetFormattedDateTime);
+            TestReadAsFromStringRoundtrip<DateTime>(dateTime.ToLocalTime(), AspNetFormattedDateTimeWithValidTZ);
+            TestReadAsFromStringRoundtrip<DateTimeOffset>(dateTimeOffset, AspNetFormattedDateTime);
+            TestReadAsFromStringRoundtrip<DateTimeOffset>(dateTimeOffset, AspNetFormattedDateTimeWithValidTZ);
+
+            ExpectException<FormatException>(delegate { new JsonPrimitive(AspNetFormattedDateTimeInvalid1).ReadAs<DateTime>(); });
+            ExpectException<FormatException>(delegate { new JsonPrimitive(AspNetFormattedDateTimeInvalid2).ReadAs<DateTime>(); });
+            ExpectException<FormatException>(delegate { new JsonPrimitive(AspNetFormattedDateTimeInvalid1).ReadAs<DateTimeOffset>(); });
+            ExpectException<FormatException>(delegate { new JsonPrimitive(AspNetFormattedDateTimeInvalid2).ReadAs<DateTimeOffset>(); });
 
             ExpectException<FormatException>(delegate { new JsonPrimitive("INF").ReadAs<float>(); });
             ExpectException<FormatException>(delegate { new JsonPrimitive("-INF").ReadAs<float>(); });
