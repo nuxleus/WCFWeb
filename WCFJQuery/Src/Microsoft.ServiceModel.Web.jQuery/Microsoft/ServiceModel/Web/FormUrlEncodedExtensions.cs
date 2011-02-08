@@ -9,6 +9,7 @@ namespace Microsoft.ServiceModel.Web
     using System.Diagnostics;
     using System.Globalization;
     using System.Json;
+    using System.Linq;
     using System.ServiceModel.Web;
     using System.Text;
     using System.Web;
@@ -203,7 +204,9 @@ namespace Microsoft.ServiceModel.Web
                     }
                     else
                     {
-                        if (current[path[i]] == null)
+                        // Since the loop goes up to the next-to-last item in the path, if we hit a null
+                        // or a primitive, then we have a mismatching node.
+                        if (current[path[i]] == null || current[path[i]] is JsonPrimitive)
                         {
                             throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(
                                 new ArgumentException(
@@ -371,12 +374,13 @@ namespace Microsoft.ServiceModel.Web
             if (jo != null && jo.Count > 0)
             {
                 List<string> childKeys = new List<string>(jo.Keys);
-                if (CanBecomeArray(childKeys))
+                List<string> sortedKeys;
+                if (CanBecomeArray(childKeys, out sortedKeys))
                 {
                     JsonArray newResult = new JsonArray();
-                    for (int i = 0; i < childKeys.Count; i++)
+                    foreach (string sortedKey in sortedKeys)
                     {
-                        newResult.Add(jo[i.ToString(CultureInfo.InvariantCulture)]);
+                        newResult.Add(jo[sortedKey]);
                     }
 
                     return newResult;
@@ -386,35 +390,50 @@ namespace Microsoft.ServiceModel.Web
             return original;
         }
 
-        private static bool CanBecomeArray(List<string> keys)
+        private static bool CanBecomeArray(List<string> keys, out List<string> sortedKeys)
         {
-            List<int> intKeys = new List<int>();
+            List<KeyValuePair<int, string>> intKeys = new List<KeyValuePair<int, string>>();
+            sortedKeys = null;
             bool areContiguousIndices = true;
             foreach (string key in keys)
             {
                 int intKey;
-                if (!int.TryParse(key, NumberStyles.Integer, CultureInfo.InvariantCulture, out intKey))
+                if (!int.TryParse(key, NumberStyles.None, CultureInfo.InvariantCulture, out intKey))
                 {
-                    // if not a number, it cannot become an array
+                    // if not a non-negative number, it cannot become an array
                     areContiguousIndices = false;
                     break;
                 }
 
-                intKeys.Add(intKey);
+                string strKey = intKey.ToString(CultureInfo.InvariantCulture);
+                if (!strKey.Equals(key, StringComparison.Ordinal))
+                {
+                    // int.Parse returned true, but it's not really the same number.
+                    // It's the case for strings such as "1\0".
+                    areContiguousIndices = false;
+                    break;
+                }
+
+                intKeys.Add(new KeyValuePair<int, string>(intKey, strKey));
             }
 
             if (areContiguousIndices)
             {
-                intKeys.Sort();
+                intKeys.Sort((x, y) => x.Key - y.Key);
 
                 for (int i = 0; i < intKeys.Count; i++)
                 {
-                    if (intKeys[i] != i)
+                    if (intKeys[i].Key != i)
                     {
                         areContiguousIndices = false;
                         break;
                     }
                 }
+            }
+
+            if (areContiguousIndices)
+            {
+                sortedKeys = new List<string>(intKeys.Select(x => x.Value));
             }
 
             return areContiguousIndices;

@@ -118,6 +118,8 @@
         public void TestArrayIndexNegative()
         {
             this.ExpectException<ArgumentException>(() => ParseFormUrlEncoded("a[x]=2&a[x][]=3"), "a[x]");
+            this.ExpectException<ArgumentException>(() => ParseFormUrlEncoded("a[]=1&a[0][]=2"), "a[0]");
+            this.ExpectException<ArgumentException>(() => ParseFormUrlEncoded("a[]=1&a[0][0][]=2"), "a[0]");
             this.ExpectException<ArgumentException>(() => ParseFormUrlEncoded("a[x][]=1&a[x][0]=2"), "a[x][0]");
             this.ExpectException<ArgumentException>(() => ParseFormUrlEncoded("a[][]=0"), "a[]");
             this.ExpectException<ArgumentException>(() => ParseFormUrlEncoded("a[][x]=0"), "a[]");
@@ -176,6 +178,16 @@
             encoded = "some+thing=10&%E5%B8%A6%E4%B8%89%E4%B8%AA%E8%A1%A8=bar";
             resultStr = @"{""some thing"":""10"",""带三个表"":""bar""}";
             this.TestFormEncodedParsing(encoded, resultStr);
+
+            encoded = "a[0\r\n][b]=1";
+            resultStr = "{\"a\":{\"0\\u000d\\u000a\":{\"b\":\"1\"}}}";
+            this.TestFormEncodedParsing(encoded, resultStr);
+            this.TestFormEncodedParsing(encoded.Replace("\r", "%0D").Replace("\n", "%0A"), resultStr);
+
+            this.TestFormEncodedParsing("a[0\0]=1", "{\"a\":{\"0\\u0000\":\"1\"}}");
+            this.TestFormEncodedParsing("a[0%00]=1", "{\"a\":{\"0\\u0000\":\"1\"}}");
+            this.TestFormEncodedParsing("a[\00]=1", "{\"a\":{\"\\u00000\":\"1\"}}");
+            this.TestFormEncodedParsing("a[%000]=1", "{\"a\":{\"\\u00000\":\"1\"}}");
         }
 
         /// <summary>
@@ -256,10 +268,12 @@
             {
                 strResult.Append("&" + result);
             }
+
             if (strResult.Length > 0)
             {
                 return strResult.Remove(0, 1).ToString();
             }
+
             return strResult.ToString();
         }
 
@@ -296,8 +310,7 @@
                     results.Add(prefix + "=" + string.Empty);
                 }
             }
-
-            if (jsonValue is JsonArray)
+            else if (jsonValue is JsonArray)
             {
                 for (int i = 0; i < jsonValue.Count; i++)
                 {
