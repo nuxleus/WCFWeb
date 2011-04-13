@@ -8,12 +8,12 @@
     <!-- Frameworks -->
     <script src="http://ajax.microsoft.com/ajax/jquery/jquery-1.4.4.min.js" type="text/javascript"></script>
     <!-- jquery plugins -->
-    <script src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js" type="text/javascript"></script>
+    <script src="Scripts/jquery.tmpl.js" type="text/javascript"></script>
     <script src="Scripts/jquery.datalink.js" type="text/javascript"></script>
     <script src="Scripts/jquery.bb.watermark.min.js" type="text/javascript"></script>
-    <script src="http://ajax.microsoft.com/ajax/jquery.validate/1.5.5/jquery.validate.min.js" type="text/javascript"></script>
+    <script src="http://ajax.microsoft.com/ajax/jquery.validate/1.6/jquery.validate.js" type="text/javascript"></script>
     <!-- jquery ui -->
-    <script src="http://ajax.microsoft.com/ajax/jquery.ui/1.8.5/jquery-ui.min.js" type="text/javascript"></script>
+    <script src="http://ajax.microsoft.com/ajax/jquery.ui/1.8.6/jquery-ui.js" type="text/javascript"></script>
     <!-- Client library code -->
     <script src="Scripts/jquery.array.js" type="text/javascript"></script>
     <script src="Scripts/jquery.datasource.js" type="text/javascript"></script>
