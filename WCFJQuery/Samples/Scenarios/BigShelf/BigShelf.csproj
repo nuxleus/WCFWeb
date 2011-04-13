@@ -98,6 +98,7 @@
     <Content Include="Scripts\jquery.datasource.js" />
     <Content Include="Scripts\jquery.pager.js" />
     <Content Include="Scripts\jquery.starrating.js" />
+    <Content Include="Scripts\jquery.tmpl.js" />
     <Content Include="Scripts\ListControl.js" />
     <Content Include="Scripts\LocalDataSource.js" />
     <Content Include="Scripts\MyProfile.js" />
