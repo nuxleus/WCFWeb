@@ -1,0 +1,479 @@
+﻿body
+{
+    background-image: url('BG.png');
+    background-repeat: repeat-x;
+    background-color: White;
+    margin: 0px;
+    font-family: Segoe UI, Georgia;
+    font-size: 10pt;
+    color: #404040;
+}
+
+.filterButton, .friendButton, .sortButton, .pagerButton
+{
+    cursor:pointer;
+    text-decoration: underline;
+}
+
+.selected
+{
+    font-weight:bold;
+    text-decoration: none;
+}
+
+.friendButton.selected
+{
+    background:url(/Styles/checkmark.png) left no-repeat;
+    padding-left:17px;
+}
+
+.book-title
+{
+    font-weight: bold;
+    color: #555555;
+    margin-top:5px;
+}
+
+.book-author
+{
+    font-size: 9pt;
+}
+
+DIV.header
+{
+    position: absolute;
+    top: 126px;
+    left: 50%;
+    margin-top: -110px;
+    margin-left: -461px;
+    background: transparent;
+    width: 944px;
+    height: 181px;
+}
+
+DIV.login
+{
+    position: absolute;
+    top: 192px;
+    left: 50%;
+    margin-left: -461px;
+    width:944px;
+    z-index: 2;
+    color: #FFFFFF;
+    text-align:right;
+}
+
+DIV.login > UL
+{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+DIV.login > UL LI
+{
+    float:right;
+    color: #fff;
+    display: block;
+    display: inline-block;
+    font-weight: bold;
+    height: 22px;
+    padding: 5px 0 0 20px;
+}
+
+DIV.login > UL LI A
+{
+    text-decoration: none!important;
+}
+
+DIV.anonymousContent, DIV.catalogFilter
+{
+    position: absolute;
+    top: 250px;
+    left: 50%;
+    margin-left: -445px;
+    z-index: 2;
+}
+
+#login-username, #login-password, #login-remember
+{
+    clear:left;
+    padding-top: 8px;
+}
+
+#login-username label, #login-password label
+{
+    margin-left:2px;
+    float:left;
+    width:75px;
+}
+
+#login-username input, #login-password input
+{
+    float:left;
+}
+
+DIV.friendsList
+{
+    position: absolute;
+    top: 275px;
+    left: 50%;
+    margin-left: -445px;
+    z-index: 2;
+}
+
+DIV.profile-title
+{
+    position: absolute;
+    top: 250px;
+    left: 50%;
+    margin-left: -425px;
+    z-index: 2;
+    font-size: 18pt;
+    color: #999999;
+}
+.profile-title-input
+{
+    z-index: 2;
+    font-size: 18pt;
+    color: #999999;
+    border: none;
+    width: auto;
+}
+
+DIV.profileForm
+{
+    position: absolute;
+    top: 290px;
+    left: 50%;
+    margin-left: -445px;
+    z-index: 2;
+}
+
+.profile-property
+{
+    border: 1px solid #999999;
+    padding: 4px 6px 4px 6px;
+    font-size: 10pt;
+    float: left;
+    margin-left: -5px;
+    padding-right: 0px;
+    width: 425px;
+    color: #404040;
+}
+
+.profile-button
+{
+    color: #FFFFFF;
+    padding: 3px 3px 3px 3px;
+    border: 0px solid white;
+}
+button#submit
+{
+    background-color: #C87E0F;
+}
+button#cancel
+{
+    background-color: #404040;
+}
+
+.profile-property-label
+{
+    color: #999999;
+}
+
+DIV.sortBy
+{
+    position: absolute;
+    top: 250px;
+    left: 50%;
+    margin-left: -130px;
+    z-index: 2;
+}
+
+DIV.search
+{
+    position: absolute;
+    top: 250px;
+    left: 50%;
+    width: 175px;
+    margin-left: 250px;
+    z-index: 2;
+}
+
+#searchBox
+{
+    border: 1px solid #999999;
+    padding: 4px 6px 4px 6px;
+    font-family: Georgia;
+    font-size: 10pt;
+    color: #404040;
+}
+
+DIV.catalog
+{
+    position: absolute;
+    top: 310px;
+    left: 50%;
+    width: 944px;
+    margin-left: -461px;
+    z-index: 2;
+}
+
+DIV.catalogNavigation
+{
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-top: -24px;
+    margin-left: -440px;
+    z-index: 2;
+}
+
+DIV.footer
+{
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-top: -565px;
+    margin-left: -512px;
+    width: 1024px;
+    height: 565px;
+    z-index: -1;
+}
+
+a.login:link
+{
+    text-decoration: underline;
+    color: White;
+}
+a.login:hover
+{
+    text-decoration: none;
+    color: White;
+}
+a.login:active
+{
+    text-decoration: underline;
+    color: White;
+}
+a.login:visited
+{
+    text-decoration: underline;
+    color: White;
+}
+
+.disabledButton, .disabledButton:active, .disabledButton:focus, .disabledButton:hover
+{
+    background: #f2f2f2;
+    border-color: #c8c8c8;
+}
+
+.save-button
+{
+    /*absolute to the book-item container */
+    position: absolute;
+    bottom: 6px;
+    left: 6px;
+}
+
+.book-notadded
+{
+    text-align: center;
+    color: #fff !important;
+    letter-spacing: 1px;
+    font-family: arial, helvetica, sans-serif !important;
+    font-size: 14px !important;
+    font-weight: bold !important;
+    text-decoration: none !important;
+    float: none;
+    background-image: url("button_bg.png");
+    background-attachment: scroll;
+    background-repeat: repeat-x;
+    background-color: transparent;
+    overflow: hidden;
+    border-top-color: #666;
+    border-right-color: #666;
+    border-bottom-color: #666;
+    border-left-color: #666;
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    display: block;
+    cursor: pointer;
+    background-color: rgb(230, 15, 2);
+    width: 108px;
+    height: 20px;
+}
+
+.book-saved, .book-read
+{
+    letter-spacing: normal;
+    background-color: rgb(255, 255, 255);
+    /*color: #b9090b !important;*/
+}
+
+.book-item
+{
+    width: 312px;
+    height: 11.5em;
+    text-decoration: none;
+    vertical-align: middle;
+    float: left;
+    position: relative;
+}
+
+.star-rating select
+{
+    visibility: hidden;
+    width: 0;
+}
+.star-rating-element
+{
+    width: 12px;
+    height: 12px;
+    background-image: url('Star.png');
+    background-repeat: no-repeat;
+    position: relative;
+    float: left;
+}
+.star-rating-element-selected
+{
+    background-image: url('Star_On.png');
+}
+.star-rating-element-hover
+{
+    background-image: url('Star_Hi.png') !important;
+}
+
+tr.editableDataRow
+{
+    border-width: 1px;
+    border-style: solid;
+    border-color: transparent;
+}
+
+#profile-properties tr.editableDataRow.updated input
+{
+    background-color: #F5C47A;
+}
+
+ul.entity-list li.deleted
+{
+    border-color: red;
+    background-color: rgb(255, 210, 210);
+    text-decoration: line-through;
+}
+
+ul.entity-list li.added
+{
+    border-color: green;
+    background-color: rgb(210, 255, 210);
+}
+
+ul.entity-list li
+{
+    padding: 4px 6px 4px 6px;
+    margin: 1px;
+    width: auto;
+    text-decoration: none;
+    vertical-align: middle;
+    float: left;
+    white-space: nowrap;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #bbd8fb;
+    background-color: rgb(233, 238, 250);
+}
+
+.disabledButton, .disabledButton:active, .disabledButton:focus, .disabledButton:hover
+{
+    background: #f2f2f2;
+    border-color: #c8c8c8;
+}
+
+span.revertDelete
+{
+    width: 25px;
+    float: right;
+    display: block;
+}
+
+.moveIntoInputBox
+{
+    margin-left: -25px;
+    height: 25px;
+    float: left;
+}
+
+#profile-properties tr.editableDataRow span.revertDelete
+{
+    background: url(/Styles/editing_edited.png) no-repeat center center;
+}
+
+#profile-properties tr.editableDataRow.updated span.revertDelete
+{
+    background: url(/Styles/editing_revert.png) no-repeat center center;
+}
+
+ul.entity-list li.deleted span.revertDelete, ul.entity-list li.added span.revertDelete
+{
+    background: url(/Styles/editing_revert.png) no-repeat center center;
+}
+
+ul.entity-list span.revertDelete
+{
+    background: url(/Styles/editing_deleted.png) no-repeat center center;
+}
+
+#friend-list input.textInput[disabled="true"]
+{
+    /*We want friend names to be r/o but to appear like other data on the page.      Hopefully, these are browser defaults for not-disabled input tags.*/
+    color: black;
+    background-color: white;
+}
+
+input.textInput
+{
+    width: 100%;
+}
+
+.watermark
+{
+    font-style: italic;
+}
+
+td.data select
+{
+    width: 74.2%;
+    height: 23px;
+}
+
+tr.editableDataRow td
+{
+    padding: 5px;
+}
+
+div.add-friend
+{
+}
+
+#add-friend-text
+{
+    width:325px;
+}
+
+ul.entity-list
+{
+    list-style-type: none;
+    margin: 0px;
+    padding: 0px;
+}
+#profile-friends-wrapper
+{
+    border: 1px solid #999999;
+    width: 425px;
+    height: 100px;
+    padding: 3px;
+}

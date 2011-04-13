@@ -37,7 +37,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Runtime.Serializa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Runtime.Serialization.Json.UnitTests", "Test\Microsoft.Runtime.Serialization.Json.UnitTests\Microsoft.Runtime.Serialization.Json.UnitTests.csproj", "{362488E2-5783-4DC5-9175-7C084C899640}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Runtime.Serialization.Json.FunctionalTest", "test\Microsoft.Runtime.Serialization.Json.FunctionalTests\Microsoft.Runtime.Serialization.Json.FunctionalTest.csproj", "{5CC8981A-2B63-46A1-8829-819272C2ABE9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Runtime.Serialization.Json.FunctionalTest", "Test\Microsoft.Runtime.Serialization.Json.FunctionalTests\Microsoft.Runtime.Serialization.Json.FunctionalTest.csproj", "{5CC8981A-2B63-46A1-8829-819272C2ABE9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonValueEvents", "Samples\Features\JsonValueEvents\JsonValueEvents.csproj", "{5687BD3D-297C-4705-AE7C-387AA9DB2E9F}"
 EndProject
@@ -46,6 +46,24 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonValueDynamic", "Samples\Features\JsonValueDynamic\JsonValueDynamic.csproj", "{48918CE0-0C47-4587-B19B-750329559CFE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonValueLinq", "Samples\Features\JsonValueLinq\JsonValueLinq.csproj", "{3D6A8FDC-B8A4-4C24-BE60-80952EA10E2B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "jquery.domainservices", "jquery.domainservices", "{77B656B4-D171-4926-804A-316332340AF7}"
+	ProjectSection(SolutionItems) = preProject
+		Src\jquery.domainservices\AssociatedEntitiesDataSource.js = Src\jquery.domainservices\AssociatedEntitiesDataSource.js
+		Src\jquery.domainservices\DataContext.js = Src\jquery.domainservices\DataContext.js
+		Src\jquery.domainservices\DataSource.js = Src\jquery.domainservices\DataSource.js
+		Src\jquery.domainservices\DomainServiceProxy.js = Src\jquery.domainservices\DomainServiceProxy.js
+		Src\jquery.domainservices\EntitySet.js = Src\jquery.domainservices\EntitySet.js
+		Src\jquery.domainservices\jquery.array.js = Src\jquery.domainservices\jquery.array.js
+		Src\jquery.domainservices\jQuery.DataLink.js = Src\jquery.domainservices\jQuery.DataLink.js
+		Src\jquery.domainservices\jquery.datasource.js = Src\jquery.domainservices\jquery.datasource.js
+		Src\jquery.domainservices\jquery.pager.js = Src\jquery.domainservices\jquery.pager.js
+		Src\jquery.domainservices\ListControl.js = Src\jquery.domainservices\ListControl.js
+		Src\jquery.domainservices\LocalDataSource.js = Src\jquery.domainservices\LocalDataSource.js
+		Src\jquery.domainservices\RemoteDataSource.js = Src\jquery.domainservices\RemoteDataSource.js
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BigShelf", "Samples\Scenarios\BigShelf\BigShelf.csproj", "{D03BD6EB-3667-4FCE-85E0-F2580AAE876F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -197,6 +215,16 @@ Global
 		{3D6A8FDC-B8A4-4C24-BE60-80952EA10E2B}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{3D6A8FDC-B8A4-4C24-BE60-80952EA10E2B}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{3D6A8FDC-B8A4-4C24-BE60-80952EA10E2B}.Release|x86.ActiveCfg = Release|Any CPU
+		{D03BD6EB-3667-4FCE-85E0-F2580AAE876F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D03BD6EB-3667-4FCE-85E0-F2580AAE876F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D03BD6EB-3667-4FCE-85E0-F2580AAE876F}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{D03BD6EB-3667-4FCE-85E0-F2580AAE876F}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{D03BD6EB-3667-4FCE-85E0-F2580AAE876F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D03BD6EB-3667-4FCE-85E0-F2580AAE876F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D03BD6EB-3667-4FCE-85E0-F2580AAE876F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D03BD6EB-3667-4FCE-85E0-F2580AAE876F}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{D03BD6EB-3667-4FCE-85E0-F2580AAE876F}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{D03BD6EB-3667-4FCE-85E0-F2580AAE876F}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -204,6 +232,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{7A183D69-9C8B-493A-A3A0-AC9CE0A72CA3} = {9ADC481C-108B-4DEB-939E-BA30C54C374F}
 		{A5879BE4-F1F5-4C39-88B9-372ABDEFF843} = {9ADC481C-108B-4DEB-939E-BA30C54C374F}
+		{77B656B4-D171-4926-804A-316332340AF7} = {9ADC481C-108B-4DEB-939E-BA30C54C374F}
 		{BF16ECF5-C9E7-4E99-8ED4-FA4BCD35920D} = {EABD321C-AAB2-4FD6-8BF5-5EC95B937C85}
 		{0D17320A-A297-42BD-8EF3-5B5E7F72CA18} = {EABD321C-AAB2-4FD6-8BF5-5EC95B937C85}
 		{F8FF64C6-AA11-4EC7-8840-CF353ED9B388} = {EABD321C-AAB2-4FD6-8BF5-5EC95B937C85}
@@ -216,5 +245,6 @@ Global
 		{64DE183A-B961-4313-996B-B74139CD8E77} = {40E1A260-C455-4552-870F-96E31E8B2D75}
 		{48918CE0-0C47-4587-B19B-750329559CFE} = {40E1A260-C455-4552-870F-96E31E8B2D75}
 		{3D6A8FDC-B8A4-4C24-BE60-80952EA10E2B} = {40E1A260-C455-4552-870F-96E31E8B2D75}
+		{D03BD6EB-3667-4FCE-85E0-F2580AAE876F} = {40E1A260-C455-4552-870F-96E31E8B2D75}
 	EndGlobalSection
 EndGlobal
