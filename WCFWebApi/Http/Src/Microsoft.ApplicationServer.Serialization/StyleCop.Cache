@@ -1,0 +1,219 @@
+<stylecopresultscache>
+  <version>10</version>
+  <project key="-808343031">
+    <configuration>DEBUG;TRACE;CODE_ANALYSIS;WIN64</configuration>
+  </project>
+  <sourcecode name="AssemblyInfo.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:34</timestamp>
+      <milliseconds>679</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:34</timestamp>
+    <milliseconds>12</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="JsonGlobals.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:34</timestamp>
+      <milliseconds>679</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:33</timestamp>
+    <milliseconds>895</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="DataContractSet.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:34</timestamp>
+      <milliseconds>679</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:33</timestamp>
+    <milliseconds>782</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="DataMember.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:34</timestamp>
+      <milliseconds>679</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:33</timestamp>
+    <milliseconds>796</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="DateTimeOffsetAdapter.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:34</timestamp>
+      <milliseconds>679</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:33</timestamp>
+    <milliseconds>809</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="ClassDataContract.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:34</timestamp>
+      <milliseconds>679</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:33</timestamp>
+    <milliseconds>695</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="CollectionDataContract.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:34</timestamp>
+      <milliseconds>679</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:33</timestamp>
+    <milliseconds>709</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="DictionaryGlobals.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:34</timestamp>
+      <milliseconds>679</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:33</timestamp>
+    <milliseconds>824</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="GenericParameterDataContract.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:34</timestamp>
+      <milliseconds>679</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:33</timestamp>
+    <milliseconds>853</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="IDataContractSurrogate.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:34</timestamp>
+      <milliseconds>679</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:33</timestamp>
+    <milliseconds>881</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="EnumDataContract.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:34</timestamp>
+      <milliseconds>679</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:33</timestamp>
+    <milliseconds>838</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="PrimitiveDataContract.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:34</timestamp>
+      <milliseconds>679</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:33</timestamp>
+    <milliseconds>911</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="SchemaExporter.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:34</timestamp>
+      <milliseconds>679</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:33</timestamp>
+    <milliseconds>927</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="SchemaHelper.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:34</timestamp>
+      <milliseconds>679</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:33</timestamp>
+    <milliseconds>941</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="SerializationMode.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:34</timestamp>
+      <milliseconds>679</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:33</timestamp>
+    <milliseconds>953</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="SpecialTypeDataContract.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:34</timestamp>
+      <milliseconds>679</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:33</timestamp>
+    <milliseconds>970</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="XmlFormatGeneratorStatics.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:34</timestamp>
+      <milliseconds>679</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:33</timestamp>
+    <milliseconds>999</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="ParameterElement.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:34</timestamp>
+      <milliseconds>679</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:33</timestamp>
+    <milliseconds>729</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="TypeElement.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:34</timestamp>
+      <milliseconds>679</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:33</timestamp>
+    <milliseconds>743</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="XmlDataContract.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:34</timestamp>
+      <milliseconds>679</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:33</timestamp>
+    <milliseconds>985</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="DataContract.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:34</timestamp>
+      <milliseconds>679</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:33</timestamp>
+    <milliseconds>766</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="Globals.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:34</timestamp>
+      <milliseconds>679</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:33</timestamp>
+    <milliseconds>869</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="SR.Designer.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:34</timestamp>
+      <milliseconds>679</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:36:33</timestamp>
+    <milliseconds>386</milliseconds>
+    <violations />
+  </sourcecode>
+  <project key="-1254645977">
+    <configuration>TRACE;DEBUG;CODE_ANALYSIS;WIN32</configuration>
+  </project>
+  <project key="1881656163">
+    <configuration>TRACE;DEBUG;CODE_ANALYSIS;WIN32</configuration>
+  </project>
+</stylecopresultscache>

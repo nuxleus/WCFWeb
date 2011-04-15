@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Moles xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" CachePath="C:\Program Files (x86)\Microsoft Moles\bin\..\MolesAssemblies" xmlns="http://schemas.microsoft.com/moles/2010/">
+  <Assembly Name="Microsoft.Net.Http" Location="F:\codeplex\wcf\Build\bin\Release\Microsoft.Net.Http.dll" />
+  <CodeStyle MaxIdentifierLength="256" />
+  <StubGeneration>
+    <Types />
+  </StubGeneration>
+  <MoleGeneration>
+    <Types />
+  </MoleGeneration>
+  <Compilation>
+    <Reference FullName="Microsoft.ApplicationServer.Common, Version=0.3.0.0, Culture=neutral, PublicKeyToken=null" Path="F:\codeplex\wcf\Build\bin\Release\Microsoft.ApplicationServer.Common.dll" />
+    <Reference FullName="Microsoft.ApplicationServer.Common.MSTestUtilities, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" Path="F:\codeplex\wcf\Http\Test\Microsoft.ApplicationServer.Common.MSTestUtilities\bin\Release\Microsoft.ApplicationServer.Common.MSTestUtilities.dll" />
+    <Reference FullName="Microsoft.ApplicationServer.Http, Version=0.3.0.0, Culture=neutral, PublicKeyToken=null" Path="F:\codeplex\wcf\Build\bin\Release\Microsoft.ApplicationServer.Http.dll" />
+    <Reference FullName="Microsoft.ApplicationServer.ServiceModel, Version=0.3.0.0, Culture=neutral, PublicKeyToken=null" Path="F:\codeplex\wcf\Build\bin\Release\Microsoft.ApplicationServer.ServiceModel.dll" />
+    <Reference FullName="Microsoft.ExtendedReflection, Version=0.94.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" Path="C:\Program Files (x86)\Common Files\Microsoft Shared\ExtendedReflection\0.94.51023.0\bin\Microsoft.ExtendedReflection.dll" />
+    <Reference FullName="Microsoft.Moles.Framework, Version=0.94.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" Path="C:\Program Files (x86)\Microsoft Moles\PublicAssemblies\Microsoft.Moles.Framework.dll" />
+    <Reference FullName="Microsoft.Net.Http, Version=0.3.0.0, Culture=neutral, PublicKeyToken=null" Path="F:\codeplex\wcf\Build\bin\Release\Microsoft.Net.Http.dll" />
+    <Reference FullName="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" Path="C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\PublicAssemblies\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll" />
+    <Reference FullName="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" Path="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\mscorlib.dll" />
+    <Reference FullName="System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" Path="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.configuration.dll" />
+    <Reference FullName="System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" Path="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Core.dll" />
+    <Reference FullName="System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" Path="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.dll" />
+    <Reference FullName="System.Runtime.Serialization, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" Path="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Runtime.Serialization.dll" />
+    <Reference FullName="System.ServiceModel.Activation, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" Path="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.ServiceModel.Activation.dll" />
+    <Reference FullName="System.ServiceModel, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" Path="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.ServiceModel.dll" />
+    <Reference FullName="System.ServiceModel.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" Path="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.ServiceModel.Web.dll" />
+    <Reference FullName="System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" Path="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Web.dll" />
+    <Reference FullName="System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" Path="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.XML.dll" />
+    <Reference FullName="System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" Path="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Xml.Linq.dll" />
+  </Compilation>
+</Moles>

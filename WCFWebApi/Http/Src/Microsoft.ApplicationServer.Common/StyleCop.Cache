@@ -1,0 +1,678 @@
+<stylecopresultscache>
+  <version>10</version>
+  <project key="1117121636">
+    <configuration>DEBUG;TRACE;CODE_ANALYSIS;WIN64</configuration>
+  </project>
+  <sourcecode name="AggregationSettings.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:14</timestamp>
+      <milliseconds>447</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>310</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="NotificationEvent.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:14</timestamp>
+      <milliseconds>447</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>372</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="INotificationService.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:14</timestamp>
+      <milliseconds>447</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>371</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="NotificationReceiver.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:14</timestamp>
+      <milliseconds>447</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>375</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="BufferedOutputStream.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:14</timestamp>
+      <milliseconds>447</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>249</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="NotificationSender.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:14</timestamp>
+      <milliseconds>447</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>376</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="AggregateGroupKey.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:14</timestamp>
+      <milliseconds>447</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>293</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="AggregateTimeWindowBase.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:14</timestamp>
+      <milliseconds>447</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>299</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="AggregateTimeWindowQueue.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:14</timestamp>
+      <milliseconds>447</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>300</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="AggregationDefaults.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:14</timestamp>
+      <milliseconds>447</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>306</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="AggregateTimeWindowQueueBase.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:14</timestamp>
+      <milliseconds>447</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>303</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="AggregateTimeWindow.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:14</timestamp>
+      <milliseconds>447</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>296</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="AggregationSynopsis.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:14</timestamp>
+      <milliseconds>447</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>313</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="AggregationProcessor.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:14</timestamp>
+      <milliseconds>447</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>308</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="AggregationUtility.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:14</timestamp>
+      <milliseconds>447</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>318</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="ResourceEvent.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:14</timestamp>
+      <milliseconds>447</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>325</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="MetricEvent.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:14</timestamp>
+      <milliseconds>447</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>323</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="BaseEvent.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:14</timestamp>
+      <milliseconds>447</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>321</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="RollupAggregationProcessor.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:14</timestamp>
+      <milliseconds>447</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>333</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="RollupAggregateTimeWindow.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:14</timestamp>
+      <milliseconds>447</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>327</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="RollupAggregationSynopsis.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:14</timestamp>
+      <milliseconds>447</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>335</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="RollupAggregateTimeWindowQueue.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:14</timestamp>
+      <milliseconds>447</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>330</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="AggregationSynopsisBase.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:14</timestamp>
+      <milliseconds>447</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>314</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="SingleItemOrList.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:14</timestamp>
+      <milliseconds>447</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>386</milliseconds>
+    <violations />
+  </sourcecode>
+  <project key="-69348547">
+    <configuration>DEBUG;TRACE;CODE_ANALYSIS;WIN32</configuration>
+  </project>
+  <project key="752017037">
+    <configuration>DEBUG;TRACE;CODE_ANALYSIS;WIN32</configuration>
+  </project>
+  <sourcecode name="AssertionFailedException.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:01</timestamp>
+      <milliseconds>988</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>237</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="AssertHelper.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:01</timestamp>
+      <milliseconds>988</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>233</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="ActionItem.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:01</timestamp>
+      <milliseconds>988</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>229</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="AsyncWaitHandle.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:01</timestamp>
+      <milliseconds>988</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>246</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="CollectionHelper.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:01</timestamp>
+      <milliseconds>988</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>255</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="HashHelper.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:01</timestamp>
+      <milliseconds>988</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>350</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="AsyncResult.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:01</timestamp>
+      <milliseconds>988</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>242</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="CallbackException.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:01</timestamp>
+      <milliseconds>988</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>251</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="ReadOnlyDictionary.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:01</timestamp>
+      <milliseconds>988</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>382</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="ChainedAsyncResult.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:01</timestamp>
+      <milliseconds>988</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>254</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="CompletedAsyncResult.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:01</timestamp>
+      <milliseconds>988</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>257</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="ComputerNameFormat.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:01</timestamp>
+      <milliseconds>988</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>258</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="DiagnosticStrings.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:01</timestamp>
+      <milliseconds>988</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>291</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="DiagnosticTraceSource.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:01</timestamp>
+      <milliseconds>988</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>266</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="DictionaryTraceRecord.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:01</timestamp>
+      <milliseconds>988</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>268</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="DiagnosticTrace.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:01</timestamp>
+      <milliseconds>988</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>263</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="EventLogEventId.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:01</timestamp>
+      <milliseconds>988</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>280</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="DiagnosticEventProvider.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:01</timestamp>
+      <milliseconds>988</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>261</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="PerformanceCounterNameAttribute.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:01</timestamp>
+      <milliseconds>988</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>286</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="StringTraceRecord.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:01</timestamp>
+      <milliseconds>988</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>288</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="TraceRecord.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:01</timestamp>
+      <milliseconds>988</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>290</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="EventLogger.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:01</timestamp>
+      <milliseconds>988</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>284</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="FatalException.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:01</timestamp>
+      <milliseconds>988</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>340</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="ExceptionTrace.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:01</timestamp>
+      <milliseconds>988</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>338</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="EtwProvider.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:01</timestamp>
+      <milliseconds>988</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>277</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="FXCop.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:01</timestamp>
+      <milliseconds>988</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>348</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="InternalBufferManager.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:01</timestamp>
+      <milliseconds>988</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>358</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="SafeEventLogWriteHandle.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:01</timestamp>
+      <milliseconds>988</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>360</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="Fx.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:01</timestamp>
+      <milliseconds>988</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>345</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="UnsafeNativeMethods.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:01</timestamp>
+      <milliseconds>988</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>362</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="InputQueue.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:01</timestamp>
+      <milliseconds>988</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>355</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="PartialTrustHelpers.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:01</timestamp>
+      <milliseconds>988</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>379</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="ProviderEventEmitter.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:01</timestamp>
+      <milliseconds>988</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>381</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="SignalGate.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:01</timestamp>
+      <milliseconds>988</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>384</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="IOThreadScheduler.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:01</timestamp>
+      <milliseconds>988</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>366</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="IOThreadTimer.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:01</timestamp>
+      <milliseconds>988</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>369</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="Ticks.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:01</timestamp>
+      <milliseconds>988</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>390</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="TraceChannel.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:01</timestamp>
+      <milliseconds>988</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>393</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="SynchronizedPool.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:01</timestamp>
+      <milliseconds>988</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>388</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="TraceEventLevel.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:01</timestamp>
+      <milliseconds>988</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>395</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="TraceEventOpcode.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:01</timestamp>
+      <milliseconds>988</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>397</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="TimeoutHelper.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:01</timestamp>
+      <milliseconds>988</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>391</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="TracePayload.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:01</timestamp>
+      <milliseconds>988</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>401</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="TraceLevelHelper.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:01</timestamp>
+      <milliseconds>988</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>399</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="WaitCallbackActionItem.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:01</timestamp>
+      <milliseconds>988</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>409</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="ValidatingCollection.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:01</timestamp>
+      <milliseconds>988</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>407</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="SRCore.Designer.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:01</timestamp>
+      <milliseconds>988</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:36:32</timestamp>
+    <milliseconds>999</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="AssemblyInfo.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:01</timestamp>
+      <milliseconds>988</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>419</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="TypeHelper.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:01</timestamp>
+      <milliseconds>988</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>405</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="TraceCore.Designer.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:01</timestamp>
+      <milliseconds>988</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:14</timestamp>
+    <milliseconds>466</milliseconds>
+    <violations />
+  </sourcecode>
+</stylecopresultscache>

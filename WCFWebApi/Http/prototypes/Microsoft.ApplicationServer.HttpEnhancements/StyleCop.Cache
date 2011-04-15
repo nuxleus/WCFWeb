@@ -1,0 +1,312 @@
+<stylecopresultscache>
+  <version>10</version>
+  <sourcecode name="GlobalSuppressions.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>01/13/2011 00:42:50</timestamp>
+      <milliseconds>0</milliseconds>
+    </settings>
+    <timestamp>12/22/2010 16:28:32</timestamp>
+    <milliseconds>0</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="HttpEndpointBehavior.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>01/13/2011 00:42:50</timestamp>
+      <milliseconds>0</milliseconds>
+    </settings>
+    <timestamp>01/13/2011 19:26:44</timestamp>
+    <milliseconds>0</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="HttpHostConfiguration.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>01/13/2011 00:42:50</timestamp>
+      <milliseconds>0</milliseconds>
+    </settings>
+    <timestamp>01/13/2011 19:26:44</timestamp>
+    <milliseconds>0</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="IEndpointConfiguration.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>01/13/2011 00:42:50</timestamp>
+      <milliseconds>0</milliseconds>
+    </settings>
+    <timestamp>01/13/2011 19:26:44</timestamp>
+    <milliseconds>0</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="IInstanceFactory.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>01/13/2011 00:42:50</timestamp>
+      <milliseconds>0</milliseconds>
+    </settings>
+    <timestamp>01/13/2011 19:26:44</timestamp>
+    <milliseconds>0</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="InstanceFactoryProvider.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>01/13/2011 00:42:50</timestamp>
+      <milliseconds>0</milliseconds>
+    </settings>
+    <timestamp>01/13/2011 19:26:44</timestamp>
+    <milliseconds>0</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="IOperationConfiguration.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>01/13/2011 00:42:50</timestamp>
+      <milliseconds>0</milliseconds>
+    </settings>
+    <timestamp>01/13/2011 19:26:44</timestamp>
+    <milliseconds>0</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="IProcessorProvider.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>01/13/2011 00:42:50</timestamp>
+      <milliseconds>0</milliseconds>
+    </settings>
+    <timestamp>01/13/2011 19:26:44</timestamp>
+    <milliseconds>0</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="IServiceConfiguration.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>01/13/2011 00:42:50</timestamp>
+      <milliseconds>0</milliseconds>
+    </settings>
+    <timestamp>01/13/2011 19:26:44</timestamp>
+    <milliseconds>0</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="IServiceDescriptionFactory.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>01/13/2011 00:42:50</timestamp>
+      <milliseconds>0</milliseconds>
+    </settings>
+    <timestamp>01/13/2011 19:26:44</timestamp>
+    <milliseconds>0</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="ComposableHttpOperationSelector.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>01/13/2011 00:42:50</timestamp>
+      <milliseconds>0</milliseconds>
+    </settings>
+    <timestamp>01/13/2011 19:26:44</timestamp>
+    <milliseconds>0</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="HttpMessageProperty.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>01/13/2011 00:42:50</timestamp>
+      <milliseconds>0</milliseconds>
+    </settings>
+    <timestamp>01/13/2011 19:26:44</timestamp>
+    <milliseconds>0</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="HttpOperationSelector.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>01/13/2011 00:42:50</timestamp>
+      <milliseconds>0</milliseconds>
+    </settings>
+    <timestamp>01/13/2011 19:26:44</timestamp>
+    <milliseconds>0</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="HttpPipelineFormatter.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>01/13/2011 00:42:50</timestamp>
+      <milliseconds>0</milliseconds>
+    </settings>
+    <timestamp>01/13/2011 19:26:44</timestamp>
+    <milliseconds>0</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="IContractConfiguration.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>01/13/2011 00:42:50</timestamp>
+      <milliseconds>0</milliseconds>
+    </settings>
+    <timestamp>01/13/2011 19:26:44</timestamp>
+    <milliseconds>0</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="MethodAndUriTemplateOperationSelector.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>01/13/2011 00:42:50</timestamp>
+      <milliseconds>0</milliseconds>
+    </settings>
+    <timestamp>01/13/2011 19:26:44</timestamp>
+    <milliseconds>0</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="ProcessorListExtensions.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>01/13/2011 00:42:50</timestamp>
+      <milliseconds>0</milliseconds>
+    </settings>
+    <timestamp>12/22/2010 16:28:32</timestamp>
+    <milliseconds>0</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="SelectedOperation.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>01/13/2011 00:42:50</timestamp>
+      <milliseconds>0</milliseconds>
+    </settings>
+    <timestamp>01/13/2011 19:26:44</timestamp>
+    <milliseconds>0</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="UriTemplateOperationSelector.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>01/13/2011 00:42:50</timestamp>
+      <milliseconds>0</milliseconds>
+    </settings>
+    <timestamp>01/13/2011 19:26:44</timestamp>
+    <milliseconds>0</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="WebProgrammingModelExtensionMethods.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>01/13/2011 00:42:50</timestamp>
+      <milliseconds>0</milliseconds>
+    </settings>
+    <timestamp>12/22/2010 16:28:32</timestamp>
+    <milliseconds>0</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="ContentNegotiationHelper.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>01/13/2011 00:42:50</timestamp>
+      <milliseconds>0</milliseconds>
+    </settings>
+    <timestamp>12/22/2010 16:28:32</timestamp>
+    <milliseconds>0</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="FormUrlEncodedProcessor.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>01/13/2011 00:42:50</timestamp>
+      <milliseconds>0</milliseconds>
+    </settings>
+    <timestamp>01/14/2011 02:18:01</timestamp>
+    <milliseconds>683</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="HtmlProcessor.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>01/13/2011 00:42:50</timestamp>
+      <milliseconds>0</milliseconds>
+    </settings>
+    <timestamp>12/22/2010 16:28:32</timestamp>
+    <milliseconds>0</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="JsonProcessor.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>01/13/2011 00:42:50</timestamp>
+      <milliseconds>0</milliseconds>
+    </settings>
+    <timestamp>01/14/2011 01:46:43</timestamp>
+    <milliseconds>944</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="MediaTypeProcessor.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>01/13/2011 00:42:50</timestamp>
+      <milliseconds>0</milliseconds>
+    </settings>
+    <timestamp>01/14/2011 02:20:14</timestamp>
+    <milliseconds>962</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="PlainTextProcessor.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>01/13/2011 00:42:50</timestamp>
+      <milliseconds>0</milliseconds>
+    </settings>
+    <timestamp>01/13/2011 19:26:44</timestamp>
+    <milliseconds>0</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="ResponseEntityBodyProcessor.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>01/13/2011 00:42:50</timestamp>
+      <milliseconds>0</milliseconds>
+    </settings>
+    <timestamp>01/13/2011 19:26:44</timestamp>
+    <milliseconds>0</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="UriTemplateHttpProcessor.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>01/13/2011 00:42:50</timestamp>
+      <milliseconds>0</milliseconds>
+    </settings>
+    <timestamp>12/22/2010 16:28:32</timestamp>
+    <milliseconds>0</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="WebHttpServiceHost.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>01/13/2011 00:42:50</timestamp>
+      <milliseconds>0</milliseconds>
+    </settings>
+    <timestamp>01/13/2011 19:26:44</timestamp>
+    <milliseconds>0</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="WebHttpServiceHostOfT.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>01/13/2011 00:42:50</timestamp>
+      <milliseconds>0</milliseconds>
+    </settings>
+    <timestamp>01/13/2011 19:26:44</timestamp>
+    <milliseconds>0</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="XmlProcessor.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>01/13/2011 00:42:50</timestamp>
+      <milliseconds>0</milliseconds>
+    </settings>
+    <timestamp>01/13/2011 19:26:44</timestamp>
+    <milliseconds>0</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="AssemblyInfo.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>01/13/2011 00:42:50</timestamp>
+      <milliseconds>0</milliseconds>
+    </settings>
+    <timestamp>01/13/2011 19:26:44</timestamp>
+    <milliseconds>0</milliseconds>
+    <violations />
+  </sourcecode>
+  <project key="-1421273298">
+    <configuration>DEBUG;TRACE</configuration>
+  </project>
+  <sourcecode name="RouteColectionExtensions.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>01/13/2011 00:42:50</timestamp>
+      <milliseconds>0</milliseconds>
+    </settings>
+    <timestamp>01/14/2011 02:54:36</timestamp>
+    <milliseconds>906</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="WebHttpServiceHostFactory.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>01/13/2011 00:42:50</timestamp>
+      <milliseconds>0</milliseconds>
+    </settings>
+    <timestamp>01/14/2011 02:48:30</timestamp>
+    <milliseconds>808</milliseconds>
+    <violations />
+  </sourcecode>
+</stylecopresultscache>

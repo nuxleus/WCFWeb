@@ -1,0 +1,15 @@
+F:\advisorsrepo\wcfhttp\Build\bin\Release\Microsoft.ApplicationServer.HttpEnhancements.XML
+F:\advisorsrepo\wcfhttp\Build\bin\Release\Microsoft.ApplicationServer.HttpEnhancements.dll
+F:\advisorsrepo\wcfhttp\Build\bin\Release\Microsoft.ApplicationServer.HttpEnhancements.pdb
+F:\advisorsrepo\wcfhttp\Http\prototypes\Microsoft.ApplicationServier.HttpEnhancements\obj\Release\ResolveAssemblyReference.cache
+F:\advisorsrepo\wcfhttp\Http\prototypes\Microsoft.ApplicationServier.HttpEnhancements\obj\Release\Microsoft.ApplicationServer.HttpEnhancements.dll
+F:\advisorsrepo\wcfhttp\Http\prototypes\Microsoft.ApplicationServier.HttpEnhancements\obj\Release\Microsoft.ApplicationServer.HttpEnhancements.pdb
+F:\advisorsrepo\wcfhttp\Http\prototypes\Microsoft.ApplicationServer.HttpEnhancements\obj\Release\ResolveAssemblyReference.cache
+F:\advisorsrepo\wcfhttp\Http\prototypes\Microsoft.ApplicationServer.HttpEnhancements\obj\Release\Microsoft.ApplicationServer.HttpEnhancements.dll
+F:\advisorsrepo\wcfhttp\Http\prototypes\Microsoft.ApplicationServer.HttpEnhancements\obj\Release\Microsoft.ApplicationServer.HttpEnhancements.pdb
+F:\codeplex\wcf\Build\bin\Release\Microsoft.ApplicationServer.HttpEnhancements.XML
+F:\codeplex\wcf\Build\bin\Release\Microsoft.ApplicationServer.HttpEnhancements.dll
+F:\codeplex\wcf\Build\bin\Release\Microsoft.ApplicationServer.HttpEnhancements.pdb
+F:\codeplex\wcf\Http\prototypes\Microsoft.ApplicationServer.HttpEnhancements\obj\Release\ResolveAssemblyReference.cache
+F:\codeplex\wcf\Http\prototypes\Microsoft.ApplicationServer.HttpEnhancements\obj\Release\Microsoft.ApplicationServer.HttpEnhancements.dll
+F:\codeplex\wcf\Http\prototypes\Microsoft.ApplicationServer.HttpEnhancements\obj\Release\Microsoft.ApplicationServer.HttpEnhancements.pdb

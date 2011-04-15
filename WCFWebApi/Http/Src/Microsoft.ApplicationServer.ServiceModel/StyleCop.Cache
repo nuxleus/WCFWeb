@@ -1,0 +1,237 @@
+<stylecopresultscache>
+  <version>10</version>
+  <project key="1307297948">
+    <configuration>DEBUG;TRACE;CODE_ANALYSIS;WIN64</configuration>
+  </project>
+  <sourcecode name="HttpProxyCredentialTypeHelper.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:34</timestamp>
+      <milliseconds>679</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:34</timestamp>
+    <milliseconds>383</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="AssemblyInfo.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:34</timestamp>
+      <milliseconds>679</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:34</timestamp>
+    <milliseconds>440</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="HttpClientCredentialTypeHelper.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:34</timestamp>
+      <milliseconds>679</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:34</timestamp>
+    <milliseconds>371</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="HttpTransportSecurityExtensionMethods.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:34</timestamp>
+      <milliseconds>679</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:34</timestamp>
+    <milliseconds>398</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="HostNameComparisonModeHelper.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:34</timestamp>
+      <milliseconds>679</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:34</timestamp>
+    <milliseconds>353</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="TransferModeHelper.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:34</timestamp>
+      <milliseconds>679</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:34</timestamp>
+    <milliseconds>411</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="UriTemplateExtensionMethods.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:34</timestamp>
+      <milliseconds>679</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:34</timestamp>
+    <milliseconds>426</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="ChannelAcceptor.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:34</timestamp>
+      <milliseconds>679</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:34</timestamp>
+    <milliseconds>123</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="AspNetEnvironment.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:34</timestamp>
+      <milliseconds>679</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:34</timestamp>
+    <milliseconds>94</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="BufferManagerOutputStream.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:34</timestamp>
+      <milliseconds>679</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:34</timestamp>
+    <milliseconds>110</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="HttpTransportDefaults.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:34</timestamp>
+      <milliseconds>679</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:34</timestamp>
+    <milliseconds>153</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="IChannelAcceptor.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:34</timestamp>
+      <milliseconds>679</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:34</timestamp>
+    <milliseconds>167</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="ChannelBindingUtility.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:34</timestamp>
+      <milliseconds>679</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:34</timestamp>
+    <milliseconds>139</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="LayeredChannel.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:34</timestamp>
+      <milliseconds>679</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:34</timestamp>
+    <milliseconds>181</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="LayeredChannelAcceptor.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:34</timestamp>
+      <milliseconds>679</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:34</timestamp>
+    <milliseconds>197</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="TransportDefaults.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:34</timestamp>
+      <milliseconds>679</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:34</timestamp>
+    <milliseconds>229</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="ConfigurationStrings.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:34</timestamp>
+      <milliseconds>679</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:34</timestamp>
+    <milliseconds>246</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="HttpTransportSecurityElementExtensionMethods.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:34</timestamp>
+      <milliseconds>679</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:34</timestamp>
+    <milliseconds>262</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="ServiceModelEnhancedConfigurationElementCollection.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:34</timestamp>
+      <milliseconds>679</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:34</timestamp>
+    <milliseconds>307</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="ServiceModelConfigurationElement.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:34</timestamp>
+      <milliseconds>679</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:34</timestamp>
+    <milliseconds>278</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="LayeredChannelListener.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:34</timestamp>
+      <milliseconds>679</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:34</timestamp>
+    <milliseconds>213</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="ServiceModelConfigurationElementCollection.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:34</timestamp>
+      <milliseconds>679</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:34</timestamp>
+    <milliseconds>293</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="ServiceModelEnumValidatorAttribute.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:34</timestamp>
+      <milliseconds>679</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:34</timestamp>
+    <milliseconds>337</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="ServiceModelEnumValidator.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:34</timestamp>
+      <milliseconds>679</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:09:34</timestamp>
+    <milliseconds>322</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="SR.Designer.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/29/2011 21:09:34</timestamp>
+      <milliseconds>679</milliseconds>
+    </settings>
+    <timestamp>03/29/2011 21:36:34</timestamp>
+    <milliseconds>97</milliseconds>
+    <violations />
+  </sourcecode>
+  <project key="1438990203">
+    <configuration>TRACE;DEBUG;CODE_ANALYSIS;WIN32</configuration>
+  </project>
+  <project key="-57267762">
+    <configuration>TRACE;DEBUG;CODE_ANALYSIS;WIN32</configuration>
+  </project>
+</stylecopresultscache>

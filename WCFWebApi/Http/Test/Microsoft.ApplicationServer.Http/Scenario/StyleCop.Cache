@@ -1,0 +1,258 @@
+<stylecopresultscache>
+  <version>10</version>
+  <project key="662970603">
+    <configuration>DEBUG;TRACE;CODE_ANALYSIS;WIN64</configuration>
+  </project>
+  <sourcecode name="CustomEndpointBehavior.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/09/2011 16:36:03</timestamp>
+      <milliseconds>891</milliseconds>
+    </settings>
+    <timestamp>03/09/2011 16:36:02</timestamp>
+    <milliseconds>955</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="Customer.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/09/2011 16:36:03</timestamp>
+      <milliseconds>891</milliseconds>
+    </settings>
+    <timestamp>03/09/2011 16:36:02</timestamp>
+    <milliseconds>955</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="CustomErrorHandler.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/09/2011 16:36:03</timestamp>
+      <milliseconds>891</milliseconds>
+    </settings>
+    <timestamp>03/09/2011 16:36:02</timestamp>
+    <milliseconds>955</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="CustomerService.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/09/2011 16:36:03</timestamp>
+      <milliseconds>891</milliseconds>
+    </settings>
+    <timestamp>03/09/2011 16:36:02</timestamp>
+    <milliseconds>971</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="CustomMessageFormatter.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/09/2011 16:36:03</timestamp>
+      <milliseconds>891</milliseconds>
+    </settings>
+    <timestamp>03/09/2011 16:36:02</timestamp>
+    <milliseconds>971</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="CustomMessageInspector.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/09/2011 16:36:03</timestamp>
+      <milliseconds>891</milliseconds>
+    </settings>
+    <timestamp>03/09/2011 16:36:02</timestamp>
+    <milliseconds>971</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="CustomOperationSelector.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/09/2011 16:36:03</timestamp>
+      <milliseconds>891</milliseconds>
+    </settings>
+    <timestamp>03/09/2011 16:36:02</timestamp>
+    <milliseconds>971</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="CustomServiceHost.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/09/2011 16:36:03</timestamp>
+      <milliseconds>891</milliseconds>
+    </settings>
+    <timestamp>03/09/2011 16:36:02</timestamp>
+    <milliseconds>986</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="TestHttpBindingParameterBehavior.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/09/2011 16:36:03</timestamp>
+      <milliseconds>891</milliseconds>
+    </settings>
+    <timestamp>03/22/2011 14:17:10</timestamp>
+    <milliseconds>227</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="HttpResponseMessageException.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/09/2011 16:36:03</timestamp>
+      <milliseconds>891</milliseconds>
+    </settings>
+    <timestamp>03/09/2011 16:36:02</timestamp>
+    <milliseconds>986</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="HttpResponseMessageExtensionMethods.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/09/2011 16:36:03</timestamp>
+      <milliseconds>891</milliseconds>
+    </settings>
+    <timestamp>03/09/2011 16:36:02</timestamp>
+    <milliseconds>986</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="ITestServiceContract.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/09/2011 16:36:03</timestamp>
+      <milliseconds>891</milliseconds>
+    </settings>
+    <timestamp>03/09/2011 16:36:03</timestamp>
+    <milliseconds>2</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="StringExtensionMethods.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/09/2011 16:36:03</timestamp>
+      <milliseconds>891</milliseconds>
+    </settings>
+    <timestamp>03/09/2011 16:36:03</timestamp>
+    <milliseconds>2</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="TestServiceClient.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/09/2011 16:36:03</timestamp>
+      <milliseconds>891</milliseconds>
+    </settings>
+    <timestamp>03/22/2011 14:17:10</timestamp>
+    <milliseconds>227</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="TestServiceCommon.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/09/2011 16:36:03</timestamp>
+      <milliseconds>891</milliseconds>
+    </settings>
+    <timestamp>03/22/2011 14:17:10</timestamp>
+    <milliseconds>243</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="TestServiceHost.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/09/2011 16:36:03</timestamp>
+      <milliseconds>891</milliseconds>
+    </settings>
+    <timestamp>03/22/2011 14:17:10</timestamp>
+    <milliseconds>243</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="ArtifactProcessorProvider.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/09/2011 16:36:03</timestamp>
+      <milliseconds>891</milliseconds>
+    </settings>
+    <timestamp>03/09/2011 16:36:03</timestamp>
+    <milliseconds>33</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="ArtifactService.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/09/2011 16:36:03</timestamp>
+      <milliseconds>891</milliseconds>
+    </settings>
+    <timestamp>03/09/2011 16:36:03</timestamp>
+    <milliseconds>49</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="GridPositionProcessor.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/09/2011 16:36:03</timestamp>
+      <milliseconds>891</milliseconds>
+    </settings>
+    <timestamp>03/09/2011 16:36:03</timestamp>
+    <milliseconds>49</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="ObjectContentScenarioTests.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/09/2011 16:36:03</timestamp>
+      <milliseconds>891</milliseconds>
+    </settings>
+    <timestamp>03/22/2011 14:17:10</timestamp>
+    <milliseconds>258</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="TestWebService.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/09/2011 16:36:03</timestamp>
+      <milliseconds>891</milliseconds>
+    </settings>
+    <timestamp>03/22/2011 14:17:10</timestamp>
+    <milliseconds>336</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="TestWebServiceBase.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/09/2011 16:36:03</timestamp>
+      <milliseconds>891</milliseconds>
+    </settings>
+    <timestamp>03/09/2011 16:36:03</timestamp>
+    <milliseconds>17</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="ArtifactScenarioTests.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/09/2011 16:36:03</timestamp>
+      <milliseconds>891</milliseconds>
+    </settings>
+    <timestamp>03/22/2011 14:17:10</timestamp>
+    <milliseconds>243</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="AutobindParameterScenarioTests.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/09/2011 16:36:03</timestamp>
+      <milliseconds>891</milliseconds>
+    </settings>
+    <timestamp>03/09/2011 16:36:03</timestamp>
+    <milliseconds>64</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="ChannelTests.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/09/2011 16:36:03</timestamp>
+      <milliseconds>891</milliseconds>
+    </settings>
+    <timestamp>03/09/2011 16:36:03</timestamp>
+    <milliseconds>64</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="ScenarioTests.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/09/2011 16:36:03</timestamp>
+      <milliseconds>891</milliseconds>
+    </settings>
+    <timestamp>03/09/2011 16:36:03</timestamp>
+    <milliseconds>64</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="ServiceTests.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/09/2011 16:36:03</timestamp>
+      <milliseconds>891</milliseconds>
+    </settings>
+    <timestamp>03/22/2011 14:17:10</timestamp>
+    <milliseconds>321</milliseconds>
+    <violations />
+  </sourcecode>
+  <sourcecode name="TestServiceBase.cs" parser="Microsoft.StyleCop.CSharp.CsParser">
+    <settings>
+      <timestamp>03/09/2011 16:36:03</timestamp>
+      <milliseconds>891</milliseconds>
+    </settings>
+    <timestamp>03/09/2011 16:36:03</timestamp>
+    <milliseconds>2</milliseconds>
+    <violations />
+  </sourcecode>
+</stylecopresultscache>
